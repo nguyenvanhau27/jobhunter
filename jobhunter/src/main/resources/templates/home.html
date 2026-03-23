@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+
+<h2>Trang chủ</h2>
+
+<!-- Hiển thị khi đã đăng nhập -->
+<div sec:authorize="isAuthenticated()">
+    <p>Xin chào, <strong sec:authentication="name"></strong>!</p>
+    <p>Role: <span sec:authentication="authorities"></span></p>
+
+    <!-- Logout button — POST request, CSRF token tự inject -->
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Đăng xuất</button>
+    </form>
+</div>
+
+<!-- Hiển thị khi chưa đăng nhập -->
+<div sec:authorize="isAnonymous()">
+    <a th:href="@{/login}">Đăng nhập</a> |
+    <a th:href="@{/register}">Đăng ký</a>
+</div>
+
+</body>
+</html>
