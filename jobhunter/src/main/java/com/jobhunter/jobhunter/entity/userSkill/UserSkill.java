@@ -1,6 +1,7 @@
 package com.jobhunter.jobhunter.entity.userSkill;
 
 
+import com.jobhunter.jobhunter.entity.AppEnums;
 import com.jobhunter.jobhunter.entity.Skill;
 import com.jobhunter.jobhunter.entity.User;
 import jakarta.persistence.*;
@@ -20,8 +21,9 @@ public class UserSkill {
     @JoinColumn(name = "skill_id")
     private Skill skill;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "level_skill")
-    private String levelSkill;
+    private AppEnums.SkillLevel levelSkill;
 
     public UserSkill() {}
 
@@ -31,6 +33,6 @@ public class UserSkill {
     public Skill getSkill() { return skill; }
     public void setSkill(Skill skill) { this.skill = skill; }
 
-    public String getLevelSkill() { return levelSkill; }
-    public void setLevelSkill(String levelSkill) { this.levelSkill = levelSkill; }
+    public AppEnums.SkillLevel getLevelSkill() { return levelSkill; }
+    public void setLevelSkill(AppEnums.SkillLevel levelSkill) { this.levelSkill = levelSkill; }
 }

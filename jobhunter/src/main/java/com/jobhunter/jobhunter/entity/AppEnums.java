@@ -16,4 +16,8 @@ public class AppEnums {
 
     // Tạo file JobStatus.java
     public enum JobStatus { OPEN, CLOSED }
+
+    public enum SkillLevel {
+        BEGINNER, INTERMEDIATE, ADVANCED
+    }
 }

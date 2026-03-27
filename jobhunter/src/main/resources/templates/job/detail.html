@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${job.title}">Chi tiết việc làm</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<a th:href="@{/jobs}">← Quay lại danh sách</a>
+
+<h2 th:text="${job.title}"></h2>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <tr>
+        <td><strong>Công ty</strong></td>
+        <td th:text="${job.company.nameCompany}"></td>
+    </tr>
+    <tr>
+        <td><strong>Địa điểm</strong></td>
+        <td th:text="${job.location}"></td>
+    </tr>
+    <tr>
+        <td><strong>Loại</strong></td>
+        <td th:text="${job.jobType}"></td>
+    </tr>
+    <tr>
+        <td><strong>Kinh nghiệm</strong></td>
+        <td th:text="${job.experienceLevel}"></td>
+    </tr>
+    <tr>
+        <td><strong>Mức lương</strong></td>
+        <td>
+            <span th:text="${#numbers.formatInteger(job.minSalary, 0, 'COMMA')}"></span>
+            —
+            <span th:text="${#numbers.formatInteger(job.maxSalary, 0, 'COMMA')}"></span>
+            VNĐ
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Kỹ năng yêu cầu</strong></td>
+        <td>
+            <span th:each="skill, iter : ${job.skills}">
+                <span th:text="${skill.name}"></span><span th:if="!${iter.last}">, </span>
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td><strong>Mô tả</strong></td>
+        <td th:text="${job.description}"></td>
+    </tr>
+    <tr>
+        <td><strong>Yêu cầu</strong></td>
+        <td th:text="${job.requirements}"></td>
+    </tr>
+    <tr>
+        <td><strong>Ngày đăng</strong></td>
+        <td th:text="${#temporals.format(job.createdAt, 'dd/MM/yyyy')}"></td>
+    </tr>
+</table>
+
+<br/>
+
+<!-- Nút Apply — chỉ hiện với USER đã đăng nhập -->
+<div sec:authorize="hasRole('USER')">
+    <a th:href="@{/jobs/{id}/apply(id=${job.id})}">
+        <button>Ứng tuyển ngay</button>
+    </a>
+</div>
+
+<!-- Guest chưa đăng nhập -->
+<div sec:authorize="isAnonymous()">
+    <a th:href="@{/login}">Đăng nhập để ứng tuyển</a>
+</div>
+
+</body>
+</html>

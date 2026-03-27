@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Cập nhật profile</title>
+</head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<!-- Nav -->
+<div>
+    Xin chào, <strong sec:authentication="name"></strong> |
+    <a th:href="@{/}">Trang chủ</a> |
+    <form th:action="@{/logout}" method="post" style="display:inline">
+        <button type="submit">Đăng xuất</button>
+    </form>
+</div>
+
+<hr/>
+
+<h2>Cập nhật thông tin cá nhân</h2>
+
+<!-- Thông báo cập nhật thành công -->
+<div th:if="${successMessage}" style="color: green; font-weight: bold;">
+    <p th:text="${successMessage}"></p>
+</div>
+
+<form th:action="@{/profile}" th:object="${profileDTO}" method="post">
+
+    <!-- Email: chỉ đọc, không cho sửa -->
+    <div>
+        <label>Email:</label>
+        <input type="email"
+               th:value="${user.email}"
+               disabled />
+        <small style="color: gray;">(Không thể thay đổi email)</small>
+    </div>
+
+    <div>
+        <label>Họ tên:</label>
+        <input type="text" th:field="*{fullName}" />
+        <span th:if="${#fields.hasErrors('fullName')}"
+              th:errors="*{fullName}"
+              style="color: red;"></span>
+    </div>
+
+    <div>
+        <label>Số điện thoại:</label>
+        <input type="text" th:field="*{phone}" />
+        <span th:if="${#fields.hasErrors('phone')}"
+              th:errors="*{phone}"
+              style="color: red;"></span>
+    </div>
+
+    <div>
+        <label>Địa chỉ:</label>
+        <input type="text" th:field="*{address}" />
+    </div>
+
+    <div>
+        <label>Kinh nghiệm:</label>
+        <textarea th:field="*{experience}" rows="4" cols="50"></textarea>
+    </div>
+
+    <br/>
+    <button type="submit">Lưu thay đổi</button>
+    <a th:href="@{/}">Huỷ</a>
+
+</form>
+
+</body>
+</html>

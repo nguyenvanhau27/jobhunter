@@ -13,6 +13,12 @@ public class Skill {
     @Column(unique = true, nullable = false)
     private String name;
 
+    @Column
+    private String category;
+
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+
     public Skill() {}
 
     public Skill(String name) {

@@ -6,7 +6,7 @@
     <title>Home</title>
 </head>
 <body>
-
+<div th:replace="~{fragments/nav :: nav}"></div>
 <h2>Trang chủ</h2>
 
 <!-- Hiển thị khi đã đăng nhập -->
@@ -17,6 +17,9 @@
     <!-- Logout button — POST request, CSRF token tự inject -->
     <form th:action="@{/logout}" method="post">
         <button type="submit">Đăng xuất</button>
+    </form>
+    <form th:action="@{/profile}" method="get">
+        <button type="submit">Cập nhật tài khoản</button>
     </form>
 </div>
 

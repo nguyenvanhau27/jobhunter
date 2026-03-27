@@ -1,4 +1,6 @@
 package com.jobhunter.jobhunter.config;
+import com.jobhunter.jobhunter.entity.User;
+import com.jobhunter.jobhunter.repository.UserRepository;
 import com.jobhunter.jobhunter.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.time.LocalDateTime;
 
 @Configuration
 @EnableWebSecurity
@@ -32,7 +36,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, UserRepository userRepository) throws Exception {
         http
                 .userDetailsService(userDetailsService)
 
@@ -52,6 +56,10 @@ public class SecurityConfig {
                         .passwordParameter("password")
                         .successHandler((request, response, authentication) -> {
                             String email = authentication.getName();
+                            userRepository.findByEmail(email).ifPresent(user -> {
+                                user.setLastLogin(LocalDateTime.now()); //save last_login
+                                userRepository.save(user);
+                            });
                             String role = authentication.getAuthorities()
                                     .iterator().next().getAuthority();
                             System.out.println("=================================");

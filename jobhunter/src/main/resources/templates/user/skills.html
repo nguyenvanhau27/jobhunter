@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý kỹ năng</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h2>Quản lý kỹ năng cá nhân</h2>
+
+<!-- Thông báo -->
+<div th:if="${successMessage}" style="color: green; font-weight: bold;">
+    <p th:text="${successMessage}"></p>
+</div>
+<div th:if="${errorMessage}" style="color: red; font-weight: bold;">
+    <p th:text="${errorMessage}"></p>
+</div>
+
+<!-- ─── Form thêm skill mới ─────────────────────────────── -->
+<h3>Thêm kỹ năng</h3>
+<form th:action="@{/user/skills/add}" method="post">
+
+    <label>Category:</label>
+    <select id="categoryAdd" onchange="filterSkills('categoryAdd', 'skillAdd')">
+        <option value="">-- Chọn category --</option>
+        <option value="Language">Language</option>
+        <option value="Frontend">Frontend</option>
+        <option value="Backend">Backend</option>
+        <option value="Database">Database</option>
+        <option value="DevOps/Cloud">DevOps/Cloud</option>
+        <option value="Mobile">Mobile</option>
+        <option value="Testing">Testing</option>
+        <option value="Tools">Tools</option>
+    </select>
+
+    &nbsp;
+
+    <label>Kỹ năng:</label>
+    <select id="skillAdd" name="skillId" required>
+        <option value="">-- Chọn category trước --</option>
+        <option th:each="skill : ${allSkills}"
+                th:value="${skill.id}"
+                th:text="${skill.name}"
+                th:attr="data-category=${skill.category}"
+                style="display:none">
+        </option>
+    </select>
+
+    &nbsp;
+
+    <label>Level:</label>
+    <select name="level" required>
+        <option th:each="lvl : ${levels}"
+                th:value="${lvl}"
+                th:text="${lvl}">
+        </option>
+    </select>
+
+    &nbsp;
+    <button type="submit">Thêm</button>
+</form>
+
+<hr/>
+
+<!-- ─── Danh sách skill hiện tại ────────────────────────── -->
+<h3>Kỹ năng của bạn</h3>
+
+<div th:if="${#lists.isEmpty(mySkills)}">
+    <p>Bạn chưa có kỹ năng nào. Hãy thêm kỹ năng ở trên!</p>
+</div>
+
+<table th:unless="${#lists.isEmpty(mySkills)}" border="1" cellpadding="8" cellspacing="0">
+    <thead>
+    <tr>
+        <th>Category</th>
+        <th>Kỹ năng</th>
+        <th>Level hiện tại</th>
+        <th>Cập nhật level</th>
+        <th>Xoá</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="us : ${mySkills}">
+
+        <!-- Category -->
+        <td th:text="${us.skill.category}"></td>
+
+        <!-- Tên skill -->
+        <td th:text="${us.skill.name}"></td>
+
+        <!-- Level hiện tại -->
+        <td th:text="${us.levelSkill}"></td>
+
+        <!-- Cập nhật level — th:selected tự chọn đúng level hiện tại -->
+        <td>
+            <form th:action="@{/user/skills/update}" method="post" style="display:inline">
+                <input type="hidden" name="skillId" th:value="${us.skill.id}"/>
+                <select name="level">
+                    <option th:each="lvl : ${levels}"
+                            th:value="${lvl}"
+                            th:text="${lvl}"
+                            th:selected="${lvl == us.levelSkill}">
+                    </option>
+                </select>
+                <button type="submit">Cập nhật</button>
+            </form>
+        </td>
+
+        <!-- Xoá -->
+        <td>
+            <form th:action="@{/user/skills/remove}" method="post" style="display:inline">
+                <input type="hidden" name="skillId" th:value="${us.skill.id}"/>
+                <button type="submit"
+                        onclick="return confirm('Bạn có chắc muốn xoá skill này?')">
+                    Xoá
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<script>
+    function filterSkills(categorySelectId, skillSelectId) {
+        const category = document.getElementById(categorySelectId).value;
+        const skillSelect = document.getElementById(skillSelectId);
+        const options = skillSelect.querySelectorAll('option[data-category]');
+
+        skillSelect.value = '';
+
+        options.forEach(opt => {
+            if (!category || opt.getAttribute('data-category') === category) {
+                opt.style.display = '';
+            } else {
+                opt.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

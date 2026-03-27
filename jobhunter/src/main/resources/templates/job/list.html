@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách việc làm</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h2>Danh sách việc làm</h2>
+
+<!-- ─── Form Filter ──────────────────────────────────────── -->
+<form th:action="@{/jobs}" method="get">
+    <input type="text" name="keyword"
+           th:value="${keyword}"
+           placeholder="Tìm theo tên job..." />
+
+    <input type="text" name="location"
+           th:value="${location}"
+           placeholder="Địa điểm..." />
+
+    <select name="jobType">
+        <option value="">-- Loại công việc --</option>
+        <option th:each="jt : ${jobTypes}"
+                th:value="${jt}"
+                th:text="${jt}"
+                th:selected="${jt == selectedJobType}">
+        </option>
+    </select>
+
+    <select name="experienceLevel">
+        <option value="">-- Kinh nghiệm --</option>
+        <option th:each="exp : ${experienceLevels}"
+                th:value="${exp}"
+                th:text="${exp}"
+                th:selected="${exp == selectedExperience}">
+        </option>
+    </select>
+
+    <select name="skillId">
+        <option value="">-- Kỹ năng --</option>
+        <option th:each="skill : ${allSkills}"
+                th:value="${skill.id}"
+                th:text="${skill.name}"
+                th:selected="${skill.id == selectedSkillId}">
+        </option>
+    </select>
+
+    <button type="submit">Tìm kiếm</button>
+    <a th:href="@{/jobs}">Reset</a>
+</form>
+
+<hr/>
+
+<p>Tìm thấy <strong th:text="${jobs.size()}"></strong> việc làm</p>
+
+<div th:if="${jobs.isEmpty()}">
+    <p>Không tìm thấy việc làm phù hợp.</p>
+</div>
+
+<table th:unless="${jobs.isEmpty()}" border="1" cellpadding="8" cellspacing="0">
+    <thead>
+    <tr>
+        <th>Vị trí</th>
+        <th>Công ty</th>
+        <th>Địa điểm</th>
+        <th>Lương (VNĐ)</th>
+        <th>Loại</th>
+        <th>Kinh nghiệm</th>
+        <th>Kỹ năng</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="job : ${jobs}">
+        <td th:text="${job.title}"></td>
+        <td th:text="${job.company.nameCompany}"></td>
+        <td th:text="${job.location}"></td>
+        <td>
+            <span th:text="${#numbers.formatInteger(job.minSalary, 0, 'COMMA')}"></span>
+            —
+            <span th:text="${#numbers.formatInteger(job.maxSalary, 0, 'COMMA')}"></span>
+        </td>
+        <td th:text="${job.jobType}"></td>
+        <td th:text="${job.experienceLevel}"></td>
+        <td>
+                <span th:each="skill, iter : ${job.skills}">
+                    <span th:text="${skill.name}"></span><span th:if="!${iter.last}">, </span>
+                </span>
+        </td>
+        <td>
+            <a th:href="@{/jobs/{id}(id=${job.id})}">Xem chi tiết</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
