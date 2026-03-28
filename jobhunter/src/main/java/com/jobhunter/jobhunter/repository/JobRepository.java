@@ -2,6 +2,8 @@ package com.jobhunter.jobhunter.repository;
 
 import com.jobhunter.jobhunter.entity.AppEnums;
 import com.jobhunter.jobhunter.entity.Job;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,7 +15,7 @@ import java.util.List;
 public interface JobRepository extends JpaRepository<Job, Long> {
 
     // UC6: Lấy tất cả job đang OPEN
-    List<Job> findByStatusJob(AppEnums.JobStatus statusJob);
+    Page<Job> findByStatusJob(AppEnums.JobStatus statusJob, Pageable pageable);
 
     // UC8: Tìm kiếm theo keyword (title hoặc description)
     @Query("SELECT j FROM Job j WHERE j.statusJob = 'OPEN' AND " +
@@ -46,10 +48,13 @@ public interface JobRepository extends JpaRepository<Job, Long> {
             "AND (:jobType IS NULL OR j.jobType = :jobType) " +
             "AND (:experienceLevel IS NULL OR j.experienceLevel = :experienceLevel) " +
             "AND (:skillId IS NULL OR s.id = :skillId)")
-    List<Job> filterJobs(
+    Page<Job> filterJobs(
             @Param("keyword") String keyword,
             @Param("location") String location,
             @Param("jobType") AppEnums.JobType jobType,
             @Param("experienceLevel") AppEnums.ExperienceLevel experienceLevel,
-            @Param("skillId") Long skillId);
+            @Param("skillId") Long skillId,
+            Pageable pageable);
+
+    java.util.Optional<Job> findById(Long id);
 }

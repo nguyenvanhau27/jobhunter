@@ -4,6 +4,10 @@ import com.jobhunter.jobhunter.entity.AppEnums;
 import com.jobhunter.jobhunter.entity.Job;
 import com.jobhunter.jobhunter.repository.JobRepository;
 import com.jobhunter.jobhunter.service.JobService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,8 +22,10 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public List<Job> findOpenJobs() {
-        return jobRepository.findByStatusJob(AppEnums.JobStatus.OPEN);
+    public Page<Job> findOpenJobs(int page, int size) {
+        // Sắp xếp mới nhất lên đầu
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return jobRepository.findByStatusJob(AppEnums.JobStatus.OPEN, pageable);
     }
 
     @Override
@@ -29,14 +35,15 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public List<Job> filterJobs(String keyword, String location,
+    public Page<Job> filterJobs(String keyword, String location,
                                 AppEnums.JobType jobType,
                                 AppEnums.ExperienceLevel experienceLevel,
-                                Long skillId) {
-        // Chuẩn hoá input — empty string → null để query JPQL xử lý đúng
-        String kw = (keyword != null && !keyword.isBlank()) ? keyword : null;
+                                Long skillId,
+                                int page, int size) {
+        String kw  = (keyword  != null && !keyword.isBlank())  ? keyword  : null;
         String loc = (location != null && !location.isBlank()) ? location : null;
 
-        return jobRepository.filterJobs(kw, loc, jobType, experienceLevel, skillId);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return jobRepository.filterJobs(kw, loc, jobType, experienceLevel, skillId, pageable);
     }
 }

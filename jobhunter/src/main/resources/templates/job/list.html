@@ -54,8 +54,14 @@
 
 <hr/>
 
-<p>Tìm thấy <strong th:text="${jobs.size()}"></strong> việc làm</p>
+<!-- ─── Tổng kết quả ─────────────────────────────────────── -->
+<p>
+    Tìm thấy <strong th:text="${jobPage.totalElements}"></strong> việc làm
+    — Trang <strong th:text="${currentPage + 1}"></strong>
+    / <strong th:text="${jobPage.totalPages}"></strong>
+</p>
 
+<!-- ─── Danh sách job ────────────────────────────────────── -->
 <div th:if="${jobs.isEmpty()}">
     <p>Không tìm thấy việc làm phù hợp.</p>
 </div>
@@ -91,11 +97,45 @@
                 </span>
         </td>
         <td>
-            <a th:href="@{/jobs/{id}(id=${job.id})}">Xem chi tiết</a>
+            <a th:href="@{/jobs/{id}(id=${job.id})}">Chi tiết</a>
         </td>
     </tr>
     </tbody>
 </table>
+
+<!-- ─── Pagination ───────────────────────────────────────── -->
+<div th:if="${jobPage.totalPages > 1}" style="margin-top: 16px;">
+
+    <!-- Nút Previous -->
+    <a th:if="${currentPage > 0}"
+       th:href="@{/jobs(page=${currentPage - 1}, keyword=${keyword}, location=${location}, jobType=${selectedJobType}, experienceLevel=${selectedExperience}, skillId=${selectedSkillId})}">
+        « Trước
+    </a>
+    <span th:unless="${currentPage > 0}" style="color:gray;">« Trước</span>
+
+    &nbsp;
+
+    <!-- Số trang -->
+    <span th:each="i : ${#numbers.sequence(0, jobPage.totalPages - 1)}">
+        <a th:if="${i != currentPage}"
+           th:href="@{/jobs(page=${i}, keyword=${keyword}, location=${location}, jobType=${selectedJobType}, experienceLevel=${selectedExperience}, skillId=${selectedSkillId})}"
+           th:text="${i + 1}">
+        </a>
+        <strong th:if="${i == currentPage}"
+                th:text="${i + 1}"
+                style="text-decoration:underline;">
+        </strong>
+        &nbsp;
+    </span>
+
+    <!-- Nút Next -->
+    <a th:if="${currentPage < jobPage.totalPages - 1}"
+       th:href="@{/jobs(page=${currentPage + 1}, keyword=${keyword}, location=${location}, jobType=${selectedJobType}, experienceLevel=${selectedExperience}, skillId=${selectedSkillId})}">
+        Tiếp »
+    </a>
+    <span th:unless="${currentPage < jobPage.totalPages - 1}" style="color:gray;">Tiếp »</span>
+
+</div>
 
 </body>
 </html>
