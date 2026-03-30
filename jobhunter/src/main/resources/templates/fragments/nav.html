@@ -43,6 +43,12 @@
         <!-- Skills -->
         <a th:href="@{/user/skills}" style="margin-right:10px;">Kỹ năng</a>
 
+        <!-- USER nav — thêm link đổi password -->
+        <a th:href="@{/profile/change-password}">Đổi mật khẩu</a>
+
+        <!-- login.html — thêm link quên password -->
+        <a th:href="@{/forgot-password}">Quên mật khẩu?</a>
+
         <!-- Thông tin user + logout -->
         <span style="margin-left:20px;">
             Xin chào, <strong sec:authentication="name"></strong>

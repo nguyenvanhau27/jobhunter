@@ -28,6 +28,9 @@ public class JobDTO {
     @NotNull(message = "Vui lòng chọn loại công việc")
     private AppEnums.JobType jobType;
 
+
+    //End time here
+
     @NotNull(message = "Vui lòng chọn cấp độ kinh nghiệm")
     private AppEnums.ExperienceLevel experienceLevel;
 
