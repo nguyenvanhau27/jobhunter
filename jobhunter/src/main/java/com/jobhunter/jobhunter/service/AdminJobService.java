@@ -2,12 +2,13 @@ package com.jobhunter.jobhunter.service;
 
 import com.jobhunter.jobhunter.dto.JobDTO;
 import com.jobhunter.jobhunter.entity.Job;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 public interface AdminJobService {
 
-    List<Job> findAll();
+    Page<Job> findAll(int page, int size);
 
     Job findById(Long id);
 
@@ -15,6 +16,7 @@ public interface AdminJobService {
 
     Job updateJob(Long id, JobDTO dto);
 
-    // Trả về message — CLOSED hoặc DELETED
+    Job reopenJob(Long id, LocalDateTime newExpiredAt);
+
     String deleteJob(Long id);
 }

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ứng tuyển</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h2>Ứng tuyển: <span th:text="${job.title}"></span></h2>
+
+<table border="0" cellpadding="6">
+    <tr>
+        <td><strong>Công ty:</strong></td>
+        <td th:text="${job.company.nameCompany}"></td>
+    </tr>
+    <tr>
+        <td><strong>Địa điểm:</strong></td>
+        <td th:text="${job.location}"></td>
+    </tr>
+    <tr>
+        <td><strong>Hết hạn:</strong></td>
+        <td th:text="${job.expiredAt != null} ? ${#temporals.format(job.expiredAt, 'dd/MM/yyyy HH:mm')} : 'Không giới hạn'"></td>
+    </tr>
+</table>
+
+<hr/>
+
+<div th:if="${errorMessage}" style="color:red; font-weight:bold;">
+    <p th:text="${errorMessage}"></p>
+</div>
+
+<!-- enctype="multipart/form-data" bắt buộc khi upload file -->
+<form th:action="@{/jobs/{id}/apply(id=${job.id})}"
+      method="post"
+      enctype="multipart/form-data">
+
+    <div>
+        <label>Upload CV (PDF, tối đa 5MB):</label><br/>
+        <input type="file"
+               name="cvFile"
+               accept=".pdf"
+               required/>
+        <br/>
+        <small style="color:gray;">Chỉ chấp nhận file PDF, tối đa 5MB</small>
+    </div>
+
+    <br/>
+
+    <div>
+        <label>Cover Letter:</label><br/>
+        <textarea name="coverLetter"
+                  rows="6"
+                  cols="60"
+                  placeholder="Giới thiệu bản thân và lý do bạn phù hợp với vị trí này...">
+        </textarea>
+    </div>
+
+    <br/>
+    <button type="submit">Nộp đơn</button>
+    <a th:href="@{/jobs/{id}(id=${job.id})}">Huỷ</a>
+
+</form>
+
+</body>
+</html>

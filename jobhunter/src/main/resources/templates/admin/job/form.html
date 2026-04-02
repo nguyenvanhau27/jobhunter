@@ -8,8 +8,11 @@
 
 <div th:replace="~{fragments/nav :: nav}"></div>
 
-<!-- Tiêu đề: tạo mới hay cập nhật -->
 <h2 th:text="${jobId} ? 'Cập nhật Job' : 'Tạo Job mới'"></h2>
+
+<div th:if="${errorMessage}" style="color:red; font-weight:bold;">
+    <p th:text="${errorMessage}"></p>
+</div>
 
 <form th:with="actionUrl=${jobId} ? '/admin/jobs/' + ${jobId} + '/edit' : '/admin/jobs/create'"
       th:action="${actionUrl}"
@@ -17,7 +20,6 @@
       method="post">
 
     <table cellpadding="6">
-
         <tr>
             <td><label>Tiêu đề:</label></td>
             <td>
@@ -26,22 +28,19 @@
                       th:errors="*{title}" style="color:red;"></span>
             </td>
         </tr>
-
         <tr>
             <td><label>Công ty:</label></td>
             <td>
-                <select th:field="*{companyId}" required>
+                <select th:field="*{companyId}">
                     <option value="">-- Chọn công ty --</option>
                     <option th:each="c : ${companies}"
                             th:value="${c.id}"
-                            th:text="${c.nameCompany}">
-                    </option>
+                            th:text="${c.nameCompany}"></option>
                 </select>
                 <span th:if="${#fields.hasErrors('companyId')}"
                       th:errors="*{companyId}" style="color:red;"></span>
             </td>
         </tr>
-
         <tr>
             <td><label>Địa điểm:</label></td>
             <td>
@@ -50,37 +49,30 @@
                       th:errors="*{location}" style="color:red;"></span>
             </td>
         </tr>
-
         <tr>
             <td><label>Loại công việc:</label></td>
             <td>
-                <select th:field="*{jobType}" required>
+                <select th:field="*{jobType}">
                     <option value="">-- Chọn loại --</option>
                     <option th:each="jt : ${jobTypes}"
-                            th:value="${jt}"
-                            th:text="${jt}">
-                    </option>
+                            th:value="${jt}" th:text="${jt}"></option>
                 </select>
                 <span th:if="${#fields.hasErrors('jobType')}"
                       th:errors="*{jobType}" style="color:red;"></span>
             </td>
         </tr>
-
         <tr>
             <td><label>Kinh nghiệm:</label></td>
             <td>
-                <select th:field="*{experienceLevel}" required>
+                <select th:field="*{experienceLevel}">
                     <option value="">-- Chọn cấp độ --</option>
                     <option th:each="exp : ${experienceLevels}"
-                            th:value="${exp}"
-                            th:text="${exp}">
-                    </option>
+                            th:value="${exp}" th:text="${exp}"></option>
                 </select>
                 <span th:if="${#fields.hasErrors('experienceLevel')}"
                       th:errors="*{experienceLevel}" style="color:red;"></span>
             </td>
         </tr>
-
         <tr>
             <td><label>Lương tối thiểu:</label></td>
             <td>
@@ -89,7 +81,6 @@
                       th:errors="*{minSalary}" style="color:red;"></span>
             </td>
         </tr>
-
         <tr>
             <td><label>Lương tối đa:</label></td>
             <td>
@@ -99,36 +90,44 @@
             </td>
         </tr>
 
+        <!-- ✅ Ngày hết hạn -->
+        <tr>
+            <td><label>Ngày hết hạn:</label></td>
+            <td>
+                <input type="datetime-local" th:field="*{expiredAt}"/>
+                <span th:if="${#fields.hasErrors('expiredAt')}"
+                      th:errors="*{expiredAt}" style="color:red;"></span>
+                <br/>
+                <small style="color:gray;">
+                    Để trống nếu không giới hạn thời gian tuyển dụng
+                </small>
+            </td>
+        </tr>
+
+
         <tr>
             <td><label>Kỹ năng yêu cầu:</label></td>
             <td>
-                <!-- Multi-select: giữ Ctrl/Cmd để chọn nhiều -->
                 <select name="skillIds" multiple size="8" style="width:250px;">
                     <option th:each="skill : ${allSkills}"
                             th:value="${skill.id}"
                             th:text="${skill.name}"
-                            th:selected="${jobDTO.skillIds != null and jobDTO.skillIds.contains(skill.id)}">
+                            th:selected="${jobDTO.skillIds != null
+                                          and jobDTO.skillIds.contains(skill.id)}">
                     </option>
                 </select>
                 <br/>
-                <small style="color:gray;">Giữ Ctrl (Windows) hoặc Cmd (Mac) để chọn nhiều skill</small>
+                <small style="color:gray;">Giữ Ctrl/Cmd để chọn nhiều</small>
             </td>
         </tr>
-
         <tr>
             <td><label>Mô tả:</label></td>
-            <td>
-                <textarea th:field="*{description}" rows="5" cols="50"></textarea>
-            </td>
+            <td><textarea th:field="*{description}" rows="5" cols="50"></textarea></td>
         </tr>
-
         <tr>
             <td><label>Yêu cầu:</label></td>
-            <td>
-                <textarea th:field="*{requirements}" rows="5" cols="50"></textarea>
-            </td>
+            <td><textarea th:field="*{requirements}" rows="5" cols="50"></textarea></td>
         </tr>
-
         <tr>
             <td></td>
             <td>
@@ -137,7 +136,6 @@
                 <a th:href="@{/admin/jobs}">Huỷ</a>
             </td>
         </tr>
-
     </table>
 </form>
 

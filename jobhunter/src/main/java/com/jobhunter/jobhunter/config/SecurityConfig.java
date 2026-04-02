@@ -46,7 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/jobs", "/jobs/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/profile/**").hasRole("USER")
-                        .requestMatchers("/applications/my").hasRole("USER")
+                        .requestMatchers("/applications/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -108,3 +108,6 @@ public class SecurityConfig {
         return http.build();
     }
 }
+
+
+

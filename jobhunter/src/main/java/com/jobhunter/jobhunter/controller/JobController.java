@@ -4,6 +4,7 @@ import com.jobhunter.jobhunter.entity.AppEnums;
 import com.jobhunter.jobhunter.entity.Job;
 import com.jobhunter.jobhunter.entity.Skill;
 import com.jobhunter.jobhunter.repository.SkillRepository;
+import com.jobhunter.jobhunter.service.CompanyService;
 import com.jobhunter.jobhunter.service.JobService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -20,10 +21,12 @@ public class JobController {
 
     private final JobService jobService;
     private final SkillRepository skillRepository;
+    private final CompanyService companyService;
 
-    public JobController(JobService jobService, SkillRepository skillRepository) {
+    public JobController(JobService jobService, SkillRepository skillRepository, CompanyService companyService) {
         this.jobService = jobService;
         this.skillRepository = skillRepository;
+        this.companyService = companyService;
     }
 
     // ─── UC6 + UC8: Danh sách + Filter ──────────────────────────
@@ -49,6 +52,11 @@ public class JobController {
 
         // Filter dropdowns
         List<Skill> allSkills = skillRepository.findAll();
+        // Trending + Top companies — chỉ load ở trang đầu, không filter
+        if (!hasFilter && page == 0) {
+            model.addAttribute("trendingJobs", jobService.findTrendingJobs(5));
+            model.addAttribute("topCompanies", companyService.findTopCompanies(6));
+        }
 
         model.addAttribute("jobPage", jobPage);
         model.addAttribute("jobs", jobPage.getContent());

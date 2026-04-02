@@ -8,17 +8,20 @@ import java.util.List;
 
 public interface JobService {
 
+    Page<Job> findActiveJobs(int page, int size);
 
-    // UC6: Danh sách job OPEN có phân trang
-    Page<Job> findOpenJobs(int page, int size);
-
-    // UC7: Chi tiết job
     Job findById(Long id);
 
-    // UC8: Filter + phân trang
     Page<Job> filterJobs(String keyword, String location,
                          AppEnums.JobType jobType,
                          AppEnums.ExperienceLevel experienceLevel,
                          Long skillId,
                          int page, int size);
+
+    Page<Job> findOpenJobs(int page, int size);
+
+    // Trending: top job nhiều apply nhất trong 7 ngày
+    List<Job> findTrendingJobs(int limit);
+
+
 }

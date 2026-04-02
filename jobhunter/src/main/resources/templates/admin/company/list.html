@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý công ty</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h2>Quản lý công ty</h2>
+
+<div th:if="${successMessage}" style="color:green; font-weight:bold;">
+    <p th:text="${successMessage}"></p>
+</div>
+<div th:if="${errorMessage}" style="color:red; font-weight:bold;">
+    <p th:text="${errorMessage}"></p>
+</div>
+
+<a th:href="@{/admin/companies/create}"><button>+ Tạo công ty mới</button></a>
+<br/><br/>
+
+<div th:if="${#lists.isEmpty(companies)}">
+    <p>Chưa có công ty nào.</p>
+</div>
+
+<table th:unless="${#lists.isEmpty(companies)}"
+       border="1" cellpadding="8" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Tên công ty</th>
+        <th>Địa điểm</th>
+        <th>Quy mô</th>
+        <th>Website</th>
+<!--        <th>Cập nhật lần cuối</th>-->
+        <th>Thao tác</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="company : ${companies}">
+        <td th:text="${company.id}"></td>
+        <td th:text="${company.nameCompany}"></td>
+        <td th:text="${company.location}"></td>
+        <td th:text="${company.size}"></td>
+        <td>
+            <a th:if="${company.website != null}"
+               th:href="${company.website}"
+               target="_blank"
+               th:text="${company.website}">
+            </a>
+        </td>
+<!--        <td>-->
+<!--                <span th:if="${company.updatedAt != null}"-->
+<!--                      th:text="${#temporals.format(company.updatedAt, 'dd/MM/yyyy HH:mm')}">-->
+<!--                </span>-->
+<!--        </td>-->
+        <td>
+            <a th:href="@{/admin/companies/{id}/edit(id=${company.id})}">Sửa</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

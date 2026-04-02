@@ -4,7 +4,9 @@ import com.jobhunter.jobhunter.entity.AppEnums;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class JobDTO {
@@ -28,16 +30,23 @@ public class JobDTO {
     @NotNull(message = "Vui lòng chọn loại công việc")
     private AppEnums.JobType jobType;
 
-
-    //End time here
-
     @NotNull(message = "Vui lòng chọn cấp độ kinh nghiệm")
     private AppEnums.ExperienceLevel experienceLevel;
 
     @NotNull(message = "Vui lòng chọn công ty")
     private Long companyId;
 
-    // Multi-select skills
+    // Ngày hết hạn — bắt buộc
+    @NotNull(message = "Vui lòng chọn ngày hết hạn")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime expiredAt;
+
+    // Validate minSalary <= maxSalary
+    public boolean isSalaryValid() {
+        if (minSalary == null || maxSalary == null) return true;
+        return minSalary <= maxSalary;
+    }
+
     private List<Long> skillIds;
 
     public String getTitle() { return title; }
@@ -66,6 +75,9 @@ public class JobDTO {
 
     public Long getCompanyId() { return companyId; }
     public void setCompanyId(Long companyId) { this.companyId = companyId; }
+
+    public LocalDateTime getExpiredAt() { return expiredAt; }
+    public void setExpiredAt(LocalDateTime expiredAt) { this.expiredAt = expiredAt; }
 
     public List<Long> getSkillIds() { return skillIds; }
     public void setSkillIds(List<Long> skillIds) { this.skillIds = skillIds; }

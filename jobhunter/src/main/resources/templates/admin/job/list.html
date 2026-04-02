@@ -10,72 +10,139 @@
 
 <h2>Quản lý Job</h2>
 
-<!-- Thông báo -->
-<div th:if="${successMessage}" style="color: green; font-weight: bold;">
+<div th:if="${successMessage}" style="color:green; font-weight:bold;">
     <p th:text="${successMessage}"></p>
 </div>
-<div th:if="${errorMessage}" style="color: red; font-weight: bold;">
+<div th:if="${errorMessage}" style="color:red; font-weight:bold;">
     <p th:text="${errorMessage}"></p>
 </div>
 
-<a th:href="@{/admin/jobs/create}">
-    <button>+ Tạo Job mới</button>
-</a>
-
+<a th:href="@{/admin/jobs/create}"><button>+ Tạo Job mới</button></a>
 <br/><br/>
 
-<div th:if="${jobs.isEmpty()}">
-    <p>Chưa có job nào.</p>
-</div>
+<p>
+    Tổng <strong th:text="${jobPage.totalElements}"></strong> job —
+    Trang <strong th:text="${currentPage + 1}"></strong>
+    / <strong th:text="${jobPage.totalPages}"></strong>
+</p>
 
-<table th:unless="${jobs.isEmpty()}" border="1" cellpadding="8" cellspacing="0">
+<table border="1" cellpadding="8" cellspacing="0">
     <thead>
     <tr>
         <th>ID</th>
         <th>Tiêu đề</th>
         <th>Công ty</th>
-        <th>Địa điểm</th>
-        <th>Loại</th>
-        <th>Kinh nghiệm</th>
         <th>Trạng thái</th>
-        <th>Skills</th>
+        <th>Hết hạn</th>
+        <th>Cập nhật lần cuối</th>
         <th>Thao tác</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="job : ${jobs}">
+<!--    <tr th:each="job : ${jobs}"-->
+<!--        th:with="isClosed=${job.statusJob.toString() == 'CLOSED'},-->
+<!--                     isExpired=${job.expiredAt != null and #temporals.beforeNow(job.expiredAt)}">-->
+    <tr th:each="job : ${jobs}"
+        th:with="isClosed=${job.statusJob.toString() == 'CLOSED'},
+             isExpired=${job.expiredAt != null and job.expiredAt.isBefore(now)}">
+
         <td th:text="${job.id}"></td>
         <td th:text="${job.title}"></td>
         <td th:text="${job.company.nameCompany}"></td>
-        <td th:text="${job.location}"></td>
-        <td th:text="${job.jobType}"></td>
-        <td th:text="${job.experienceLevel}"></td>
+
+        <!-- Trạng thái -->
         <td>
                 <span th:text="${job.statusJob}"
-                      th:style="${job.statusJob.name() == 'OPEN'} ? 'color:green' : 'color:red'">
+                      th:style="${job.statusJob.toString() == 'OPEN'} ? 'color:green' : 'color:red'">
+                </span>
+            <span th:if="${isExpired}" style="color:orange;"> (Hết hạn)</span>
+        </td>
+
+        <!-- Ngày hết hạn -->
+        <td>
+                <span th:if="${job.expiredAt != null}"
+                      th:text="${#temporals.format(job.expiredAt, 'dd/MM/yyyy HH:mm')}"
+                      th:style="${isExpired} ? 'color:red' : 'color:green'">
+                </span>
+            <span th:unless="${job.expiredAt != null}" style="color:gray;">
+                    Không giới hạn
                 </span>
         </td>
+
+        <!-- Cập nhật lần cuối -->
         <td>
-                <span th:each="skill, iter : ${job.skills}">
-                    <span th:text="${skill.name}"></span><span th:if="!${iter.last}">, </span>
+                <span th:if="${job.updatedAt != null}"
+                      th:text="${#temporals.format(job.updatedAt, 'dd/MM/yyyy HH:mm')}">
                 </span>
         </td>
+
+        <!-- Thao tác -->
         <td>
-            <!-- Sửa -->
             <a th:href="@{/admin/jobs/{id}/edit(id=${job.id})}">Sửa</a>
             &nbsp;|&nbsp;
+
+            <!-- Reopen — dùng th:with đã tính sẵn -->
+            <span th:if="${isClosed or isExpired}">
+                    <button th:onclick="'showReopenForm(' + ${job.id} + ')'">Mở lại</button>
+                    &nbsp;|&nbsp;
+                </span>
+
             <!-- Xoá -->
             <form th:action="@{/admin/jobs/{id}/delete(id=${job.id})}"
                   method="post" style="display:inline">
                 <button type="submit"
-                        onclick="return confirm('Xoá job này?')">
-                    Xoá
-                </button>
+                        onclick="return confirm('Xoá job này?')">Xoá</button>
             </form>
         </td>
     </tr>
     </tbody>
 </table>
+
+<!-- ─── Pagination ───────────────────────────────────────── -->
+<div th:if="${jobPage.totalPages > 1}" style="margin-top:16px;">
+    <a th:if="${currentPage > 0}"
+       th:href="@{/admin/jobs(page=${currentPage - 1})}">« Trước</a>
+    <span th:unless="${currentPage > 0}" style="color:gray;">« Trước</span>
+    &nbsp;
+    <span th:each="i : ${#numbers.sequence(0, jobPage.totalPages - 1)}">
+        <a th:if="${i != currentPage}"
+           th:href="@{/admin/jobs(page=${i})}"
+           th:text="${i + 1}"></a>
+        <strong th:if="${i == currentPage}" th:text="${i + 1}"></strong>
+        &nbsp;
+    </span>
+    <a th:if="${currentPage < jobPage.totalPages - 1}"
+       th:href="@{/admin/jobs(page=${currentPage + 1})}">Tiếp »</a>
+    <span th:unless="${currentPage < jobPage.totalPages - 1}"
+          style="color:gray;">Tiếp »</span>
+</div>
+
+<!-- ─── Reopen Modal ─────────────────────────────────────── -->
+<div id="reopenModal" style="display:none; position:fixed; top:30%; left:35%;
+     background:white; border:1px solid #ccc; padding:24px; z-index:999;">
+    <h3>Mở lại Job</h3>
+    <form id="reopenForm" method="post">
+
+        <!-- Thêm CSRF token -->
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+        <label>Ngày hết hạn mới:</label><br/>
+        <input type="datetime-local" name="newExpiredAt" required
+               style="margin:8px 0;"/><br/><br/>
+        <button type="submit">Xác nhận mở lại</button>
+        <button type="button" onclick="hideReopenForm()">Huỷ</button>
+    </form>
+</div>
+
+<script>
+    function showReopenForm(jobId) {
+        document.getElementById('reopenForm').action = '/admin/jobs/' + jobId + '/reopen';
+        document.getElementById('reopenModal').style.display = 'block';
+    }
+    function hideReopenForm() {
+        document.getElementById('reopenModal').style.display = 'none';
+    }
+</script>
 
 </body>
 </html>

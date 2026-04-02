@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -15,9 +16,14 @@ public interface PasswordResetTokenRepository extends JpaRepository<PasswordRese
 
     Optional<PasswordResetToken> findByToken(String token);
 
-    // Xoá token cũ của email trước khi tạo mới
     @Modifying
     @Transactional
     @Query("DELETE FROM PasswordResetToken t WHERE t.email = :email")
     void deleteByEmail(@Param("email") String email);
+
+    // Scheduler: xoá token hết hạn hoặc đã dùng
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM PasswordResetToken t WHERE t.expiryTime < :now OR t.used = true")
+    void deleteExpiredTokens(@Param("now") LocalDateTime now);
 }

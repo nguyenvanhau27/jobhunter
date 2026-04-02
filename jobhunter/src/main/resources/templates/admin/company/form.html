@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Form công ty</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h2 th:text="${companyId} ? 'Cập nhật công ty' : 'Tạo công ty mới'"></h2>
+
+<div th:if="${errorMessage}" style="color:red; font-weight:bold;">
+    <p th:text="${errorMessage}"></p>
+</div>
+
+<form th:with="actionUrl=${companyId} ? '/admin/companies/' + ${companyId} + '/edit' : '/admin/companies/create'"
+      th:action="${actionUrl}"
+      th:object="${companyDTO}"
+      method="post">
+
+    <table cellpadding="6">
+        <tr>
+            <td><label>Tên công ty:</label></td>
+            <td>
+                <input type="text" th:field="*{nameCompany}" size="40"/>
+                <span th:if="${#fields.hasErrors('nameCompany')}"
+                      th:errors="*{nameCompany}" style="color:red;"></span>
+            </td>
+        </tr>
+        <tr>
+            <td><label>Địa điểm:</label></td>
+            <td><input type="text" th:field="*{location}" size="30"/></td>
+        </tr>
+        <tr>
+            <td><label>Quy mô:</label></td>
+            <td>
+                <select th:field="*{size}">
+                    <option value="">-- Chọn quy mô --</option>
+                    <option value="SMALL">SMALL (dưới 50 người)</option>
+                    <option value="MEDIUM">MEDIUM (50-200 người)</option>
+                    <option value="LARGE">LARGE (trên 200 người)</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><label>Website:</label></td>
+            <td><input type="text" th:field="*{website}" size="40"
+                       placeholder="https://example.com"/></td>
+        </tr>
+        <tr>
+            <td><label>Image URL:</label></td>
+            <td>
+                <input type="text" th:field="*{imageUrl}" size="40"
+                       placeholder="https://example.com/logo.png"/>
+                <br/>
+                <small style="color:gray;">URL ảnh logo công ty</small>
+            </td>
+        </tr>
+        <tr>
+            <td><label>Mô tả:</label></td>
+            <td>
+                <textarea th:field="*{description}" rows="5" cols="50"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <button type="submit">Lưu</button>
+                &nbsp;
+                <a th:href="@{/admin/companies}">Huỷ</a>
+            </td>
+        </tr>
+    </table>
+</form>
+
+</body>
+</html>

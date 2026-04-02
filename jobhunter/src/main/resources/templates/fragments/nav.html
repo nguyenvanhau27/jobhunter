@@ -4,52 +4,23 @@
 <head></head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════════
-     NAV FRAGMENT — dùng chung toàn project
-     Cách dùng trong bất kỳ trang nào:
-     <div th:replace="~{fragments/nav :: nav}"></div>
-════════════════════════════════════════════════════════════ -->
 <nav th:fragment="nav" style="background:#f0f0f0; padding:10px; margin-bottom:20px;">
 
-    <!-- Logo / Home -->
     <a th:href="@{/}" style="font-weight:bold; margin-right:20px;">JobHunter</a>
-
-    <!-- ── Công khai — tất cả đều thấy ── -->
     <a th:href="@{/jobs}" style="margin-right:10px;">Việc làm</a>
 
-    <!-- ══════════════════════════════════════
-         GUEST — chưa đăng nhập
-    ══════════════════════════════════════ -->
+    <!-- ── GUEST ── -->
     <span sec:authorize="isAnonymous()">
         <a th:href="@{/login}" style="margin-right:10px;">Đăng nhập</a>
         <a th:href="@{/register}" style="margin-right:10px;">Đăng ký</a>
     </span>
 
-    <!-- ══════════════════════════════════════
-         USER — đã đăng nhập
-    ══════════════════════════════════════ -->
+    <!-- ── USER ── -->
     <span sec:authorize="hasRole('USER')">
-
-        <!-- Job -->
-        <a th:href="@{/jobs}" style="margin-right:10px;">Tìm việc</a>
-
-        <!-- Apply -->
-        <a th:href="@{/applications/my}" style="margin-right:10px; color:gray;"
-           title="Chưa làm">Đơn ứng tuyển</a>
-
-        <!-- Profile -->
         <a th:href="@{/profile}" style="margin-right:10px;">Profile</a>
-
-        <!-- Skills -->
         <a th:href="@{/user/skills}" style="margin-right:10px;">Kỹ năng</a>
-
-        <!-- USER nav — thêm link đổi password -->
-        <a th:href="@{/profile/change-password}">Đổi mật khẩu</a>
-
-        <!-- login.html — thêm link quên password -->
-        <a th:href="@{/forgot-password}">Quên mật khẩu?</a>
-
-        <!-- Thông tin user + logout -->
+        <a th:href="@{/profile/change-password}" style="margin-right:10px;">Đổi mật khẩu</a>
+        <a th:href="@{/applications/my}" style="margin-right:10px;">Đơn ứng tuyển</a>
         <span style="margin-left:20px;">
             Xin chào, <strong sec:authentication="name"></strong>
         </span>
@@ -58,33 +29,26 @@
         </form>
     </span>
 
-    <!-- ══════════════════════════════════════
-         ADMIN
-    ══════════════════════════════════════ -->
+    <!-- ── ADMIN ── -->
     <span sec:authorize="hasRole('ADMIN')">
-
-        <!-- Company -->
-        <a th:href="@{/admin/companies}" style="margin-right:10px; color:gray;"
-           title="Chưa làm">Công ty</a>
-
-        <!-- Job management -->
-        <a th:href="@{/admin/jobs}" style="margin-right:10px; color:gray;"
-           title="Chưa làm">Quản lý việc làm</a>
-
-        <!-- Application management -->
-        <a th:href="@{/admin/applications}" style="margin-right:10px; color:gray;"
-           title="Chưa làm">Duyệt ứng tuyển</a>
-
-        <!-- Dashboard -->
         <a th:href="@{/admin/dashboard}" style="margin-right:10px;">Dashboard</a>
-
-        <!-- Thông tin admin + logout -->
+        <a th:href="@{/admin/companies}" style="margin-right:10px;">Công ty</a>
+        <a th:href="@{/admin/jobs}" style="margin-right:10px;">Quản lý Job</a>
+        <a th:href="@{/admin/skills}" style="margin-right:10px;">Kỹ năng</a>
+        <a th:href="@{/admin/users}" style="margin-right:10px;">Người dùng</a>
         <span style="margin-left:20px;">
             Admin: <strong sec:authentication="name"></strong>
         </span>
         <form th:action="@{/logout}" method="post" style="display:inline; margin-left:10px;">
             <button type="submit">Đăng xuất</button>
         </form>
+    </span>
+
+    <!-- ── Language switcher ── -->
+    <span style="float:right;">
+        <a th:href="@{''(lang=vi)}">🇻🇳</a>
+        &nbsp;|&nbsp;
+        <a th:href="@{''(lang=en)}">🇬🇧</a>
     </span>
 
 </nav>

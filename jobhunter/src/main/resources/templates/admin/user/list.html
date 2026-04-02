@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý User</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h2>Quản lý người dùng</h2>
+
+<div th:if="${successMessage}" style="color:green; font-weight:bold;">
+    <p th:text="${successMessage}"></p>
+</div>
+
+<p>Tổng: <strong th:text="${userPage.totalElements}"></strong> người dùng</p>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Email</th>
+        <th>Họ tên</th>
+        <th>Role</th>
+        <th>Trạng thái</th>
+        <th>Đăng nhập lần cuối</th>
+        <th>Ngày tạo</th>
+        <th>Thao tác</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}"
+        th:style="${user.statusUser.toString() == 'INACTIVE'} ? 'background:#fff0f0' : ''">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.email}"></td>
+        <td th:text="${user.fullName}"></td>
+        <td th:text="${user.role.name}"></td>
+        <td>
+                <span th:text="${user.statusUser}"
+                      th:style="${user.statusUser.toString() == 'ACTIVE'} ? 'color:green' : 'color:red'">
+                </span>
+        </td>
+        <td>
+                <span th:if="${user.lastLogin != null}"
+                      th:text="${#temporals.format(user.lastLogin, 'dd/MM/yyyy HH:mm')}">
+                </span>
+            <span th:unless="${user.lastLogin != null}" style="color:gray;">Chưa đăng nhập</span>
+        </td>
+        <td th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy')}"></td>
+        <td>
+            <form th:action="@{/admin/users/{id}/toggle-status(id=${user.id})}"
+                  method="post" style="display:inline">
+                <button type="submit"
+                        th:text="${user.statusUser.toString() == 'ACTIVE'} ? 'Khoá' : 'Mở khoá'"
+                        th:style="${user.statusUser.toString() == 'ACTIVE'} ? 'color:red' : 'color:green'"
+                        th:onclick="${user.statusUser.toString() == 'ACTIVE'}
+                                ? 'return confirm(\'Khoá tài khoản này?\')'
+                                : 'return confirm(\'Mở khoá tài khoản này?\')'">
+                </button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Pagination -->
+<div th:if="${userPage.totalPages > 1}" style="margin-top:16px;">
+    <a th:if="${currentPage > 0}"
+       th:href="@{/admin/users(page=${currentPage - 1})}">« Trước</a>
+    <span th:unless="${currentPage > 0}" style="color:gray;">« Trước</span>
+    &nbsp;
+    <span th:each="i : ${#numbers.sequence(0, userPage.totalPages - 1)}">
+        <a th:if="${i != currentPage}"
+           th:href="@{/admin/users(page=${i})}"
+           th:text="${i + 1}"></a>
+        <strong th:if="${i == currentPage}" th:text="${i + 1}"></strong>
+        &nbsp;
+    </span>
+    <a th:if="${currentPage < userPage.totalPages - 1}"
+       th:href="@{/admin/users(page=${currentPage + 1})}">Tiếp »</a>
+    <span th:unless="${currentPage < userPage.totalPages - 1}"
+          style="color:gray;">Tiếp »</span>
+</div>
+
+</body>
+</html>

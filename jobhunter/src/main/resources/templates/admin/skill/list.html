@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Skill</title>
+</head>
+<body>
+
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h2>Quản lý Kỹ năng</h2>
+
+<div th:if="${successMessage}" style="color:green; font-weight:bold;">
+    <p th:text="${successMessage}"></p>
+</div>
+<div th:if="${errorMessage}" style="color:red; font-weight:bold;">
+    <p th:text="${errorMessage}"></p>
+</div>
+
+<!-- ─── Form thêm skill mới ─────────────────────────────── -->
+<h3>Thêm skill mới</h3>
+<form th:action="@{/admin/skills/create}" method="post">
+    <input type="text" name="name" placeholder="Tên skill" required size="20"/>
+    &nbsp;
+    <select name="category">
+        <option value="">-- Category --</option>
+        <option value="Language">Language</option>
+        <option value="Frontend">Frontend</option>
+        <option value="Backend">Backend</option>
+        <option value="Database">Database</option>
+        <option value="DevOps/Cloud">DevOps/Cloud</option>
+        <option value="Mobile">Mobile</option>
+        <option value="Testing">Testing</option>
+        <option value="Tools">Tools</option>
+    </select>
+    &nbsp;
+    <button type="submit">Thêm</button>
+</form>
+
+<hr/>
+
+<!-- ─── Danh sách skill ──────────────────────────────────── -->
+<p>Tổng: <strong th:text="${#lists.size(skills)}"></strong> skills</p>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Tên skill</th>
+        <th>Category</th>
+        <th>Thao tác</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="skill : ${skills}">
+        <td th:text="${skill.id}"></td>
+
+        <!-- Inline edit name -->
+        <td>
+            <form th:action="@{/admin/skills/{id}/edit(id=${skill.id})}"
+                  method="post" style="display:inline">
+                <input type="text" name="name"
+                       th:value="${skill.name}" size="20" required/>
+                <select name="category">
+                    <option value="">-- Category --</option>
+                    <option value="Language"
+                            th:selected="${skill.category == 'Language'}">Language</option>
+                    <option value="Frontend"
+                            th:selected="${skill.category == 'Frontend'}">Frontend</option>
+                    <option value="Backend"
+                            th:selected="${skill.category == 'Backend'}">Backend</option>
+                    <option value="Database"
+                            th:selected="${skill.category == 'Database'}">Database</option>
+                    <option value="DevOps/Cloud"
+                            th:selected="${skill.category == 'DevOps/Cloud'}">DevOps/Cloud</option>
+                    <option value="Mobile"
+                            th:selected="${skill.category == 'Mobile'}">Mobile</option>
+                    <option value="Testing"
+                            th:selected="${skill.category == 'Testing'}">Testing</option>
+                    <option value="Tools"
+                            th:selected="${skill.category == 'Tools'}">Tools</option>
+                </select>
+                <button type="submit">Lưu</button>
+            </form>
+        </td>
+
+        <td th:text="${skill.category}"></td>
+
+        <!-- Xoá -->
+        <td>
+            <form th:action="@{/admin/skills/{id}/delete(id=${skill.id})}"
+                  method="post" style="display:inline">
+                <button type="submit"
+                        onclick="return confirm('Xoá skill này?')">Xoá</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

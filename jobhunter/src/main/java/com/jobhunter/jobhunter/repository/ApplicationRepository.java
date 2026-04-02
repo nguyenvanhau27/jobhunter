@@ -21,4 +21,5 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     // Kiểm tra job có PENDING application không (dùng khi delete job)
     boolean existsByJobIdAndStatus(Long jobId, AppEnums.ApplicationStatus status);
+    long countByStatus(AppEnums.ApplicationStatus status);
 }

@@ -1,5 +1,6 @@
 package com.jobhunter.jobhunter.repository;
 
+import com.jobhunter.jobhunter.entity.AppEnums;
 import com.jobhunter.jobhunter.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -12,4 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     boolean existsByEmail(String email);
+
+    // Dashboard stats
+    long countByStatusUser(AppEnums.UserStatus statusUser);
 }

@@ -3,86 +3,165 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách việc làm</title>
+    <title th:text="#{job.list.title}">Job Listings</title>
 </head>
 <body>
 
 <div th:replace="~{fragments/nav :: nav}"></div>
 
-<h2>Danh sách việc làm</h2>
+<!-- ─── Language switcher ───────────────────────────────── -->
+<div style="text-align:right; margin-bottom:8px;">
+    <a th:href="@{/jobs(lang=vi)}">🇻🇳 Tiếng Việt</a>
+    &nbsp;|&nbsp;
+    <a th:href="@{/jobs(lang=en)}">🇬🇧 English</a>
+</div>
+
+<h2 th:text="#{job.list.title}">Job Listings</h2>
 
 <!-- ─── Form Filter ──────────────────────────────────────── -->
 <form th:action="@{/jobs}" method="get">
     <input type="text" name="keyword"
            th:value="${keyword}"
-           placeholder="Tìm theo tên job..." />
+           th:placeholder="#{job.list.keyword}"/>
 
     <input type="text" name="location"
            th:value="${location}"
-           placeholder="Địa điểm..." />
+           th:placeholder="#{job.list.location}"/>
 
     <select name="jobType">
-        <option value="">-- Loại công việc --</option>
+        <option value="" th:text="#{job.list.type}">-- Job Type --</option>
         <option th:each="jt : ${jobTypes}"
-                th:value="${jt}"
-                th:text="${jt}"
-                th:selected="${jt == selectedJobType}">
-        </option>
+                th:value="${jt}" th:text="${jt}"
+                th:selected="${jt == selectedJobType}"></option>
     </select>
 
     <select name="experienceLevel">
-        <option value="">-- Kinh nghiệm --</option>
+        <option value="" th:text="#{job.list.experience}">-- Experience --</option>
         <option th:each="exp : ${experienceLevels}"
-                th:value="${exp}"
-                th:text="${exp}"
-                th:selected="${exp == selectedExperience}">
-        </option>
+                th:value="${exp}" th:text="${exp}"
+                th:selected="${exp == selectedExperience}"></option>
     </select>
 
     <select name="skillId">
-        <option value="">-- Kỹ năng --</option>
+        <option value="" th:text="#{job.list.skill}">-- Skill --</option>
         <option th:each="skill : ${allSkills}"
-                th:value="${skill.id}"
-                th:text="${skill.name}"
-                th:selected="${skill.id == selectedSkillId}">
-        </option>
+                th:value="${skill.id}" th:text="${skill.name}"
+                th:selected="${skill.id == selectedSkillId}"></option>
     </select>
 
-    <button type="submit">Tìm kiếm</button>
-    <a th:href="@{/jobs}">Reset</a>
+    <button type="submit" th:text="#{job.list.search}">Search</button>
+    <a th:href="@{/jobs}" th:text="#{job.list.reset}">Reset</a>
 </form>
 
 <hr/>
 
-<!-- ─── Tổng kết quả ─────────────────────────────────────── -->
-<p>
-    Tìm thấy <strong th:text="${jobPage.totalElements}"></strong> việc làm
-    — Trang <strong th:text="${currentPage + 1}"></strong>
-    / <strong th:text="${jobPage.totalPages}"></strong>
-</p>
+<!-- ─── Trending Jobs (chỉ hiện trang đầu, không filter) ── -->
+<div th:if="${trendingJobs != null and !#lists.isEmpty(trendingJobs)}">
+    <h3 th:text="#{job.list.trending}">Trending Jobs</h3>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px;">
+        <div th:each="job : ${trendingJobs}"
+             style="border:1px solid #e0e0e0; border-radius:8px;
+                    padding:12px; min-width:200px; max-width:220px;">
 
-<!-- ─── Danh sách job ────────────────────────────────────── -->
-<div th:if="${jobs.isEmpty()}">
-    <p>Không tìm thấy việc làm phù hợp.</p>
+            <!-- Company logo -->
+            <img th:if="${job.company.imageUrl != null}"
+                 th:src="${job.company.imageUrl}"
+                 th:alt="${job.company.nameCompany}"
+                 style="width:40px; height:40px; object-fit:contain;
+                        border-radius:4px; margin-bottom:6px;"
+                 onerror="this.style.display='none'"/>
+
+            <div style="font-weight:bold; font-size:14px;"
+                 th:text="${job.title}"></div>
+            <div style="color:gray; font-size:12px;"
+                 th:text="${job.company.nameCompany}"></div>
+            <div style="font-size:12px;" th:text="${job.location}"></div>
+            <a th:href="@{/jobs/{id}(id=${job.id})}"
+               style="font-size:12px; color:#0066cc;">
+                <span th:text="#{job.list.detail}">View Detail</span> →
+            </a>
+        </div>
+    </div>
+    <hr/>
 </div>
 
-<table th:unless="${jobs.isEmpty()}" border="1" cellpadding="8" cellspacing="0">
+<!-- ─── Top Companies (chỉ hiện trang đầu, không filter) ── -->
+<div th:if="${topCompanies != null and !#lists.isEmpty(topCompanies)}">
+    <h3 th:text="#{job.list.top.companies}">Top Companies</h3>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px;">
+        <div th:each="company : ${topCompanies}"
+             style="border:1px solid #e0e0e0; border-radius:8px;
+                    padding:12px; text-align:center; min-width:120px;">
+
+            <!-- Company logo -->
+            <img th:if="${company.imageUrl != null}"
+                 th:src="${company.imageUrl}"
+                 th:alt="${company.nameCompany}"
+                 style="width:60px; height:60px; object-fit:contain;
+                        border-radius:6px; margin-bottom:8px;"
+                 onerror="this.style.display='none'"/>
+
+            <!-- Placeholder nếu không có ảnh -->
+            <div th:unless="${company.imageUrl != null}"
+                 style="width:60px; height:60px; background:#f0f0f0;
+                        border-radius:6px; margin:0 auto 8px;
+                        display:flex; align-items:center; justify-content:center;
+                        font-size:20px; font-weight:bold; color:#999;">
+                <span th:text="${#strings.substring(company.nameCompany, 0, 1)}"></span>
+            </div>
+
+            <div style="font-size:13px; font-weight:bold;"
+                 th:text="${company.nameCompany}"></div>
+            <div style="font-size:11px; color:gray;"
+                 th:text="${company.location}"></div>
+        </div>
+    </div>
+    <hr/>
+</div>
+
+<!-- ─── Kết quả tìm kiếm ─────────────────────────────────── -->
+<p>
+    <span th:text="|#{job.list.found} ${jobPage.totalElements}|"></span>
+    — <span th:text="#{common.page}">Page</span>
+    <strong th:text="${currentPage + 1}"></strong>
+    <span th:text="#{common.of}">of</span>
+    <strong th:text="${jobPage.totalPages}"></strong>
+</p>
+
+<div th:if="${#lists.isEmpty(jobs)}">
+    <p th:text="#{job.list.empty}">No jobs found.</p>
+</div>
+
+<table th:unless="${#lists.isEmpty(jobs)}"
+       border="1" cellpadding="8" cellspacing="0">
     <thead>
     <tr>
+        <th>Logo</th>
+        <th th:text="#{job.list.company}">Company</th>
         <th>Vị trí</th>
-        <th>Công ty</th>
         <th>Địa điểm</th>
-        <th>Lương (VNĐ)</th>
+        <th th:text="#{job.list.salary}">Salary</th>
         <th>Loại</th>
-        <th>Kinh nghiệm</th>
-        <th>Kỹ năng</th>
+        <th th:text="#{job.list.expires}">Expires</th>
         <th></th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="job : ${jobs}">
-        <td th:text="${job.title}"></td>
+
+        <!-- Company logo nhỏ -->
+        <td style="text-align:center;">
+            <img th:if="${job.company.imageUrl != null}"
+                 th:src="${job.company.imageUrl}"
+                 th:alt="${job.company.nameCompany}"
+                 style="width:36px; height:36px; object-fit:contain; border-radius:4px;"
+                 onerror="this.style.display='none'"/>
+            <span th:unless="${job.company.imageUrl != null}"
+                  style="font-size:18px; color:#ccc;">🏢</span>
+        </td>
+
         <td th:text="${job.company.nameCompany}"></td>
+        <td><strong th:text="${job.title}"></strong></td>
         <td th:text="${job.location}"></td>
         <td>
             <span th:text="${#numbers.formatInteger(job.minSalary, 0, 'COMMA')}"></span>
@@ -90,51 +169,50 @@
             <span th:text="${#numbers.formatInteger(job.maxSalary, 0, 'COMMA')}"></span>
         </td>
         <td th:text="${job.jobType}"></td>
-        <td th:text="${job.experienceLevel}"></td>
         <td>
-                <span th:each="skill, iter : ${job.skills}">
-                    <span th:text="${skill.name}"></span><span th:if="!${iter.last}">, </span>
+                <span th:if="${job.expiredAt != null}"
+                      th:text="${#temporals.format(job.expiredAt, 'dd/MM/yyyy')}">
                 </span>
+            <span th:unless="${job.expiredAt != null}"
+                  style="color:gray;">∞</span>
         </td>
         <td>
-            <a th:href="@{/jobs/{id}(id=${job.id})}">Chi tiết</a>
+            <a th:href="@{/jobs/{id}(id=${job.id})}"
+               th:text="#{job.list.detail}">View Detail</a>
         </td>
     </tr>
     </tbody>
 </table>
 
 <!-- ─── Pagination ───────────────────────────────────────── -->
-<div th:if="${jobPage.totalPages > 1}" style="margin-top: 16px;">
-
-    <!-- Nút Previous -->
+<div th:if="${jobPage.totalPages > 1}" style="margin-top:16px;">
     <a th:if="${currentPage > 0}"
-       th:href="@{/jobs(page=${currentPage - 1}, keyword=${keyword}, location=${location}, jobType=${selectedJobType}, experienceLevel=${selectedExperience}, skillId=${selectedSkillId})}">
-        « Trước
-    </a>
-    <span th:unless="${currentPage > 0}" style="color:gray;">« Trước</span>
-
+       th:href="@{/jobs(page=${currentPage - 1}, keyword=${keyword},
+                        location=${location}, jobType=${selectedJobType},
+                        experienceLevel=${selectedExperience},
+                        skillId=${selectedSkillId})}"
+       th:text="#{common.prev}">Previous</a>
+    <span th:unless="${currentPage > 0}" style="color:gray;"
+          th:text="#{common.prev}">Previous</span>
     &nbsp;
-
-    <!-- Số trang -->
     <span th:each="i : ${#numbers.sequence(0, jobPage.totalPages - 1)}">
         <a th:if="${i != currentPage}"
-           th:href="@{/jobs(page=${i}, keyword=${keyword}, location=${location}, jobType=${selectedJobType}, experienceLevel=${selectedExperience}, skillId=${selectedSkillId})}"
-           th:text="${i + 1}">
-        </a>
-        <strong th:if="${i == currentPage}"
-                th:text="${i + 1}"
-                style="text-decoration:underline;">
-        </strong>
+           th:href="@{/jobs(page=${i}, keyword=${keyword},
+                            location=${location}, jobType=${selectedJobType},
+                            experienceLevel=${selectedExperience},
+                            skillId=${selectedSkillId})}"
+           th:text="${i + 1}"></a>
+        <strong th:if="${i == currentPage}" th:text="${i + 1}"></strong>
         &nbsp;
     </span>
-
-    <!-- Nút Next -->
     <a th:if="${currentPage < jobPage.totalPages - 1}"
-       th:href="@{/jobs(page=${currentPage + 1}, keyword=${keyword}, location=${location}, jobType=${selectedJobType}, experienceLevel=${selectedExperience}, skillId=${selectedSkillId})}">
-        Tiếp »
-    </a>
-    <span th:unless="${currentPage < jobPage.totalPages - 1}" style="color:gray;">Tiếp »</span>
-
+       th:href="@{/jobs(page=${currentPage + 1}, keyword=${keyword},
+                        location=${location}, jobType=${selectedJobType},
+                        experienceLevel=${selectedExperience},
+                        skillId=${selectedSkillId})}"
+       th:text="#{common.next}">Next</a>
+    <span th:unless="${currentPage < jobPage.totalPages - 1}"
+          style="color:gray;" th:text="#{common.next}">Next</span>
 </div>
 
 </body>
