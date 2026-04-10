@@ -1,143 +1,448 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8">
-    <title>Job Form</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${jobId} ? 'Cập nhật Job – Admin' : 'Tạo Job mới – Admin'">Job Form</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin-job.css}"/>
 </head>
-<body>
+<body class="admin-body">
 
-<div th:replace="~{fragments/nav :: nav}"></div>
+<div class="admin-shell">
 
-<h2 th:text="${jobId} ? 'Cập nhật Job' : 'Tạo Job mới'"></h2>
+    <!-- ╔═══════════════════════════════╗
+         ║  SIDEBAR                     ║
+         ╚═══════════════════════════════╝ -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="admin-sidebar-brand">
+            <div class="admin-sidebar-brand-icon">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+            </div>
+            <div class="admin-sidebar-brand-text">
+                <div class="admin-sidebar-brand-name">Admin Panel</div>
+                <div class="admin-sidebar-brand-sub">ITJobHub</div>
+            </div>
+        </div>
+        <nav class="admin-sidebar-nav">
+            <div class="admin-sidebar-section-label">Main</div>
 
-<div th:if="${errorMessage}" style="color:red; font-weight:bold;">
-    <p th:text="${errorMessage}"></p>
+            <a th:href="@{/admin/dashboard}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                Dashboard
+            </a>
+            <div class="admin-sidebar-section-label" style="margin-top:8px;">Management</div>
+            <a th:href="@{/admin/jobs}" class="admin-nav-item active">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Quản lý Job
+            </a>
+            <a th:href="@{/admin/users}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Quản lý User
+            </a>
+            <a th:href="@{/admin/companies}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Quản lý Công ty
+            </a>
+            <div class="admin-sidebar-section-label" style="margin-top:8px;">System</div>
+            <a th:href="@{/admin/settings}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                Cài đặt hệ thống
+            </a>
+        </nav>
+        <div class="admin-sidebar-footer">
+            <div class="admin-sidebar-collapse" id="sidebarCollapseBtn">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                <span>Thu gọn</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ╔═══════════════════════════════╗
+         ║  MAIN AREA                   ║
+         ╚═══════════════════════════════╝ -->
+    <div class="admin-main">
+
+        <!-- Top bar -->
+        <header class="admin-topbar">
+            <div class="admin-breadcrumb">
+                <a th:href="@{/}">Home</a>
+                <span class="sep">›</span>
+                <a th:href="@{/admin/dashboard}">Dashboard</a>
+                <span class="sep">›</span>
+                <a th:href="@{/admin/jobs}">Quản lý Job</a>
+                <span class="sep">›</span>
+                <span class="current"
+                      th:text="${jobId} ? 'Chỉnh sửa #' + ${jobId} : 'Tạo mới'">Form</span>
+            </div>
+            <div class="admin-topbar-right">
+                <div class="admin-topbar-time">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Cập nhật lúc:&nbsp;
+                    <span th:text="${#temporals.format(now, 'HH:mm dd/MM/yyyy')}">00:00</span>
+                </div>
+                <div class="admin-topbar-avatar">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page content -->
+        <main class="admin-content">
+
+            <!-- Page header -->
+            <div class="admin-page-header">
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                    <div>
+                        <h1 class="admin-page-title"
+                            th:text="${jobId} ? 'Cập nhật Job: ' + ${jobDTO.title} : 'Tạo Job mới'">
+                            Job Form
+                        </h1>
+                        <p class="admin-page-subtitle"
+                           th:text="${jobId} ? 'Chỉnh sửa thông tin công việc' : 'Điền thông tin để đăng công việc mới'">
+                        </p>
+                    </div>
+                    <!-- Status badge (edit mode only) -->
+                    <span th:if="${jobId != null}" class="job-status open" style="align-self:center;">OPEN</span>
+                </div>
+            </div>
+
+            <!-- Error message -->
+            <div th:if="${errorMessage}" class="flash-error" style="margin-bottom:20px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span th:text="${errorMessage}"></span>
+                </div>
+            </div>
+
+            <!-- ── FORM ─────────────────────────────── -->
+            <form th:with="actionUrl=${jobId} ? '/admin/jobs/' + ${jobId} + '/edit' : '/admin/jobs/create'"
+                  th:action="${actionUrl}"
+                  th:object="${jobDTO}"
+                  method="post"
+                  id="jobForm">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <!-- ── Section 1: Thông tin cơ bản ── -->
+                <div class="form-section">
+                    <h2 class="form-section-title">Thông tin cơ bản</h2>
+
+                    <!-- Tiêu đề -->
+                    <div class="form-group">
+                        <label class="form-label" for="title">
+                            Tiêu đề <span class="required">*</span>
+                        </label>
+                        <input type="text" id="title" th:field="*{title}"
+                               class="form-input"
+                               th:classappend="${#fields.hasErrors('title')} ? ' is-error'"
+                               placeholder="Ví dụ: Backend NodeJS Developer"/>
+                        <span th:if="${#fields.hasErrors('title')}"
+                              class="form-error" th:errors="*{title}"></span>
+                    </div>
+
+                    <!-- Công ty + Địa điểm -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="companyId">
+                                Công ty <span class="required">*</span>
+                            </label>
+                            <div class="select-wrap">
+                                <select id="companyId" th:field="*{companyId}"
+                                        class="form-select"
+                                        th:classappend="${#fields.hasErrors('companyId')} ? ' is-error'">
+                                    <option value="">-- Chọn công ty --</option>
+                                    <option th:each="c : ${companies}"
+                                            th:value="${c.id}"
+                                            th:text="${c.nameCompany}"></option>
+                                </select>
+                                <svg class="select-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                            </div>
+                            <span th:if="${#fields.hasErrors('companyId')}"
+                                  class="form-error" th:errors="*{companyId}"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="location">Địa điểm</label>
+                            <input type="text" id="location" th:field="*{location}"
+                                   class="form-input"
+                                   placeholder="Hồ Chí Minh, Hà Nội..."/>
+                            <span th:if="${#fields.hasErrors('location')}"
+                                  class="form-error" th:errors="*{location}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Loại công việc -->
+                    <div class="form-group" style="max-width:400px;">
+                        <label class="form-label" for="jobType">Loại công việc</label>
+                        <div class="select-wrap">
+                            <select id="jobType" th:field="*{jobType}" class="form-select">
+                                <option value="">-- Chọn loại --</option>
+                                <option th:each="jt : ${jobTypes}"
+                                        th:value="${jt}"
+                                        th:text="${jt}"></option>
+                            </select>
+                            <svg class="select-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                        <span th:if="${#fields.hasErrors('jobType')}"
+                              class="form-error" th:errors="*{jobType}"></span>
+                    </div>
+                </div>
+
+                <!-- ── Section 2: Yêu cầu & Kỹ năng ── -->
+                <div class="form-section">
+                    <h2 class="form-section-title">Yêu cầu &amp; Kỹ năng</h2>
+
+                    <!-- Kinh nghiệm -->
+                    <div class="form-group" style="max-width:400px;">
+                        <label class="form-label" for="experienceLevel">Kinh nghiệm</label>
+                        <div class="select-wrap">
+                            <select id="experienceLevel" th:field="*{experienceLevel}" class="form-select">
+                                <option value="">-- Chọn cấp độ --</option>
+                                <option th:each="exp : ${experienceLevels}"
+                                        th:value="${exp}"
+                                        th:text="${exp}"></option>
+                            </select>
+                            <svg class="select-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                        <span th:if="${#fields.hasErrors('experienceLevel')}"
+                              class="form-error" th:errors="*{experienceLevel}"></span>
+                    </div>
+
+                    <!-- Skills tag picker -->
+                    <div class="form-group">
+                        <label class="form-label">Kỹ năng yêu cầu</label>
+                        <!-- Tag display area -->
+                        <div class="skill-tag-box" id="skillTagBox">
+                            <!-- Pre-selected tags: th:each + inner th:if to avoid duplicate th:if on same element -->
+                            <th:block th:if="${jobDTO.skillIds != null}"
+                                      th:each="skill : ${allSkills}">
+                                <span th:if="${jobDTO.skillIds.contains(skill.id)}"
+                                      class="skill-tag js-skill-tag"
+                                      th:data-id="${skill.id}">
+                                    <span th:text="${skill.name}"></span>
+                                    <!-- data-skill-id (number) used by JS event delegation — no th:onclick string needed -->
+                                    <button type="button" class="skill-tag-remove"
+                                            th:data-skill-id="${skill.id}">×</button>
+                                </span>
+                            </th:block>
+                            <input type="text" id="skillSearchInput"
+                                   class="skill-search-input"
+                                   placeholder="Nhập để tìm và chọn kỹ năng..."
+                                   autocomplete="off"/>
+                        </div>
+                        <p class="form-hint">Gõ tên kỹ năng và chọn từ danh sách gợi ý</p>
+
+                        <!-- Skill dropdown -->
+                        <div class="skill-dropdown" id="skillDropdown">
+                            <div th:each="skill : ${allSkills}"
+                                 class="skill-dropdown-item"
+                                 th:data-id="${skill.id}"
+                                 th:data-name="${skill.name}"
+                                 th:text="${skill.name}"
+                                 onclick="selectSkill(this)">
+                            </div>
+                        </div>
+
+                        <!-- Hidden inputs for form submission (managed by JS) -->
+                        <div id="skillHiddenInputs">
+                            <input th:each="sid : ${jobDTO.skillIds}"
+                                   type="hidden" name="skillIds" th:value="${sid}"/>
+                        </div>
+                    </div>
+
+                    <!-- Ngày hết hạn -->
+                    <div class="form-group" style="max-width:360px;">
+                        <label class="form-label" for="expiredAt">Ngày hết hạn</label>
+                        <input type="datetime-local" id="expiredAt" th:field="*{expiredAt}"
+                               class="form-input"/>
+                        <p class="form-hint">Hãy chọn ngày giờ hết hạn cho việc ứng tuyển</p>
+                        <span th:if="${#fields.hasErrors('expiredAt')}"
+                              class="form-error" th:errors="*{expiredAt}"></span>
+                    </div>
+                </div>
+
+                <!-- ── Section 3: Đãi ngộ ─────────── -->
+                <div class="form-section">
+                    <h2 class="form-section-title">Đãi ngộ</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="minSalary">
+                                Lương tối thiểu (VNĐ) <span class="required">*</span>
+                            </label>
+                            <input type="number" id="minSalary" th:field="*{minSalary}"
+                                   class="form-input"
+                                   th:classappend="${#fields.hasErrors('minSalary')} ? ' is-error'"
+                                   min="0" placeholder="15000000"/>
+                            <span th:if="${#fields.hasErrors('minSalary')}"
+                                  class="form-error" th:errors="*{minSalary}"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="maxSalary">
+                                Lương tối đa (VNĐ) <span class="required">*</span>
+                            </label>
+                            <input type="number" id="maxSalary" th:field="*{maxSalary}"
+                                   class="form-input"
+                                   th:classappend="${#fields.hasErrors('maxSalary')} ? ' is-error'"
+                                   min="0" placeholder="30000000"/>
+                            <span th:if="${#fields.hasErrors('maxSalary')}"
+                                  class="form-error" th:errors="*{maxSalary}"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Section 4: Chi tiết nội dung ── -->
+                <div class="form-section">
+                    <h2 class="form-section-title">Chi tiết nội dung</h2>
+
+                    <div class="form-group">
+                        <label class="form-label" for="description">Mô tả</label>
+                        <textarea id="description" th:field="*{description}"
+                                  class="form-textarea"
+                                  rows="6"
+                                  placeholder="Mô tả tổng quan về công việc, môi trường làm việc..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="requirements">Yêu cầu</label>
+                        <textarea id="requirements" th:field="*{requirements}"
+                                  class="form-textarea"
+                                  rows="6"
+                                  placeholder="Liệt kê các yêu cầu kỹ năng, kinh nghiệm..."></textarea>
+                    </div>
+                </div>
+
+                <!-- ── Form actions ───────────────── -->
+                <div class="form-actions">
+                    <a th:href="@{/admin/jobs}" class="btn-form-cancel">Huỷ</a>
+                    <button type="submit" class="btn-form-submit">
+                        <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        <span th:text="${jobId} ? 'Lưu thay đổi' : 'Tạo Job'">Lưu</span>
+                    </button>
+                </div>
+
+            </form>
+        </main>
+    </div>
 </div>
 
-<form th:with="actionUrl=${jobId} ? '/admin/jobs/' + ${jobId} + '/edit' : '/admin/jobs/create'"
-      th:action="${actionUrl}"
-      th:object="${jobDTO}"
-      method="post">
+<script th:inline="javascript">
+    /*<![CDATA[*/
 
-    <table cellpadding="6">
-        <tr>
-            <td><label>Tiêu đề:</label></td>
-            <td>
-                <input type="text" th:field="*{title}" size="50"/>
-                <span th:if="${#fields.hasErrors('title')}"
-                      th:errors="*{title}" style="color:red;"></span>
-            </td>
-        </tr>
-        <tr>
-            <td><label>Công ty:</label></td>
-            <td>
-                <select th:field="*{companyId}">
-                    <option value="">-- Chọn công ty --</option>
-                    <option th:each="c : ${companies}"
-                            th:value="${c.id}"
-                            th:text="${c.nameCompany}"></option>
-                </select>
-                <span th:if="${#fields.hasErrors('companyId')}"
-                      th:errors="*{companyId}" style="color:red;"></span>
-            </td>
-        </tr>
-        <tr>
-            <td><label>Địa điểm:</label></td>
-            <td>
-                <input type="text" th:field="*{location}" size="30"/>
-                <span th:if="${#fields.hasErrors('location')}"
-                      th:errors="*{location}" style="color:red;"></span>
-            </td>
-        </tr>
-        <tr>
-            <td><label>Loại công việc:</label></td>
-            <td>
-                <select th:field="*{jobType}">
-                    <option value="">-- Chọn loại --</option>
-                    <option th:each="jt : ${jobTypes}"
-                            th:value="${jt}" th:text="${jt}"></option>
-                </select>
-                <span th:if="${#fields.hasErrors('jobType')}"
-                      th:errors="*{jobType}" style="color:red;"></span>
-            </td>
-        </tr>
-        <tr>
-            <td><label>Kinh nghiệm:</label></td>
-            <td>
-                <select th:field="*{experienceLevel}">
-                    <option value="">-- Chọn cấp độ --</option>
-                    <option th:each="exp : ${experienceLevels}"
-                            th:value="${exp}" th:text="${exp}"></option>
-                </select>
-                <span th:if="${#fields.hasErrors('experienceLevel')}"
-                      th:errors="*{experienceLevel}" style="color:red;"></span>
-            </td>
-        </tr>
-        <tr>
-            <td><label>Lương tối thiểu:</label></td>
-            <td>
-                <input type="number" th:field="*{minSalary}" min="0"/>
-                <span th:if="${#fields.hasErrors('minSalary')}"
-                      th:errors="*{minSalary}" style="color:red;"></span>
-            </td>
-        </tr>
-        <tr>
-            <td><label>Lương tối đa:</label></td>
-            <td>
-                <input type="number" th:field="*{maxSalary}" min="0"/>
-                <span th:if="${#fields.hasErrors('maxSalary')}"
-                      th:errors="*{maxSalary}" style="color:red;"></span>
-            </td>
-        </tr>
+    // ── Sidebar ───────────────────────────────────
+    document.getElementById('sidebarCollapseBtn').addEventListener('click', () => {
+        document.getElementById('adminSidebar').classList.toggle('open');
+    });
 
-        <!-- ✅ Ngày hết hạn -->
-        <tr>
-            <td><label>Ngày hết hạn:</label></td>
-            <td>
-                <input type="datetime-local" th:field="*{expiredAt}"/>
-                <span th:if="${#fields.hasErrors('expiredAt')}"
-                      th:errors="*{expiredAt}" style="color:red;"></span>
-                <br/>
-                <small style="color:gray;">
-                    Để trống nếu không giới hạn thời gian tuyển dụng
-                </small>
-            </td>
-        </tr>
+    // ── Skill tag picker ──────────────────────────
+    const selectedSkillIds = new Set();
+    document.querySelectorAll('#skillHiddenInputs input[name=skillIds]').forEach(inp => {
+        selectedSkillIds.add(parseInt(inp.value));
+    });
 
+    // Build lookup map from dropdown items
+    const skillMap = {};
+    document.querySelectorAll('.skill-dropdown-item').forEach(item => {
+        skillMap[item.dataset.id] = item.dataset.name;
+    });
 
-        <tr>
-            <td><label>Kỹ năng yêu cầu:</label></td>
-            <td>
-                <select name="skillIds" multiple size="8" style="width:250px;">
-                    <option th:each="skill : ${allSkills}"
-                            th:value="${skill.id}"
-                            th:text="${skill.name}"
-                            th:selected="${jobDTO.skillIds != null
-                                          and jobDTO.skillIds.contains(skill.id)}">
-                    </option>
-                </select>
-                <br/>
-                <small style="color:gray;">Giữ Ctrl/Cmd để chọn nhiều</small>
-            </td>
-        </tr>
-        <tr>
-            <td><label>Mô tả:</label></td>
-            <td><textarea th:field="*{description}" rows="5" cols="50"></textarea></td>
-        </tr>
-        <tr>
-            <td><label>Yêu cầu:</label></td>
-            <td><textarea th:field="*{requirements}" rows="5" cols="50"></textarea></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td>
-                <button type="submit">Lưu</button>
-                &nbsp;
-                <a th:href="@{/admin/jobs}">Huỷ</a>
-            </td>
-        </tr>
-    </table>
-</form>
+    function refreshDropdownVisibility() {
+        document.querySelectorAll('.skill-dropdown-item').forEach(item => {
+            item.classList.toggle('selected', selectedSkillIds.has(parseInt(item.dataset.id)));
+        });
+    }
+    refreshDropdownVisibility();
+
+    // ── Dropdown show/hide ────────────────────────
+    function showSkillDropdown() {
+        document.getElementById('skillDropdown').classList.add('open');
+        document.addEventListener('click', outsideClickHandler);
+    }
+    function hideSkillDropdown() {
+        document.getElementById('skillDropdown').classList.remove('open');
+    }
+    function outsideClickHandler(e) {
+        const box = document.getElementById('skillTagBox');
+        const dd  = document.getElementById('skillDropdown');
+        if (!box.contains(e.target) && !dd.contains(e.target)) {
+            hideSkillDropdown();
+            document.removeEventListener('click', outsideClickHandler);
+        }
+    }
+
+    // ── Wire skill search input (no inline handlers) ──
+    const skillSearchInput = document.getElementById('skillSearchInput');
+    skillSearchInput.addEventListener('input', function () {
+        showSkillDropdown();
+        const q = this.value.toLowerCase();
+        document.querySelectorAll('.skill-dropdown-item').forEach(item => {
+            item.style.display = item.dataset.name.toLowerCase().includes(q) ? '' : 'none';
+        });
+    });
+    skillSearchInput.addEventListener('focus', showSkillDropdown);
+    skillSearchInput.addEventListener('keydown', e => { if (e.key === 'Escape') hideSkillDropdown(); });
+
+    // ── Skill dropdown item click ──────────────────
+    function selectSkill(el) {
+        const id   = parseInt(el.dataset.id);
+        const name = el.dataset.name;
+        if (selectedSkillIds.has(id)) return;
+        selectedSkillIds.add(id);
+        addSkillTag(id, name);
+        addHiddenInput(id);
+        refreshDropdownVisibility();
+        skillSearchInput.value = '';
+        // reset filter
+        document.querySelectorAll('.skill-dropdown-item').forEach(i => i.style.display = '');
+    }
+
+    // ── Add tag element ────────────────────────────
+    function addSkillTag(id, name) {
+        const box  = document.getElementById('skillTagBox');
+        const tag  = document.createElement('span');
+        tag.className    = 'skill-tag js-skill-tag';
+        tag.dataset.id   = id;
+        // Build tag with remove button — data-skill-id is numeric, no th:onclick needed
+        const labelSpan  = document.createElement('span');
+        labelSpan.textContent = name;          // textContent = safe, no XSS
+        const removeBtn  = document.createElement('button');
+        removeBtn.type   = 'button';
+        removeBtn.className = 'skill-tag-remove';
+        removeBtn.dataset.skillId = id;        // numeric — safe
+        removeBtn.textContent = '×';
+        tag.appendChild(labelSpan);
+        tag.appendChild(removeBtn);
+        box.insertBefore(tag, skillSearchInput);
+    }
+
+    // ── Hidden input for form POST ─────────────────
+    function addHiddenInput(id) {
+        const container = document.getElementById('skillHiddenInputs');
+        if (!container.querySelector('input[value="' + id + '"]')) {
+            const inp = document.createElement('input');
+            inp.type  = 'hidden';
+            inp.name  = 'skillIds';
+            inp.value = id;
+            container.appendChild(inp);
+        }
+    }
+
+    // ── Remove skill — event delegation ───────────
+    // Works for both server-rendered tags (data-skill-id) and JS-created tags (data-skill-id)
+    document.getElementById('skillTagBox').addEventListener('click', function (e) {
+        const btn = e.target.closest('.skill-tag-remove');
+        if (!btn) return;
+        const id = parseInt(btn.dataset.skillId);
+        selectedSkillIds.delete(id);
+        const tag = document.querySelector('.js-skill-tag[data-id="' + id + '"]');
+        if (tag) tag.remove();
+        const inp = document.querySelector('#skillHiddenInputs input[value="' + id + '"]');
+        if (inp) inp.remove();
+        refreshDropdownVisibility();
+    });
+
+    /*]]>*/
+</script>
 
 </body>
 </html>

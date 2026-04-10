@@ -1,0 +1,65 @@
+:root {
+    --primary:       #2563eb;
+    --primary-light: #dbeafe;
+    --primary-hover: #bfdbfe;
+    --primary-dark:  #1d4ed8;
+
+    --text-dark:   #1a1a2e;
+    --text-body:   #374151;
+    --text-muted:  #64748b;
+    --text-white:  #ffffff;
+
+    --bg-white:    #ffffff;
+    --bg-light:    #f8faff;
+    --border:      #e8f0fe;
+    --border-gray: #f0f4ff;
+
+    --danger:      #dc2626;
+    --danger-bg:   #fef2f2;
+    --success:     #16a34a;
+
+    --shadow-nav:  0 1px 0 #e8f0fe;
+    --shadow-drop: 0 8px 24px rgba(37,99,235,.12);
+
+    --font:        'Segoe UI', system-ui, -apple-system, sans-serif;
+    --nav-h:       64px;
+    --radius:      8px;
+    --radius-lg:   12px;
+    --max-w:       1200px;
+    --px:          clamp(16px, 4vw, 40px);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); color: var(--text-body); background: var(--bg-white); line-height: 1.6; }
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+img { max-width: 100%; display: block; }
+
+.container { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--px); }
+
+.btn-primary {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--primary); color: var(--text-white);
+    padding: 9px 22px; border-radius: var(--radius);
+    font-size: 15px; font-weight: 500; transition: background .2s; border: none;
+}
+.btn-primary:hover { background: var(--primary-dark); color: var(--text-white); }
+
+.btn-outline {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: transparent; color: var(--primary); border: 1.5px solid var(--primary);
+    padding: 8px 20px; border-radius: var(--radius);
+    font-size: 15px; font-weight: 500; transition: all .2s;
+}
+.btn-outline:hover { background: var(--primary-light); }
+
+.flash-success {
+    background: #f0fdf4; color: var(--success); border: 1px solid #bbf7d0;
+    padding: 12px 16px; border-radius: var(--radius); margin-bottom: 16px;
+}
+.flash-error {
+    background: var(--danger-bg); color: var(--danger); border: 1px solid #fecaca;
+    padding: 12px 16px; border-radius: var(--radius); margin-bottom: 16px;
+}
+
+.page-wrap { max-width: var(--max-w); margin: 0 auto; padding: 32px var(--px); }

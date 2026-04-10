@@ -1,66 +1,237 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Quản lý công ty</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Quản lý Công ty – ITJobHub Admin</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin-job.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin-company.css}"/>
 </head>
-<body>
+<body class="admin-body">
 
-<div th:replace="~{fragments/nav :: nav}"></div>
+<div class="admin-shell">
 
-<h2>Quản lý công ty</h2>
-
-<div th:if="${successMessage}" style="color:green; font-weight:bold;">
-    <p th:text="${successMessage}"></p>
-</div>
-<div th:if="${errorMessage}" style="color:red; font-weight:bold;">
-    <p th:text="${errorMessage}"></p>
-</div>
-
-<a th:href="@{/admin/companies/create}"><button>+ Tạo công ty mới</button></a>
-<br/><br/>
-
-<div th:if="${#lists.isEmpty(companies)}">
-    <p>Chưa có công ty nào.</p>
-</div>
-
-<table th:unless="${#lists.isEmpty(companies)}"
-       border="1" cellpadding="8" cellspacing="0">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Tên công ty</th>
-        <th>Địa điểm</th>
-        <th>Quy mô</th>
-        <th>Website</th>
-<!--        <th>Cập nhật lần cuối</th>-->
-        <th>Thao tác</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="company : ${companies}">
-        <td th:text="${company.id}"></td>
-        <td th:text="${company.nameCompany}"></td>
-        <td th:text="${company.location}"></td>
-        <td th:text="${company.size}"></td>
-        <td>
-            <a th:if="${company.website != null}"
-               th:href="${company.website}"
-               target="_blank"
-               th:text="${company.website}">
+    <!-- ╔═══════════════════════════════╗
+         ║  SIDEBAR                     ║
+         ╚═══════════════════════════════╝ -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="admin-sidebar-brand">
+            <div class="admin-sidebar-brand-icon">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+            </div>
+            <div class="admin-sidebar-brand-text">
+                <div class="admin-sidebar-brand-name">Admin Panel</div>
+                <div class="admin-sidebar-brand-sub">ITJobHub</div>
+            </div>
+        </div>
+        <nav class="admin-sidebar-nav">
+            <div class="admin-sidebar-section-label">Main</div>
+            <a th:href="@{/admin/dashboard}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                Dashboard
             </a>
-        </td>
-<!--        <td>-->
-<!--                <span th:if="${company.updatedAt != null}"-->
-<!--                      th:text="${#temporals.format(company.updatedAt, 'dd/MM/yyyy HH:mm')}">-->
-<!--                </span>-->
-<!--        </td>-->
-        <td>
-            <a th:href="@{/admin/companies/{id}/edit(id=${company.id})}">Sửa</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+            <div class="admin-sidebar-section-label" style="margin-top:8px;">Management</div>
+            <a th:href="@{/admin/jobs}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Quản lý Job
+            </a>
+            <a th:href="@{/admin/users}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Quản lý User
+            </a>
+            <a th:href="@{/admin/companies}" class="admin-nav-item active">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Quản lý Công ty
+            </a>
+            <div class="admin-sidebar-section-label" style="margin-top:8px;">System</div>
+            <a th:href="@{/admin/settings}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                Cài đặt hệ thống
+            </a>
+        </nav>
+        <div class="admin-sidebar-footer">
+            <div class="admin-sidebar-collapse" id="sidebarCollapseBtn">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                <span>Thu gọn</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ╔═══════════════════════════════╗
+         ║  MAIN AREA                   ║
+         ╚═══════════════════════════════╝ -->
+    <div class="admin-main">
+
+        <header class="admin-topbar">
+            <div class="admin-breadcrumb">
+                <a th:href="@{/}">Home</a>
+                <span class="sep">›</span>
+                <a th:href="@{/admin/dashboard}">Dashboard</a>
+                <span class="sep">›</span>
+                <span class="current">Quản lý Công ty</span>
+            </div>
+            <div class="admin-topbar-right">
+                <div class="admin-topbar-avatar">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-content">
+
+            <!-- Page header -->
+            <div class="admin-page-header">
+                <div>
+                    <h1 class="admin-page-title">Quản lý Công ty</h1>
+                    <p class="admin-page-subtitle">Danh sách tất cả các công ty trong hệ thống</p>
+                </div>
+                <div class="admin-page-actions">
+                    <a th:href="@{/admin/companies/create}" class="btn-admin-primary">
+                        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Tạo công ty mới
+                    </a>
+                </div>
+            </div>
+
+            <!-- Flash messages -->
+            <div th:if="${successMessage}" class="flash-success" style="margin-bottom:16px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span th:text="${successMessage}"></span>
+                </div>
+            </div>
+            <div th:if="${errorMessage}" class="flash-error" style="margin-bottom:16px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span th:text="${errorMessage}"></span>
+                </div>
+            </div>
+
+            <!-- Search bar -->
+            <div class="admin-card" style="margin-bottom:16px; padding:14px 18px;">
+                <div class="job-search-bar">
+                    <div class="job-search-field">
+                        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" id="companySearchInput"
+                               placeholder="Tìm kiếm theo tên công ty, địa điểm..."/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table card -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <div>
+                        <div class="admin-card-title">
+                            Tổng <strong th:text="${#lists.size(companies)}">0</strong> công ty
+                        </div>
+                    </div>
+                    <a th:href="@{/admin/companies/create}" class="btn-admin-primary" style="font-size:13px;padding:7px 14px;">
+                        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Tạo mới
+                    </a>
+                </div>
+
+                <!-- Empty -->
+                <div th:if="${#lists.isEmpty(companies)}" class="admin-empty">
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    <p>Chưa có công ty nào trong hệ thống.</p>
+                </div>
+
+                <!-- Table -->
+                <div th:unless="${#lists.isEmpty(companies)}" class="admin-table-wrap">
+                    <table class="admin-table" id="companyTable">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Logo</th>
+                            <th>Tên công ty</th>
+                            <th>Địa điểm</th>
+                            <th>Quy mô</th>
+                            <th>Website</th>
+                            <th>Thao tác</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="company : ${companies}">
+                            <td class="td-id" th:text="${company.id}"></td>
+
+                            <!-- Logo -->
+                            <td>
+                                <div class="company-logo-cell">
+                                    <img th:if="${company.imageUrl != null and !#strings.isEmpty(company.imageUrl)}"
+                                         th:src="${company.imageUrl}"
+                                         th:alt="${company.nameCompany}"
+                                         class="company-logo-img"
+                                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+                                    <!-- Fallback placeholder (always rendered, hidden by default if img loads) -->
+                                    <div class="company-logo-placeholder"
+                                         th:style="${company.imageUrl != null and !#strings.isEmpty(company.imageUrl)} ? 'display:none' : 'display:flex'">
+                                        <span th:text="${#strings.substring(company.nameCompany,0,1)}"></span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="td-position" th:text="${company.nameCompany}"></span>
+                            </td>
+
+                            <td class="td-company" th:text="${company.location}"></td>
+
+                            <!-- Size badge -->
+                            <td>
+                                <span class="size-badge"
+                                      th:classappend="${company.size != null and company.size.toString() == 'LARGE'} ? ' large'
+                                                    : (${company.size != null and company.size.toString() == 'MEDIUM'} ? ' medium' : ' small')"
+                                      th:text="${company.size}">
+                                </span>
+                            </td>
+
+                            <!-- Website -->
+                            <td>
+                                <a th:if="${company.website != null and !#strings.isEmpty(company.website)}"
+                                   th:href="${company.website}"
+                                   th:text="${company.website}"
+                                   class="company-website-link"
+                                   target="_blank" rel="noopener noreferrer"></a>
+                                <span th:unless="${company.website != null and !#strings.isEmpty(company.website)}"
+                                      class="td-muted">—</span>
+                            </td>
+
+                            <!-- Actions -->
+                            <td>
+                                <div class="action-group">
+                                    <a th:href="@{/admin/companies/{id}/edit(id=${company.id})}"
+                                       class="btn-action edit" title="Sửa">
+                                        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                        Sửa
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script>
+    document.getElementById('sidebarCollapseBtn').addEventListener('click', () => {
+        document.getElementById('adminSidebar').classList.toggle('open');
+    });
+
+    document.getElementById('companySearchInput').addEventListener('input', function () {
+        const q = this.value.toLowerCase();
+        document.querySelectorAll('#companyTable tbody tr').forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+    });
+</script>
 
 </body>
 </html>

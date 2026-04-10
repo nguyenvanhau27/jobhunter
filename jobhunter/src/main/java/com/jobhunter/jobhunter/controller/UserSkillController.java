@@ -15,10 +15,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/user/skills")
 public class UserSkillController {
+
+    private static final int PAGE_SIZE = 20;
 
     private final UserSkillService userSkillService;
     private final UserService userService;
@@ -32,91 +35,89 @@ public class UserSkillController {
         this.skillRepository = skillRepository;
     }
 
-    // ─── GET /profile/skills ─────────────────────────────────────
     @GetMapping
     public String skillsPage(
             @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(defaultValue = "0") int page,
             Model model) {
 
         User user = userService.findByEmail(userDetails.getUsername());
 
-        // Danh sách skill hiện tại của user
-        List<UserSkill> mySkills = userSkillService.getSkillsByUserId(user.getId());
+        List<UserSkill> allMySkills = userSkillService.getSkillsByUserId(user.getId());
 
-        // Tất cả skill trong hệ thống để hiển thị dropdown
-        List<Skill> allSkills = skillRepository.findAll();
+        // Pagination
+        int totalSkills = allMySkills.size();
+        int totalPages  = Math.max(1, (int) Math.ceil((double) totalSkills / PAGE_SIZE));
+        int safePage    = Math.min(page, totalPages - 1);
+        int start       = safePage * PAGE_SIZE;
+        int end         = Math.min(start + PAGE_SIZE, totalSkills);
+        List<UserSkill> pagedSkills = totalSkills > 0 ? allMySkills.subList(start, end) : List.of();
 
-        // Tất cả level để hiển thị dropdown
-        AppEnums.SkillLevel[] levels = AppEnums.SkillLevel.values();
+        // All system skills for search dropdown
+        List<Skill> allSkills = skillRepository.findAllByOrderByCategoryAscNameAsc();
 
-        model.addAttribute("mySkills", mySkills);
-        model.addAttribute("allSkills", allSkills);
-        model.addAttribute("levels", levels);
-        model.addAttribute("user", user);
+        // Unique categories for filter dropdown
+        List<String> categories = allSkills.stream()
+                .map(Skill::getCategory)
+                .filter(c -> c != null && !c.isBlank())
+                .distinct().sorted()
+                .collect(Collectors.toList());
 
+        model.addAttribute("mySkills",    pagedSkills);
+        model.addAttribute("allSkills",   allSkills);
+        model.addAttribute("categories",  categories);
+        model.addAttribute("levels",      AppEnums.SkillLevel.values());
+        model.addAttribute("user",        user);
+        model.addAttribute("totalSkills", totalSkills);
+        model.addAttribute("totalPages",  totalPages);
+        model.addAttribute("currentPage", safePage);
         return "user/skills";
     }
 
-    // ─── POST /profile/skills/add ────────────────────────────────
     @PostMapping("/add")
     public String addSkill(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam Long skillId,
             @RequestParam AppEnums.SkillLevel level,
-            RedirectAttributes redirectAttributes) {
-
+            RedirectAttributes ra) {
         User user = userService.findByEmail(userDetails.getUsername());
-
         try {
             userSkillService.addSkill(user.getId(), skillId, level);
-            redirectAttributes.addFlashAttribute("successMessage", "Thêm skill thành công!");
-
+            ra.addFlashAttribute("successMessage", "Thêm skill thành công!");
         } catch (IllegalArgumentException e) {
-            // E1: Skill đã tồn tại
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            ra.addFlashAttribute("errorMessage", e.getMessage());
         }
-
         return "redirect:/user/skills";
     }
 
-    // ─── POST /profile/skills/update ────────────────────────────
     @PostMapping("/update")
     public String updateSkill(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam Long skillId,
             @RequestParam AppEnums.SkillLevel level,
-            RedirectAttributes redirectAttributes) {
-
+            RedirectAttributes ra) {
         User user = userService.findByEmail(userDetails.getUsername());
-
         try {
             userSkillService.updateSkillLevel(user.getId(), skillId, level);
-            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật level thành công!");
-
+            ra.addFlashAttribute("successMessage", "Cập nhật level thành công!");
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            ra.addFlashAttribute("errorMessage", e.getMessage());
         }
-
         return "redirect:/user/skills";
     }
 
-    // ─── POST /profile/skills/remove ────────────────────────────
     @PostMapping("/remove")
     public String removeSkill(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestParam Long skillId,
-            RedirectAttributes redirectAttributes) {
-
+            RedirectAttributes ra) {
         User user = userService.findByEmail(userDetails.getUsername());
-
         try {
             userSkillService.removeSkill(user.getId(), skillId);
-            redirectAttributes.addFlashAttribute("successMessage", "Đã xoá skill!");
-
+            ra.addFlashAttribute("successMessage", "Đã xoá skill!");
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            ra.addFlashAttribute("errorMessage", e.getMessage());
         }
-
         return "redirect:/user/skills";
     }
 }

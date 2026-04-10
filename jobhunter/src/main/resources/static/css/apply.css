@@ -1,0 +1,449 @@
+/* apply.css — Apply job + My applications
+   Depends on: variables.css
+*/
+
+/* ══════════════════════════════════════
+   SHARED page wrapper
+══════════════════════════════════════ */
+.ap-page {
+    background: #f8faff;
+    min-height: 100vh;
+}
+
+.ap-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px var(--px) 0;
+}
+
+/* page title block */
+.ap-page-head { margin-bottom: 28px; }
+.ap-page-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+}
+.ap-page-sub {
+    font-size: 15px;
+    color: var(--text-muted);
+}
+
+/* ══════════════════════════════════════
+   APPLY PAGE  /jobs/{id}/apply
+══════════════════════════════════════ */
+
+/* Job info summary card */
+.ap-job-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 28px;
+    margin-bottom: 20px;
+}
+.ap-job-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 14px;
+}
+.ap-job-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+.ap-job-meta-item {}
+.ap-job-meta-key {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+.ap-job-meta-val {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* Main form card */
+.ap-form-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+}
+
+/* ── CV Upload zone ── */
+.ap-upload-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.ap-upload-required { color: var(--danger); }
+
+.ap-dropzone {
+    border: 2px dashed #bfdbfe;
+    border-radius: 12px;
+    padding: 40px 20px 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    position: relative;
+    background: #fafcff;
+}
+.ap-dropzone:hover,
+.ap-dropzone.dragover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+}
+.ap-dropzone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+.ap-upload-icon {
+    width: 52px;
+    height: 52px;
+    background: var(--primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+}
+.ap-upload-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--primary);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.ap-drop-text {
+    font-size: 15px;
+    color: var(--text-dark);
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+.ap-drop-or {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+}
+
+.ap-choose-btn {
+    background: var(--primary);
+    color: #fff;
+    padding: 9px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font);
+    transition: background .2s;
+    position: relative;
+    z-index: 1;
+    pointer-events: none; /* click delegated to input overlay */
+}
+.ap-dropzone:hover .ap-choose-btn { background: var(--primary-dark); }
+
+.ap-drop-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 12px;
+}
+
+/* File selected state */
+.ap-file-selected {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 10px;
+}
+.ap-file-selected.show { display: flex; }
+.ap-file-selected svg {
+    width: 18px; height: 18px;
+    stroke: #16a34a; fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    flex-shrink: 0;
+}
+.ap-file-name {
+    font-size: 14px;
+    color: #15803d;
+    font-weight: 500;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.ap-file-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #dc2626;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0 2px;
+    flex-shrink: 0;
+}
+
+/* ── Cover Letter ── */
+.ap-cl-group { margin-top: 24px; }
+.ap-cl-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.ap-cl-textarea {
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 15px;
+    color: var(--text-dark);
+    font-family: var(--font);
+    outline: none;
+    resize: vertical;
+    min-height: 160px;
+    transition: border-color .2s, box-shadow .2s;
+    line-height: 1.6;
+}
+.ap-cl-textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.08);
+}
+.ap-cl-textarea::placeholder { color: #9ca3af; }
+.ap-cl-counter {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    text-align: right;
+}
+
+/* ── Form actions ── */
+.ap-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+.ap-btn-cancel {
+    background: #fff;
+    color: var(--text-body);
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: var(--font);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+.ap-btn-cancel:hover { border-color: var(--primary); color: var(--primary); }
+
+.ap-btn-submit {
+    background: var(--primary);
+    color: #fff;
+    padding: 10px 28px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font);
+    transition: background .2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.ap-btn-submit:hover { background: var(--primary-dark); }
+.ap-btn-submit svg {
+    width: 16px; height: 16px;
+    stroke: #fff; fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* Flash error */
+.ap-error {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.ap-error svg {
+    width: 16px; height: 16px; flex-shrink: 0;
+    stroke: currentColor; fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* ══════════════════════════════════════
+   MY APPLICATIONS  /applications/my
+══════════════════════════════════════ */
+
+.my-wrap {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px var(--px) 0;
+}
+
+.my-table-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+.my-table-head {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-dark);
+    background: #fff;
+}
+.my-table-head span { color: var(--primary); }
+
+/* Table */
+.my-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.my-table th {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-align: left;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    background: #fafbff;
+}
+.my-table td {
+    font-size: 14px;
+    color: var(--text-body);
+    padding: 14px 24px;
+    border-bottom: 1px solid #f5f7ff;
+    vertical-align: middle;
+}
+.my-table tr:last-child td { border-bottom: none; }
+.my-table tr:hover td { background: #fafcff; }
+
+.my-job-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 2px;
+}
+.my-company {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+/* Status badges — Figma exact colors */
+.my-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .3px;
+}
+.my-badge-pending  { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+.my-badge-approved { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+.my-badge-rejected { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+/* CV link */
+.my-cv-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--primary);
+    font-weight: 500;
+    transition: opacity .2s;
+}
+.my-cv-link:hover { opacity: .75; }
+.my-cv-link svg {
+    width: 15px; height: 15px;
+    stroke: var(--primary); fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* Empty state */
+.my-empty {
+    text-align: center;
+    padding: 56px 20px;
+}
+.my-empty-icon {
+    width: 56px; height: 56px;
+    background: var(--primary-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+}
+.my-empty-icon svg {
+    width: 26px; height: 26px;
+    stroke: var(--primary); fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+.my-empty-title { font-size: 16px; font-weight: 600; color: var(--text-dark); margin-bottom: 8px; }
+.my-empty-sub   { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+
+/* CTA (reused) */
+.ap-cta {
+    background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+    padding: 56px var(--px);
+    text-align: center;
+}
+.ap-cta h2 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+.ap-cta p  { font-size: 15px; color: rgba(255,255,255,.8); margin-bottom: 28px; max-width: 480px; margin-left: auto; margin-right: auto; }
+.ap-cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.ap-cta-white {
+    background: #fff; color: #1d4ed8;
+    padding: 11px 28px; border-radius: 8px;
+    font-size: 15px; font-weight: 600; display: inline-block; transition: all .2s;
+}
+.ap-cta-white:hover { background: #dbeafe; }
+.ap-cta-outline {
+    background: transparent; color: #fff;
+    border: 2px solid rgba(255,255,255,.5);
+    padding: 11px 28px; border-radius: 8px;
+    font-size: 15px; font-weight: 600; display: inline-block; transition: all .2s;
+}
+.ap-cta-outline:hover { border-color: #fff; background: rgba(255,255,255,.1); }
+
+@media (max-width: 640px) {
+    .ap-wrap, .my-wrap { padding: 24px var(--px) 0; }
+    .ap-job-meta { grid-template-columns: 1fr 1fr; }
+    .my-table th:nth-child(3),
+    .my-table td:nth-child(3) { display: none; }
+    .ap-actions { justify-content: stretch; flex-direction: column-reverse; }
+    .ap-btn-cancel, .ap-btn-submit { width: 100%; justify-content: center; }
+}

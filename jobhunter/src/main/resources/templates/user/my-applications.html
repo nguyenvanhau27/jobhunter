@@ -1,60 +1,135 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Đơn ứng tuyển của tôi</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Đơn ứng tuyển của tôi — JobHunter</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}"/>
+    <link rel="stylesheet" th:href="@{/css/nav.css}"/>
+    <link rel="stylesheet" th:href="@{/css/footer.css}"/>
+    <link rel="stylesheet" th:href="@{/css/apply.css}"/>
 </head>
 <body>
-
 <div th:replace="~{fragments/nav :: nav}"></div>
 
-<h2>Đơn ứng tuyển của tôi</h2>
+<div class="ap-page">
+    <div class="my-wrap">
 
-<div th:if="${successMessage}" style="color:green; font-weight:bold;">
-    <p th:text="${successMessage}"></p>
+        <!-- Page title -->
+        <div class="ap-page-head">
+            <h1 class="ap-page-title">Đơn ứng tuyển của tôi</h1>
+            <p class="ap-page-sub">Theo dõi trạng thái các đơn ứng tuyển của bạn</p>
+        </div>
+
+        <!-- Flash success (after apply) -->
+        <div th:if="${successMessage}"
+             style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;border-radius:10px;padding:12px 16px;font-size:14px;margin-bottom:20px;display:flex;align-items:center;gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <span th:text="${successMessage}"></span>
+        </div>
+
+        <!-- Table card -->
+        <div class="my-table-card">
+
+            <!-- Header count -->
+            <div class="my-table-head" th:if="${!#lists.isEmpty(applications)}">
+                Tổng <span th:text="${#lists.size(applications)}"></span> đơn ứng tuyển
+            </div>
+
+            <!-- Empty state -->
+            <div th:if="${#lists.isEmpty(applications)}" class="my-empty">
+                <div class="my-empty-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                </div>
+                <div class="my-empty-title">Chưa có đơn ứng tuyển nào</div>
+                <div class="my-empty-sub">Hãy tìm kiếm và ứng tuyển các vị trí phù hợp với bạn</div>
+                <a th:href="@{/jobs}" class="btn-primary" style="padding:11px 28px;font-size:15px;">
+                    Tìm việc ngay
+                </a>
+            </div>
+
+            <!-- Table -->
+            <table th:unless="${#lists.isEmpty(applications)}" class="my-table">
+                <thead>
+                <tr>
+                    <th>Vị trí</th>
+                    <th>Công ty</th>
+                    <th>Ngày nộp</th>
+                    <th>Trạng thái</th>
+                    <th>CV</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="app : ${applications}">
+
+                    <!-- Job title + link -->
+                    <td>
+                        <div class="my-job-title">
+                            <a th:href="@{/jobs/{id}(id=${app.job.id})}"
+                               th:text="${app.job.title}"
+                               style="color:var(--text-dark);text-decoration:none;transition:color .2s;"
+                               onmouseover="this.style.color='var(--primary)'"
+                               onmouseout="this.style.color='var(--text-dark)'">
+                            </a>
+                        </div>
+                    </td>
+
+                    <!-- Company -->
+                    <td>
+                        <span class="my-company" th:text="${app.job.company.nameCompany}"></span>
+                    </td>
+
+                    <!-- Date -->
+                    <td th:text="${#temporals.format(app.appliedAt, 'dd/MM/yyyy HH:mm')}"></td>
+
+                    <!-- Status badge — Figma colors -->
+                    <td>
+                        <span th:if="${app.status.toString() == 'PENDING'}"  class="my-badge my-badge-pending">PENDING</span>
+                        <span th:if="${app.status.toString() == 'APPROVED'}" class="my-badge my-badge-approved">APPROVED</span>
+                        <span th:if="${app.status.toString() == 'REJECTED'}" class="my-badge my-badge-rejected">REJECTED</span>
+                    </td>
+
+                    <!-- CV link with eye icon -->
+                    <td>
+                        <a th:if="${app.cvFile != null}"
+                           th:href="@{/{cv}(cv=${app.cvFile})}"
+                           class="my-cv-link" target="_blank">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            Xem CV
+                        </a>
+                        <span th:unless="${app.cvFile != null}"
+                              style="font-size:13px;color:var(--text-muted);">—</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+<!--    <div class="ap-cta">-->
+<!--        <h2>Ready to Start Your IT Career Journey?</h2>-->
+<!--        <p>Join thousands of IT professionals who found their dream jobs. Create your free account today and get matched with the perfect opportunities.</p>-->
+<!--        <div class="ap-cta-btns">-->
+<!--            <a th:href="@{/jobs}" class="ap-cta-white">Get Started Free</a>-->
+<!--            <a th:href="@{/jobs}" class="ap-cta-outline">Learn More</a>-->
+<!--        </div>-->
+<!--    </div>-->
 </div>
 
-<div th:if="${#lists.isEmpty(applications)}">
-    <p>Bạn chưa ứng tuyển job nào. <a th:href="@{/jobs}">Tìm việc ngay</a></p>
-</div>
-
-<table th:unless="${#lists.isEmpty(applications)}"
-       border="1" cellpadding="8" cellspacing="0">
-    <thead>
-    <tr>
-        <th>Vị trí</th>
-        <th>Công ty</th>
-        <th>Ngày nộp</th>
-        <th>Trạng thái</th>
-        <th>CV</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="app : ${applications}">
-        <td>
-            <a th:href="@{/jobs/{id}(id=${app.job.id})}"
-               th:text="${app.job.title}">
-            </a>
-        </td>
-        <td th:text="${app.job.company.nameCompany}"></td>
-        <td th:text="${#temporals.format(app.appliedAt, 'dd/MM/yyyy HH:mm')}"></td>
-        <td>
-            <!-- Màu theo trạng thái -->
-            <span th:text="${app.status}"
-                  th:style="${app.status.toString() == 'APPROVED'} ? 'color:green; font-weight:bold'
-                               : (${app.status.toString() == 'REJECTED'} ? 'color:red'
-                               : 'color:orange')">
-                </span>
-        </td>
-        <td>
-            <a th:href="@{/{cvFile}(cvFile=${app.cvFile})}"
-               target="_blank">
-                Xem CV
-            </a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>
 </html>

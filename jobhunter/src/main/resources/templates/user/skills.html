@@ -1,145 +1,256 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Quản lý kỹ năng</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Quản lý kỹ năng — JobHunter</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}"/>
+    <link rel="stylesheet" th:href="@{/css/nav.css}"/>
+    <link rel="stylesheet" th:href="@{/css/footer.css}"/>
+    <link rel="stylesheet" th:href="@{/css/skills.css}"/>
 </head>
 <body>
-
 <div th:replace="~{fragments/nav :: nav}"></div>
 
-<h2>Quản lý kỹ năng cá nhân</h2>
+<div class="sk-page">
+    <div class="sk-wrap">
 
-<!-- Thông báo -->
-<div th:if="${successMessage}" style="color: green; font-weight: bold;">
-    <p th:text="${successMessage}"></p>
-</div>
-<div th:if="${errorMessage}" style="color: red; font-weight: bold;">
-    <p th:text="${errorMessage}"></p>
-</div>
+        <div class="sk-page-head">
+            <h1 class="sk-page-title">Quản lý kỹ năng cá nhân</h1>
+            <p class="sk-page-sub">Cập nhật và quản lý các kỹ năng của bạn để tăng cơ hội tìm được công việc phù hợp</p>
+        </div>
 
-<!-- ─── Form thêm skill mới ─────────────────────────────── -->
-<h3>Thêm kỹ năng</h3>
-<form th:action="@{/user/skills/add}" method="post">
+        <div th:if="${successMessage}" class="sk-success">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="sk-error">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span th:text="${errorMessage}"></span>
+        </div>
 
-    <label>Category:</label>
-    <select id="categoryAdd" onchange="filterSkills('categoryAdd', 'skillAdd')">
-        <option value="">-- Chọn category --</option>
-        <option value="Language">Language</option>
-        <option value="Frontend">Frontend</option>
-        <option value="Backend">Backend</option>
-        <option value="Database">Database</option>
-        <option value="DevOps/Cloud">DevOps/Cloud</option>
-        <option value="Mobile">Mobile</option>
-        <option value="Testing">Testing</option>
-        <option value="Tools">Tools</option>
-    </select>
+        <!-- ADD SKILL CARD -->
+        <div class="sk-add-card">
+            <div class="sk-add-title">Thêm kỹ năng mới</div>
+            <form th:action="@{/user/skills/add}" method="post" id="addSkillForm">
+                <input type="hidden" name="skillId" id="selectedSkillId"/>
+                <div class="sk-add-row">
 
-    &nbsp;
+                    <!-- Category -->
+                    <div class="sk-field">
+                        <label class="sk-field-label">Category</label>
+                        <select class="sk-select" id="catFilter" onchange="skFilter()">
+                            <option value="">Tất cả</option>
+                            <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
+                        </select>
+                    </div>
 
-    <label>Kỹ năng:</label>
-    <select id="skillAdd" name="skillId" required>
-        <option value="">-- Chọn category trước --</option>
-        <option th:each="skill : ${allSkills}"
-                th:value="${skill.id}"
-                th:text="${skill.name}"
-                th:attr="data-category=${skill.category}"
-                style="display:none">
-        </option>
-    </select>
+                    <!-- Skill search -->
+                    <div class="sk-field">
+                        <label class="sk-field-label">Kỹ năng</label>
+                        <div style="position:relative;">
+                            <input class="sk-search-input" type="text" id="skillSearch"
+                                   placeholder="Tìm kiếm kỹ năng..." autocomplete="off"
+                                   oninput="skSearch(this.value)"
+                                   onfocus="skOpenDrop()"
+                                   onblur="setTimeout(skCloseDrop, 200)"/>
+                            <div class="sk-search-icon">
+                                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            </div>
+                            <div class="sk-skill-dropdown" id="skillDrop"></div>
+                        </div>
+                    </div>
 
-    &nbsp;
+                    <!-- Level -->
+                    <div class="sk-field">
+                        <label class="sk-field-label">Level</label>
+                        <select class="sk-select" name="level" id="levelSel" required>
+                            <option th:each="lv : ${levels}" th:value="${lv}" th:text="${lv}"></option>
+                        </select>
+                    </div>
 
-    <label>Level:</label>
-    <select name="level" required>
-        <option th:each="lvl : ${levels}"
-                th:value="${lvl}"
-                th:text="${lvl}">
-        </option>
-    </select>
-
-    &nbsp;
-    <button type="submit">Thêm</button>
-</form>
-
-<hr/>
-
-<!-- ─── Danh sách skill hiện tại ────────────────────────── -->
-<h3>Kỹ năng của bạn</h3>
-
-<div th:if="${#lists.isEmpty(mySkills)}">
-    <p>Bạn chưa có kỹ năng nào. Hãy thêm kỹ năng ở trên!</p>
-</div>
-
-<table th:unless="${#lists.isEmpty(mySkills)}" border="1" cellpadding="8" cellspacing="0">
-    <thead>
-    <tr>
-        <th>Category</th>
-        <th>Kỹ năng</th>
-        <th>Level hiện tại</th>
-        <th>Cập nhật level</th>
-        <th>Xoá</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="us : ${mySkills}">
-
-        <!-- Category -->
-        <td th:text="${us.skill.category}"></td>
-
-        <!-- Tên skill -->
-        <td th:text="${us.skill.name}"></td>
-
-        <!-- Level hiện tại -->
-        <td th:text="${us.levelSkill}"></td>
-
-        <!-- Cập nhật level — th:selected tự chọn đúng level hiện tại -->
-        <td>
-            <form th:action="@{/user/skills/update}" method="post" style="display:inline">
-                <input type="hidden" name="skillId" th:value="${us.skill.id}"/>
-                <select name="level">
-                    <option th:each="lvl : ${levels}"
-                            th:value="${lvl}"
-                            th:text="${lvl}"
-                            th:selected="${lvl == us.levelSkill}">
-                    </option>
-                </select>
-                <button type="submit">Cập nhật</button>
+                    <!-- Add btn -->
+                    <div class="sk-field">
+                        <button type="submit" class="sk-add-btn">
+                            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Thêm
+                        </button>
+                    </div>
+                </div>
             </form>
-        </td>
+        </div>
 
-        <!-- Xoá -->
-        <td>
-            <form th:action="@{/user/skills/remove}" method="post" style="display:inline">
-                <input type="hidden" name="skillId" th:value="${us.skill.id}"/>
-                <button type="submit"
-                        onclick="return confirm('Bạn có chắc muốn xoá skill này?')">
-                    Xoá
-                </button>
-            </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
+        <!-- SKILL LIST -->
+        <div class="sk-list-card">
+            <div class="sk-list-head">
+                <div class="sk-list-head-title">Kỹ năng của bạn</div>
+                <div class="sk-list-count">Tổng: <strong th:text="${totalSkills}"></strong> kỹ năng</div>
+            </div>
 
-<script>
-    function filterSkills(categorySelectId, skillSelectId) {
-        const category = document.getElementById(categorySelectId).value;
-        const skillSelect = document.getElementById(skillSelectId);
-        const options = skillSelect.querySelectorAll('option[data-category]');
+            <!-- Empty -->
+            <div th:if="${#lists.isEmpty(mySkills)}" class="sk-empty">
+                <div class="sk-empty-icon">
+                    <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+                <div class="sk-empty-text">Bạn chưa có kỹ năng nào. Hãy thêm kỹ năng đầu tiên!</div>
+            </div>
 
-        skillSelect.value = '';
+            <!-- Table -->
+            <table th:unless="${#lists.isEmpty(mySkills)}" class="sk-table">
+                <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Kỹ năng</th>
+                    <th>Level hiện tại</th>
+                    <th>Cập nhật Level</th>
+                    <th>Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="us : ${mySkills}">
+                    <td><span class="sk-cat" th:text="${us.skill.category != null ? us.skill.category : '—'}"></span></td>
+                    <td><span class="sk-name" th:text="${us.skill.name}"></span></td>
 
-        options.forEach(opt => {
-            if (!category || opt.getAttribute('data-category') === category) {
-                opt.style.display = '';
-            } else {
-                opt.style.display = 'none';
-            }
-        });
-    }
+                    <!-- Level badge -->
+                    <td>
+            <span th:if="${us.levelSkill.toString() == 'BEGINNER'}"
+                  class="sk-badge sk-badge-beginner">BEGINNER</span>
+                        <span th:if="${us.levelSkill.toString() == 'INTERMEDIATE'}"
+                              class="sk-badge sk-badge-intermediate">INTERMEDIATE</span>
+                        <span th:if="${us.levelSkill.toString() == 'ADVANCED'}"
+                              class="sk-badge sk-badge-advanced">ADVANCED</span>
+                    </td>
+
+                    <!-- Inline update -->
+                    <td>
+                        <form th:action="@{/user/skills/update}" method="post" style="display:flex;gap:8px;align-items:center;">
+                            <input type="hidden" name="skillId" th:value="${us.skill.id}"/>
+                            <select class="sk-level-select" name="level" onchange="this.form.submit()">
+                                <option th:each="lv : ${levels}"
+                                        th:value="${lv}" th:text="${lv}"
+                                        th:selected="${lv == us.levelSkill}"></option>
+                            </select>
+                        </form>
+                    </td>
+
+                    <!-- Delete -->
+                    <td>
+                        <form th:action="@{/user/skills/remove}" method="post" style="display:inline;">
+                            <input type="hidden" name="skillId" th:value="${us.skill.id}"/>
+                            <button type="submit" class="sk-del-btn"
+                                    onclick="return confirm('Xoá kỹ năng này?')">
+                                <svg viewBox="0 0 24 24">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                                    <path d="M10 11v6"/><path d="M14 11v6"/>
+                                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                                </svg>
+                                Xoá
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div th:if="${totalPages > 1}" class="sk-pagination">
+                <a th:href="@{/user/skills(page=${currentPage - 1})}"
+                   class="sk-page-btn"
+                   th:style="${currentPage == 0} ? 'pointer-events:none;opacity:.35' : ''">‹</a>
+                <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                    <a th:href="@{/user/skills(page=${i})}"
+                       class="sk-page-btn" th:classappend="${i == currentPage} ? ' active' : ''"
+                       th:text="${i + 1}"></a>
+                </th:block>
+                <a th:href="@{/user/skills(page=${currentPage + 1})}"
+                   class="sk-page-btn"
+                   th:style="${currentPage >= totalPages - 1} ? 'pointer-events:none;opacity:.35' : ''">›</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="sk-cta">
+        <h2>Ready to Start Your IT Career Journey?</h2>
+        <p>Join thousands of IT professionals who found their dream jobs. Create your free account today and get matched with the perfect opportunities.</p>
+        <div class="sk-cta-btns">
+            <a th:href="@{/jobs}" class="sk-cta-white">Get Started Free</a>
+            <a th:href="@{/jobs}" class="sk-cta-outline">Learn More</a>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- Skill data from server for JS -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const SK_DATA = /*[[${allSkills}]]*/ [];
+    /*]]>*/
 </script>
 
+<script>
+    let skAll = [];
+    try { skAll = SK_DATA.map(s => ({ id: s.id, name: s.name, category: s.category || '' })); } catch(e){}
+    let skFiltered = [...skAll];
+
+    function skFilter() {
+        skSearch(document.getElementById('skillSearch').value);
+    }
+
+    function skSearch(q) {
+        const cat = document.getElementById('catFilter').value;
+        q = q.toLowerCase();
+        skFiltered = skAll.filter(s =>
+            (cat === '' || s.category === cat) &&
+            s.name.toLowerCase().includes(q)
+        );
+        skRender();
+        document.getElementById('skillDrop').classList.add('open');
+        // Reset selection when user types
+        document.getElementById('selectedSkillId').value = '';
+    }
+
+    function skRender() {
+        const dd = document.getElementById('skillDrop');
+        if (!skFiltered.length) {
+            dd.innerHTML = '<div class="sk-no-result">Không tìm thấy kỹ năng phù hợp</div>';
+            return;
+        }
+        dd.innerHTML = skFiltered.slice(0, 60).map(s =>
+            `<div class="sk-skill-option" onmousedown="skSelect(${s.id},'${s.name.replace(/'/g,"\\'")}')">
+      <span class="sk-skill-option-name">${s.name}</span>
+      <span class="sk-skill-option-cat">${s.category}</span>
+    </div>`
+        ).join('');
+    }
+
+    function skSelect(id, name) {
+        document.getElementById('selectedSkillId').value = id;
+        document.getElementById('skillSearch').value = name;
+        document.getElementById('skillDrop').classList.remove('open');
+    }
+
+    function skOpenDrop() {
+        skSearch(document.getElementById('skillSearch').value);
+    }
+    function skCloseDrop() {
+        document.getElementById('skillDrop').classList.remove('open');
+    }
+
+    document.getElementById('addSkillForm').addEventListener('submit', function(e) {
+        if (!document.getElementById('selectedSkillId').value) {
+            e.preventDefault();
+            alert('Vui lòng chọn một kỹ năng từ danh sách!');
+            document.getElementById('skillSearch').focus();
+        }
+    });
+
+    // Init
+    skRender();
+</script>
 </body>
 </html>

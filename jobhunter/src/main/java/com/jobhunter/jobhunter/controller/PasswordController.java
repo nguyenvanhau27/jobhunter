@@ -21,38 +21,38 @@ public class PasswordController {
     // ══════════════════════════════════════════
     // CHANGE PASSWORD (đã đăng nhập)
     // ══════════════════════════════════════════
-
-    @GetMapping("/profile/change-password")
-    public String changePasswordPage() {
-        return "user/change-password";
-    }
-
-    @PostMapping("/profile/change-password")
-    public String changePassword(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam String oldPassword,
-            @RequestParam String newPassword,
-            @RequestParam String confirmPassword,
-            RedirectAttributes redirectAttributes) {
-
-        if (!newPassword.equals(confirmPassword)) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Mật khẩu mới và xác nhận không khớp");
-            return "redirect:/profile/change-password";
-        }
-
-        try {
-            passwordService.changePassword(
-                    userDetails.getUsername(), oldPassword, newPassword);
-            redirectAttributes.addFlashAttribute("successMessage",
-                    "Đổi mật khẩu thành công!");
-            return "redirect:/profile";
-
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/profile/change-password";
-        }
-    }
+//
+//    @GetMapping("/profile/change-password")
+//    public String changePasswordPage() {
+//        return "user/change-password";
+//    }
+//
+//    @PostMapping("/profile/change-password")
+//    public String changePassword(
+//            @AuthenticationPrincipal UserDetails userDetails,
+//            @RequestParam String oldPassword,
+//            @RequestParam String newPassword,
+//            @RequestParam String confirmPassword,
+//            RedirectAttributes redirectAttributes) {
+//
+//        if (!newPassword.equals(confirmPassword)) {
+//            redirectAttributes.addFlashAttribute("errorMessage",
+//                    "Mật khẩu mới và xác nhận không khớp");
+//            return "redirect:/profile/change-password";
+//        }
+//
+//        try {
+//            passwordService.changePassword(
+//                    userDetails.getUsername(), oldPassword, newPassword);
+//            redirectAttributes.addFlashAttribute("successMessage",
+//                    "Đổi mật khẩu thành công!");
+//            return "redirect:/profile";
+//
+//        } catch (IllegalArgumentException e) {
+//            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+//            return "redirect:/profile/change-password";
+//        }
+//    }
 
     // ══════════════════════════════════════════
     // FORGOT PASSWORD (chưa đăng nhập)

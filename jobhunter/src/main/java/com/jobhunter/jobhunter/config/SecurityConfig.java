@@ -1,5 +1,4 @@
 package com.jobhunter.jobhunter.config;
-import com.jobhunter.jobhunter.entity.User;
 import com.jobhunter.jobhunter.repository.UserRepository;
 import com.jobhunter.jobhunter.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
@@ -41,11 +40,12 @@ public class SecurityConfig {
                 .userDetailsService(userDetailsService)
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/js/**", "/images/**", "/uploads/**").permitAll()
+                        .requestMatchers("/css/**", "/static/js/**", "/images/**", "/uploads/**").permitAll()
                         .requestMatchers("/register", "/login", "/forgot-password", "/reset-password").permitAll()
                         .requestMatchers("/jobs", "/jobs/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/profile/**").hasRole("USER")
+                        .requestMatchers("/user/**").hasRole("USER")
                         .requestMatchers("/applications/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )

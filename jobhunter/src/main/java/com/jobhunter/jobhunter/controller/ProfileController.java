@@ -2,6 +2,7 @@ package com.jobhunter.jobhunter.controller;
 
 import com.jobhunter.jobhunter.dto.ProfileDTO;
 import com.jobhunter.jobhunter.entity.User;
+import com.jobhunter.jobhunter.service.PasswordService;
 import com.jobhunter.jobhunter.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -9,10 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -20,52 +18,86 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class ProfileController {
 
     private final UserService userService;
+    private final PasswordService passwordService;
 
-    public ProfileController(UserService userService) {
+    public ProfileController(UserService userService, PasswordService passwordService) {
         this.userService = userService;
+        this.passwordService = passwordService;
     }
 
-    // ─── GET /profile — hiển thị form với dữ liệu hiện tại ──────
-    @GetMapping
-    public String profilePage(
-            @AuthenticationPrincipal UserDetails userDetails,
-            Model model) {
+    private void loadUser(Model model, UserDetails ud) {
+        User user = userService.findByEmail(ud.getUsername());
 
-        // Lấy user từ DB theo email đang đăng nhập
-        User user = userService.findByEmail(userDetails.getUsername());
-
-        // Map dữ liệu hiện tại vào DTO để pre-fill form
         ProfileDTO dto = new ProfileDTO();
         dto.setFullName(user.getFullName());
         dto.setPhone(user.getPhone());
         dto.setAddress(user.getAddress());
         dto.setExperience(user.getExperience());
 
+        model.addAttribute("user", user);
         model.addAttribute("profileDTO", dto);
-        model.addAttribute("user", user);  // để hiển thị email (read-only)
+    }
 
+    // ── GET /profile?tab=info|password ──────────────────────────
+    @GetMapping
+    public String show(
+            @AuthenticationPrincipal UserDetails ud,
+            @RequestParam(defaultValue = "info") String tab,
+            Model model) {
+
+        loadUser(model, ud);
+
+        // Flash attribute (từ redirect) được ưu tiên hơn param
+        if (!model.containsAttribute("activeTab")) {
+            model.addAttribute("activeTab", tab);
+        }
         return "user/profile";
     }
 
-    // ─── POST /profile — lưu cập nhật ───────────────────────────
-    @PostMapping
-    public String updateProfile(
-            @AuthenticationPrincipal UserDetails userDetails,
+    // ── POST /profile/update ─────────────────────────────────────
+    @PostMapping("/update")
+    public String update(
+            @AuthenticationPrincipal UserDetails ud,
             @Valid @ModelAttribute("profileDTO") ProfileDTO dto,
-            BindingResult bindingResult,
+            BindingResult br,
             Model model,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes ra) {
 
-        // Lỗi validation
-        if (bindingResult.hasErrors()) {
-            User user = userService.findByEmail(userDetails.getUsername());
-            model.addAttribute("user", user);
+        if (br.hasErrors()) {
+            loadUser(model, ud);
+            model.addAttribute("activeTab", "info");
             return "user/profile";
         }
 
-        userService.updateProfile(userDetails.getUsername(), dto);
-        redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thành công!");
-
+        userService.updateProfile(ud.getUsername(), dto);
+        ra.addFlashAttribute("successMessage", "Cập nhật thông tin thành công!");
+        ra.addFlashAttribute("activeTab", "info");
         return "redirect:/profile";
+    }
+
+    // ── POST /profile/change-password ────────────────────────────
+    @PostMapping("/change-password")
+    public String changePassword(
+            @AuthenticationPrincipal UserDetails ud,
+            @RequestParam String oldPassword,
+            @RequestParam String newPassword,
+            @RequestParam String confirmPassword,
+            RedirectAttributes ra) {
+
+        if (!newPassword.equals(confirmPassword)) {
+            ra.addFlashAttribute("pwdError", "Mật khẩu mới và xác nhận không khớp");
+            ra.addFlashAttribute("activeTab", "password");
+            return "redirect:/profile?tab=password";
+        }
+
+        try {
+            passwordService.changePassword(ud.getUsername(), oldPassword, newPassword);
+            ra.addFlashAttribute("pwdSuccess", "Đổi mật khẩu thành công!");
+        } catch (IllegalArgumentException e) {
+            ra.addFlashAttribute("pwdError", e.getMessage());
+        }
+
+        ra.addFlashAttribute("activeTab", "password");
+        return "redirect:/profile?tab=password";
     }
 }

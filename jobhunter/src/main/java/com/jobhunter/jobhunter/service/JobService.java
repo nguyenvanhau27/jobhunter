@@ -13,10 +13,9 @@ public interface JobService {
     Job findById(Long id);
 
     Page<Job> filterJobs(String keyword, String location,
-                         AppEnums.JobType jobType,
-                         AppEnums.ExperienceLevel experienceLevel,
-                         Long skillId,
-                         int page, int size);
+                         List<AppEnums.JobType> jobTypes,
+                         List<AppEnums.ExperienceLevel> experienceLevels,
+                         List<Long> skillIds, int page, int size);
 
     Page<Job> findOpenJobs(int page, int size);
 

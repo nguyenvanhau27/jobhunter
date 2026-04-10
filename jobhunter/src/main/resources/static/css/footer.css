@@ -1,0 +1,65 @@
+.jh-footer {
+    background: #111827; color: #fff;
+    padding: 56px var(--px) 0;
+}
+
+.jh-footer-top {
+    display: grid;
+    grid-template-columns: 1.8fr 1fr 1fr;
+    gap: 48px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid #1f2937;
+}
+
+.jh-footer-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.jh-footer-logo-icon {
+    width: 32px; height: 32px; background: var(--primary);
+    border-radius: 7px; display: flex; align-items: center; justify-content: center;
+}
+.jh-footer-logo-icon svg {
+    width: 18px; height: 18px; stroke: #fff; fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+.jh-footer-logo-text { font-size: 17px; font-weight: 700; color: #fff; }
+
+.jh-footer-desc {
+    font-size: 13px; color: #9ca3af; line-height: 1.7;
+    margin-bottom: 20px; max-width: 300px;
+}
+
+.jh-footer-social { display: flex; gap: 10px; }
+.jh-footer-social-btn {
+    width: 34px; height: 34px; background: #1f2937;
+    border-radius: 7px; display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+}
+.jh-footer-social-btn:hover { background: var(--primary); }
+.jh-footer-social-btn svg {
+    width: 16px; height: 16px; stroke: #9ca3af; fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+.jh-footer-social-btn:hover svg { stroke: #fff; }
+
+.jh-footer-col-title {
+    font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 16px;
+}
+.jh-footer-col a {
+    display: block; font-size: 13px; color: #9ca3af;
+    margin-bottom: 10px; transition: color .2s;
+}
+.jh-footer-col a:hover { color: #fff; }
+
+.jh-footer-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 0; font-size: 12px; color: #6b7280;
+    flex-wrap: wrap; gap: 8px;
+}
+.jh-footer-bottom-links { display: flex; gap: 20px; }
+.jh-footer-bottom-links a { font-size: 12px; color: #6b7280; transition: color .2s; }
+.jh-footer-bottom-links a:hover { color: #9ca3af; }
+.jh-footer-heart { color: #ef4444; }
+
+@media (max-width: 768px) {
+    .jh-footer-top { grid-template-columns: 1fr; gap: 32px; }
+    .jh-footer-bottom { flex-direction: column; align-items: flex-start; }
+}

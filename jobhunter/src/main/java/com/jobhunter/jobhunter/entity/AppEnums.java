@@ -6,7 +6,7 @@ public class AppEnums {
     public enum JobType { FULLTIME, PART_TIME, INTERN, REMOTE }
 
     // Tạo file ExperienceLevel.java
-    public enum ExperienceLevel { JUNIOR, SENIOR, MID }
+    public enum ExperienceLevel { JUNIOR, MID, SENIOR}
 
     // Tạo file ApplicationStatus.java
     public enum ApplicationStatus { PENDING, APPROVED, REJECTED }

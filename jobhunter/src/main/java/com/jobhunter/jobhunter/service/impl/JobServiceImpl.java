@@ -37,15 +37,18 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public Page<Job> filterJobs(String keyword, String location,
-                                AppEnums.JobType jobType,
-                                AppEnums.ExperienceLevel experienceLevel,
-                                Long skillId, int page, int size) {
+                                List<AppEnums.JobType> jobTypes,
+                                List<AppEnums.ExperienceLevel> experienceLevels,
+                                List<Long> skillIds,
+                                int page, int size) {
         String kw  = (keyword  != null && !keyword.isBlank())  ? keyword  : null;
         String loc = (location != null && !location.isBlank()) ? location : null;
+        List<AppEnums.JobType> jt  = (jobTypes != null && !jobTypes.isEmpty())          ? jobTypes          : null;
+        List<AppEnums.ExperienceLevel> el = (experienceLevels != null && !experienceLevels.isEmpty()) ? experienceLevels : null;
+        List<Long> sk = (skillIds != null && !skillIds.isEmpty())                       ? skillIds          : null;
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return jobRepository.filterActiveJobs(
-                LocalDateTime.now(), kw, loc, jobType, experienceLevel, skillId, pageable);
+        return jobRepository.filterActiveJobs(LocalDateTime.now(), kw, loc, jt, el, sk, pageable);
     }
 
     @Override

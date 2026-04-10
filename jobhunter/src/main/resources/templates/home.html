@@ -1,33 +1,295 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Home</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>JobHunter — Tìm việc IT hàng đầu</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}"/>
+    <link rel="stylesheet" th:href="@{/css/nav.css}"/>
+    <link rel="stylesheet" th:href="@{/css/footer.css}"/>
+    <link rel="stylesheet" th:href="@{/css/home.css}"/>
+    <link rel="stylesheet" th:href="@{/css/profile.css}"/>
 </head>
 <body>
+
+<!-- ════ NAV ════ -->
 <div th:replace="~{fragments/nav :: nav}"></div>
-<h2>Trang chủ</h2>
 
-<!-- Hiển thị khi đã đăng nhập -->
-<div sec:authorize="isAuthenticated()">
-    <p>Xin chào, <strong sec:authentication="name"></strong>!</p>
-    <p>Role: <span sec:authentication="authorities"></span></p>
+<!-- ════ HERO BANNER ════ -->
+<section class="hero">
+    <div class="hero-inner">
 
-    <!-- Logout button — POST request, CSRF token tự inject -->
-    <form th:action="@{/logout}" method="post">
-        <button type="submit">Đăng xuất</button>
-    </form>
-    <form th:action="@{/profile}" method="get">
-        <button type="submit">Cập nhật tài khoản</button>
-    </form>
-</div>
+        <!-- Left: text + search -->
+        <div>
+            <div class="hero-tag">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                #1 IT Job Platform in Vietnam
+            </div>
 
-<!-- Hiển thị khi chưa đăng nhập -->
-<div sec:authorize="isAnonymous()">
-    <a th:href="@{/login}">Đăng nhập</a> |
-    <a th:href="@{/register}">Đăng ký</a>
-</div>
+            <h1 class="hero-title">
+                Find Your Dream<br/>
+                <span>IT Job Today</span>
+            </h1>
 
+            <p class="hero-desc">
+                Connect with top tech companies and discover thousands of IT
+                opportunities. Start your career journey with the best job matching
+                platform for tech professionals.
+            </p>
+
+            <!-- Search box -->
+            <form class="hero-search" th:action="@{/jobs}" method="get">
+                <input type="text" name="keyword"
+                       placeholder="Search job title, keywords, or company..."/>
+                <button type="submit">Search</button>
+            </form>
+
+            <!-- Stats -->
+            <div class="hero-stats">
+                <div>
+                    <div class="hero-stat-num">10,000+</div>
+                    <div class="hero-stat-label">Active Jobs</div>
+                </div>
+                <div>
+                    <div class="hero-stat-num">5,000+</div>
+                    <div class="hero-stat-label">Companies</div>
+                </div>
+                <div>
+                    <div class="hero-stat-num">50,000+</div>
+                    <div class="hero-stat-label">Happy Users</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: image -->
+        <div class="hero-img">
+            <img src="https://images.unsplash.com/photo-1770777843445-2a1621b1201d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwyfHx0ZWNobm9sb2d5JTIwd29ya3NwYWNlJTIwdGVhbXxlbnwxfHx8fDE3NzUyODIwNDB8MA&ixlib=rb-4.1.0&q=80&w=1080"
+                 alt="IT workspace team"/>
+        </div>
+    </div>
+</section>
+
+<!-- ════ HOT JOBS ════ -->
+<section class="section">
+    <div class="section-head">
+        <div class="section-icon">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h2 class="section-title">Hot Jobs Right Now</h2>
+        <p class="section-sub">Discover the most popular IT positions from leading tech companies</p>
+    </div>
+
+    <!-- Có job -->
+    <div th:if="${trendingJobs != null and !#lists.isEmpty(trendingJobs)}" class="jobs-grid">
+        <div th:each="job : ${trendingJobs}" class="job-card">
+
+            <!-- Logo + bookmark -->
+            <div class="job-card-top">
+                <!-- Logo công ty -->
+                <div th:if="${job.company.imageUrl != null and !#strings.isEmpty(job.company.imageUrl)}"
+                     class="job-logo">
+                    <img th:src="${job.company.imageUrl}"
+                         th:alt="${job.company.nameCompany}"
+                         onerror="this.parentElement.style.display='none';this.parentElement.nextElementSibling.style.display='flex'"/>
+                </div>
+                <div th:if="${job.company.imageUrl == null or #strings.isEmpty(job.company.imageUrl)}"
+                     class="job-logo-placeholder"
+                     th:text="${#strings.substring(job.company.nameCompany, 0, 1)}">
+                </div>
+
+                <!-- Bookmark icon -->
+                <div class="job-bookmark">
+                    <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </div>
+            </div>
+
+            <!-- Job info -->
+            <div>
+                <div class="job-title" th:text="${job.title}">Job Title</div>
+                <div class="job-company" th:text="${job.company.nameCompany}">Company</div>
+            </div>
+
+            <!-- Meta -->
+            <div class="job-meta">
+                <div class="job-meta-item">
+                    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span th:text="${job.location}">Location</span>
+                </div>
+                <div class="job-meta-item">
+                    <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                    <span th:text="${job.jobType}">Full time</span>
+                </div>
+            </div>
+
+            <!-- Salary -->
+            <div class="job-salary">
+                <span th:text="${'$' + #numbers.formatInteger(job.minSalary / 1000, 0, 'COMMA') + ',000'}"></span>
+                —
+                <span th:text="${'$' + #numbers.formatInteger(job.maxSalary / 1000, 0, 'COMMA') + ',000'}"></span>
+            </div>
+
+            <!-- Apply button -->
+            <a th:href="@{/jobs/{id}(id=${job.id})}" class="job-card-btn">APPLY NOW</a>
+        </div>
+    </div>
+
+    <!-- Không có job -->
+    <div th:if="${trendingJobs == null or #lists.isEmpty(trendingJobs)}" class="no-data">
+        Chưa có dữ liệu việc làm. Hãy quay lại sau!
+    </div>
+
+    <!-- View all -->
+    <div class="jobs-more">
+        <a th:href="@{/jobs}" class="btn-primary" style="padding:12px 32px;font-size:15px;">
+            View All Jobs →
+        </a>
+    </div>
+</section>
+
+<!-- ════ TOP COMPANIES ════ -->
+<section class="section section-gray">
+    <div class="section-head">
+        <div class="section-icon">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h2 class="section-title">Top Companies Hiring</h2>
+        <p class="section-sub">Connect with industry-leading companies actively seeking IT talent</p>
+    </div>
+
+    <!-- Có company -->
+    <div th:if="${topCompanies != null and !#lists.isEmpty(topCompanies)}" class="companies-grid">
+        <div th:each="company : ${topCompanies}" class="company-card">
+
+            <!-- Logo -->
+            <div th:if="${company.imageUrl != null and !#strings.isEmpty(company.imageUrl)}"
+                 class="company-logo-wrap">
+                <img th:src="${company.imageUrl}"
+                     th:alt="${company.nameCompany}"
+                     onerror="this.parentElement.style.display='none'"/>
+            </div>
+            <div th:if="${company.imageUrl == null or #strings.isEmpty(company.imageUrl)}"
+                 class="company-logo-placeholder"
+                 th:text="${#strings.substring(company.nameCompany, 0, 1)}">
+            </div>
+
+            <!-- Name + location -->
+            <div class="company-name" th:text="${company.nameCompany}">Company</div>
+            <div class="company-location" th:text="${company.location}">Location</div>
+
+            <!-- Rating placeholder -->
+            <div class="company-rating">
+                <svg viewBox="0 0 24 24" width="12" height="12"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#d97706"/></svg>
+                4.5
+            </div>
+
+            <!-- Description -->
+            <div class="company-desc"
+                 th:text="${company.description != null ? company.description : 'Leading technology company.'}">
+            </div>
+
+            <!-- View company -->
+            <a th:href="@{/jobs(location=${company.location})}" class="company-card-btn">
+                View Company
+            </a>
+        </div>
+    </div>
+
+    <!-- Không có company -->
+    <div th:if="${topCompanies == null or #lists.isEmpty(topCompanies)}" class="no-data">
+        Chưa có dữ liệu công ty.
+    </div>
+
+    <div class="companies-more">
+        <a th:href="@{/jobs}" class="btn-outline" style="padding:12px 32px;font-size:15px;">
+            Explore All Companies →
+        </a>
+    </div>
+</section>
+
+<!-- ════ ABOUT ════ -->
+<section class="section" id="about">
+    <div class="about-inner">
+
+        <!-- Text -->
+        <div class="about-text">
+            <div class="section-icon" style="margin:0 0 20px;">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <h2>About JobHunter</h2>
+            <p>
+                <strong>JobHunter</strong> is Vietnam's premier platform for connecting IT professionals
+                with their ideal career opportunities. Founded in 2024, we've grown to become the most
+                trusted job search platform in the tech industry.
+            </p>
+            <p>
+                Our mission is to empower developers, designers, and tech professionals to find
+                meaningful work that matches their skills, passions, and career goals. We partner
+                with companies of all sizes, from innovative startups to Fortune 500 enterprises.
+            </p>
+            <p>
+                With advanced matching algorithms, personalized job recommendations, and
+                comprehensive company insights, we make job searching simple, efficient, and effective.
+            </p>
+
+            <!-- Stats -->
+            <div class="about-stats">
+                <div class="about-stat">
+                    <div class="about-stat-num">10K+</div>
+                    <div class="about-stat-label">Active Jobs</div>
+                </div>
+                <div class="about-stat">
+                    <div class="about-stat-num">5K+</div>
+                    <div class="about-stat-label">Companies</div>
+                </div>
+                <div class="about-stat">
+                    <div class="about-stat-num">50K+</div>
+                    <div class="about-stat-label">Users</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image -->
+        <div class="about-img-wrap">
+            <img src="https://images.unsplash.com/photo-1759844197486-5b3612c7d534?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwzfHx0ZWNobm9sb2d5JTIwd29ya3NwYWNlJTIwdGVhbXxlbnwxfHx8fDE3NzUyODIwNDB8MA&ixlib=rb-4.1.0&q=80&w=1080"
+                 alt="Team working"/>
+
+            <!-- Floating card -->
+            <div class="about-card-float">
+                <div class="about-card-float-avatar">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div>
+                    <div class="about-card-float-title">Python Developer</div>
+                    <div class="about-card-float-sub">Microsoft</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ════ CTA BANNER ════ -->
+<section class="cta">
+    <h2>Ready to Start Your IT Career Journey?</h2>
+    <p>
+        Join thousands of IT professionals who found their dream jobs.
+        Create your free account today and get matched with the perfect opportunities.
+    </p>
+    <div class="cta-btns">
+        <a th:href="@{/register}" class="cta-btn-white"
+           sec:authorize="isAnonymous()">Get Started Free</a>
+        <a th:href="@{/jobs}" class="cta-btn-white"
+           sec:authorize="isAuthenticated()">Browse Jobs Now</a>
+        <a th:href="@{/jobs}" class="cta-btn-outline">Learn More</a>
+    </div>
+</section>
+
+<!-- ════ FOOTER ════ -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/navbar.js}"></script>
 </body>
 </html>

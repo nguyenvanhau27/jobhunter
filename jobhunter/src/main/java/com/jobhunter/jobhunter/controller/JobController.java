@@ -10,7 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.List;
 
 @Controller
@@ -34,35 +37,36 @@ public class JobController {
     public String jobList(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String location,
-            @RequestParam(required = false) AppEnums.JobType jobType,
-            @RequestParam(required = false) AppEnums.ExperienceLevel experienceLevel,
-            @RequestParam(required = false) Long skillId,
+            @RequestParam(required = false) List<AppEnums.JobType> jobType,           // ← List
+            @RequestParam(required = false) List<AppEnums.ExperienceLevel> experienceLevel, // ← List
+            @RequestParam(required = false) List<Long> skillId,                        // ← List
             @RequestParam(defaultValue = "0") int page,
             Model model) {
 
         boolean hasFilter = (keyword != null && !keyword.isBlank())
                 || (location != null && !location.isBlank())
-                || jobType != null
-                || experienceLevel != null
-                || skillId != null;
+                || (jobType != null && !jobType.isEmpty())
+                || (experienceLevel != null && !experienceLevel.isEmpty())
+                || (skillId != null && !skillId.isEmpty());
 
         Page<Job> jobPage = hasFilter
                 ? jobService.filterJobs(keyword, location, jobType, experienceLevel, skillId, page, PAGE_SIZE)
                 : jobService.findOpenJobs(page, PAGE_SIZE);
 
-        // Filter dropdowns
-        List<Skill> allSkills = skillRepository.findAll();
-        // Trending + Top companies — chỉ load ở trang đầu, không filter
-        if (!hasFilter && page == 0) {
-            model.addAttribute("trendingJobs", jobService.findTrendingJobs(5));
-            model.addAttribute("topCompanies", companyService.findTopCompanies(6));
-        }
+        List<Skill> allSkills = skillRepository.findAllByOrderByCategoryAscNameAsc();
+        Map<String, List<Skill>> skillsByCategory = allSkills.stream()
+                .collect(Collectors.groupingBy(Skill::getCategory,
+                        java.util.LinkedHashMap::new, Collectors.toList()));
+        model.addAttribute("skillsByCategory", skillsByCategory);
+        model.addAttribute("allSkills", allSkills); // keep as fallback
+        model.addAttribute("jobTypes", AppEnums.JobType.values());
+        model.addAttribute("experienceLevels", AppEnums.ExperienceLevel.values());
 
         model.addAttribute("jobPage", jobPage);
         model.addAttribute("jobs", jobPage.getContent());
-        model.addAttribute("allSkills", allSkills);
-        model.addAttribute("jobTypes", AppEnums.JobType.values());
-        model.addAttribute("experienceLevels", AppEnums.ExperienceLevel.values());
+        model.addAttribute("selectedJobTypes", jobType);
+        model.addAttribute("selectedExperiences", experienceLevel);
+        model.addAttribute("selectedSkillIds", skillId);
 
         // Giữ lại filter đã chọn
         model.addAttribute("keyword", keyword);

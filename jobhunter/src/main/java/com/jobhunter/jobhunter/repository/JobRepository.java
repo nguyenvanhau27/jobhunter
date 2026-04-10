@@ -23,22 +23,33 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     Page<Job> findActiveJobs(@Param("now") LocalDateTime now, Pageable pageable);
 
     // UC8: Filter + chưa hết hạn
-    @Query("SELECT DISTINCT j FROM Job j " +
-            "LEFT JOIN j.skills s " +
-            "WHERE j.statusJob = 'OPEN' " +
-            "AND (j.expiredAt IS NULL OR j.expiredAt > :now) " +
-            "AND (:keyword IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
-            "AND (:location IS NULL OR LOWER(j.location) LIKE LOWER(CONCAT('%', :location, '%'))) " +
-            "AND (:jobType IS NULL OR j.jobType = :jobType) " +
-            "AND (:experienceLevel IS NULL OR j.experienceLevel = :experienceLevel) " +
-            "AND (:skillId IS NULL OR s.id = :skillId)")
+    @Query("""
+        SELECT DISTINCT j FROM Job j LEFT JOIN j.skills s
+        WHERE j.statusJob = 'OPEN'
+        AND (j.expiredAt IS NULL OR j.expiredAt > :now)
+        AND (
+            (:keyword IS NOT NULL AND LOWER(j.title) LIKE LOWER(CONCAT('%',:keyword,'%')))
+            OR (:location IS NOT NULL AND LOWER(j.location) LIKE LOWER(CONCAT('%',:location,'%')))
+            OR (:jobTypes IS NOT NULL AND j.jobType IN :jobTypes)
+            OR (:expLevels IS NOT NULL AND j.experienceLevel IN :expLevels)
+            OR (:skillIds IS NOT NULL AND s.id IN :skillIds)
+    
+            OR (
+                :keyword IS NULL 
+                AND :location IS NULL
+                AND :jobTypes IS NULL
+                AND :expLevels IS NULL
+                AND :skillIds IS NULL
+            )
+        )
+    """)
     Page<Job> filterActiveJobs(
             @Param("now") LocalDateTime now,
             @Param("keyword") String keyword,
             @Param("location") String location,
-            @Param("jobType") AppEnums.JobType jobType,
-            @Param("experienceLevel") AppEnums.ExperienceLevel experienceLevel,
-            @Param("skillId") Long skillId,
+            @Param("jobTypes") List<AppEnums.JobType> jobTypes,
+            @Param("expLevels") List<AppEnums.ExperienceLevel> expLevels,
+            @Param("skillIds") List<Long> skillIds,
             Pageable pageable);
 
     // ADMIN: xem tất cả job (kể cả hết hạn, CLOSED)

@@ -2,218 +2,385 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8">
-    <title th:text="#{job.list.title}">Job Listings</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Job Listings – ITJobHub</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}"/>
+    <link rel="stylesheet" th:href="@{/css/nav.css}"/>
+    <link rel="stylesheet" th:href="@{/css/footer.css}"/>
+    <link rel="stylesheet" th:href="@{/css/job-list.css}"/>
 </head>
 <body>
 
 <div th:replace="~{fragments/nav :: nav}"></div>
 
-<!-- ─── Language switcher ───────────────────────────────── -->
-<div style="text-align:right; margin-bottom:8px;">
-    <a th:href="@{/jobs(lang=vi)}">🇻🇳 Tiếng Việt</a>
-    &nbsp;|&nbsp;
-    <a th:href="@{/jobs(lang=en)}">🇬🇧 English</a>
-</div>
+<div class="jobs-page">
 
-<h2 th:text="#{job.list.title}">Job Listings</h2>
+    <!-- ══════════════════════════════════════════
+         TOP SEARCH BAR
+         ══════════════════════════════════════════ -->
+    <div class="search-hero">
+        <div class="container">
+            <form id="filterForm" th:action="@{/jobs}" method="get">
+                <!-- Hidden inputs for multi-select values (populated by JS on submit) -->
+                <div id="hiddenInputs"></div>
 
-<!-- ─── Form Filter ──────────────────────────────────────── -->
-<form th:action="@{/jobs}" method="get">
-    <input type="text" name="keyword"
-           th:value="${keyword}"
-           th:placeholder="#{job.list.keyword}"/>
-
-    <input type="text" name="location"
-           th:value="${location}"
-           th:placeholder="#{job.list.location}"/>
-
-    <select name="jobType">
-        <option value="" th:text="#{job.list.type}">-- Job Type --</option>
-        <option th:each="jt : ${jobTypes}"
-                th:value="${jt}" th:text="${jt}"
-                th:selected="${jt == selectedJobType}"></option>
-    </select>
-
-    <select name="experienceLevel">
-        <option value="" th:text="#{job.list.experience}">-- Experience --</option>
-        <option th:each="exp : ${experienceLevels}"
-                th:value="${exp}" th:text="${exp}"
-                th:selected="${exp == selectedExperience}"></option>
-    </select>
-
-    <select name="skillId">
-        <option value="" th:text="#{job.list.skill}">-- Skill --</option>
-        <option th:each="skill : ${allSkills}"
-                th:value="${skill.id}" th:text="${skill.name}"
-                th:selected="${skill.id == selectedSkillId}"></option>
-    </select>
-
-    <button type="submit" th:text="#{job.list.search}">Search</button>
-    <a th:href="@{/jobs}" th:text="#{job.list.reset}">Reset</a>
-</form>
-
-<hr/>
-
-<!-- ─── Trending Jobs (chỉ hiện trang đầu, không filter) ── -->
-<div th:if="${trendingJobs != null and !#lists.isEmpty(trendingJobs)}">
-    <h3 th:text="#{job.list.trending}">Trending Jobs</h3>
-    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px;">
-        <div th:each="job : ${trendingJobs}"
-             style="border:1px solid #e0e0e0; border-radius:8px;
-                    padding:12px; min-width:200px; max-width:220px;">
-
-            <!-- Company logo -->
-            <img th:if="${job.company.imageUrl != null}"
-                 th:src="${job.company.imageUrl}"
-                 th:alt="${job.company.nameCompany}"
-                 style="width:40px; height:40px; object-fit:contain;
-                        border-radius:4px; margin-bottom:6px;"
-                 onerror="this.style.display='none'"/>
-
-            <div style="font-weight:bold; font-size:14px;"
-                 th:text="${job.title}"></div>
-            <div style="color:gray; font-size:12px;"
-                 th:text="${job.company.nameCompany}"></div>
-            <div style="font-size:12px;" th:text="${job.location}"></div>
-            <a th:href="@{/jobs/{id}(id=${job.id})}"
-               style="font-size:12px; color:#0066cc;">
-                <span th:text="#{job.list.detail}">View Detail</span> →
-            </a>
+                <div class="search-bar">
+                    <div class="field">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
+                        </svg>
+                        <input type="text" name="keyword" th:value="${keyword}" placeholder="Job title, keyword…"/>
+                    </div>
+                    <div class="field">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M17.657 16.657L13.414 20.9a2 2 0 0 1-2.828 0l-4.243-4.243a8 8 0 1 1 11.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                        </svg>
+                        <input type="text" name="location" th:value="${location}" placeholder="City, province…"/>
+                    </div>
+                    <button type="button" class="btn-search" onclick="submitFilters()">Search</button>
+                    <a th:href="@{/jobs}" class="btn-outline">Reset</a>
+                </div>
+            </form>
         </div>
     </div>
-    <hr/>
-</div>
 
-<!-- ─── Top Companies (chỉ hiện trang đầu, không filter) ── -->
-<div th:if="${topCompanies != null and !#lists.isEmpty(topCompanies)}">
-    <h3 th:text="#{job.list.top.companies}">Top Companies</h3>
-    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px;">
-        <div th:each="company : ${topCompanies}"
-             style="border:1px solid #e0e0e0; border-radius:8px;
-                    padding:12px; text-align:center; min-width:120px;">
+    <div class="container">
 
-            <!-- Company logo -->
-            <img th:if="${company.imageUrl != null}"
-                 th:src="${company.imageUrl}"
-                 th:alt="${company.nameCompany}"
-                 style="width:60px; height:60px; object-fit:contain;
-                        border-radius:6px; margin-bottom:8px;"
-                 onerror="this.style.display='none'"/>
+        <!-- results meta bar -->
+        <div class="results-bar">
+            <p class="results-count">
+                Found <strong th:text="${jobPage.totalElements}">0</strong> jobs
+                &nbsp;—&nbsp; Page
+                <strong th:text="${currentPage + 1}">1</strong>
+                of <strong th:text="${jobPage.totalPages}">1</strong>
+            </p>
+        </div>
 
-            <!-- Placeholder nếu không có ảnh -->
-            <div th:unless="${company.imageUrl != null}"
-                 style="width:60px; height:60px; background:#f0f0f0;
-                        border-radius:6px; margin:0 auto 8px;
-                        display:flex; align-items:center; justify-content:center;
-                        font-size:20px; font-weight:bold; color:#999;">
-                <span th:text="${#strings.substring(company.nameCompany, 0, 1)}"></span>
-            </div>
+        <div class="jobs-layout">
 
-            <div style="font-size:13px; font-weight:bold;"
-                 th:text="${company.nameCompany}"></div>
-            <div style="font-size:11px; color:gray;"
-                 th:text="${company.location}"></div>
+            <!-- ╔══════════════════════════════════╗
+                 ║  SIDEBAR FILTERS                 ║
+                 ╚══════════════════════════════════╝ -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h3>Filters</h3>
+                    <a th:href="@{/jobs}" class="btn-reset">Clear all</a>
+                </div>
+
+                <!-- Active filter chips (rendered by JS) -->
+                <div class="active-filters" id="activeFilters"></div>
+
+                <!-- ─── Job Type ─────────────────── -->
+                <!--
+                    jobTypes = AppEnums.JobType.values()  (from model)
+                    Values:  FULLTIME | PART_TIME | INTERN | REMOTE
+                -->
+                <div class="filter-group" id="grp-jobType">
+                    <div class="filter-group-title" onclick="toggleGroup('grp-jobType')">
+                        <span>Job Type</span>
+                        <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none"
+                             viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                    <div class="filter-options">
+                        <label class="filter-option" th:each="jt : ${jobTypes}">
+                            <input type="checkbox"
+                                   class="cb-jobType"
+                                   th:value="${jt.name()}"
+                                   th:checked="${selectedJobTypes != null and #lists.contains(selectedJobTypes, jt)}"
+                                   onchange="syncFilters()"/>
+                            <span th:switch="${jt.name()}">
+                                <span th:case="'FULLTIME'">Full-time</span>
+                                <span th:case="'PART_TIME'">Part-time</span>
+                                <span th:case="'INTERN'">Internship</span>
+                                <span th:case="'REMOTE'">Remote</span>
+                                <span th:case="*" th:text="${jt.name()}"></span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- ─── Experience Level ──────────── -->
+                <!--
+                    experienceLevels = AppEnums.ExperienceLevel.values()
+                    Values:  JUNIOR | MID | SENIOR
+                -->
+                <div class="filter-group" id="grp-exp">
+                    <div class="filter-group-title" onclick="toggleGroup('grp-exp')">
+                        <span>Experience Level</span>
+                        <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none"
+                             viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                    <div class="filter-options">
+                        <label class="filter-option" th:each="exp : ${experienceLevels}">
+                            <input type="checkbox"
+                                   class="cb-exp"
+                                   th:value="${exp.name()}"
+                                   th:checked="${selectedExperiences != null and #lists.contains(selectedExperiences, exp)}"
+                                   onchange="syncFilters()"/>
+                            <span th:switch="${exp.name()}">
+                                <span th:case="'JUNIOR'">Junior (0–2 yrs)</span>
+                                <span th:case="'MID'">Mid-level (2–5 yrs)</span>
+                                <span th:case="'SENIOR'">Senior (5+ yrs)</span>
+                                <span th:case="*" th:text="${exp.name()}"></span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- ─── Skills grouped by category ─ -->
+                <!--
+                    Controller must add to model:
+                      Map<String, List<Skill>> skillsByCategory
+                    Example (in JobController):
+                      List<Skill> skills = skillRepository.findAllByOrderByCategoryAscNameAsc();
+                      Map<String, List<Skill>> grouped = skills.stream()
+                          .collect(Collectors.groupingBy(Skill::getCategory,
+                                   LinkedHashMap::new, Collectors.toList()));
+                      model.addAttribute("skillsByCategory", grouped);
+                -->
+                <th:block th:if="${skillsByCategory != null and !skillsByCategory.isEmpty()}">
+                    <div class="filter-group collapsed"
+                         th:each="entry : ${skillsByCategory}"
+                         th:id="${'grp-sk-' + entry.key}">
+                        <div class="filter-group-title"
+                             th:attr="data-target=${'grp-sk-' + entry.key}"
+                             onclick="toggleGroup(this.dataset.target)">
+                            <span th:text="${entry.key}">Category</span>
+                            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                 viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                        <div class="filter-options">
+                            <label class="filter-option" th:each="skill : ${entry.value}">
+                                <input type="checkbox"
+                                       class="cb-skill"
+                                       th:value="${skill.id}"
+                                       th:data-label="${skill.name}"
+                                       th:checked="${selectedSkillIds != null and #lists.contains(selectedSkillIds, skill.id)}"
+                                       onchange="syncFilters()"/>
+                                <span th:text="${skill.name}"></span>
+                            </label>
+                        </div>
+                    </div>
+                </th:block>
+
+                <!-- Fallback flat list when skillsByCategory not yet wired -->
+                <th:block th:unless="${skillsByCategory != null and !skillsByCategory.isEmpty()}">
+                    <div class="filter-group" id="grp-skills-flat"
+                         th:if="${allSkills != null and !#lists.isEmpty(allSkills)}">
+                        <div class="filter-group-title" onclick="toggleGroup('grp-skills-flat')">
+                            <span>Skills</span>
+                            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                 viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </div>
+                        <div class="filter-options">
+                            <label class="filter-option" th:each="skill : ${allSkills}">
+                                <input type="checkbox"
+                                       class="cb-skill"
+                                       th:value="${skill.id}"
+                                       th:data-label="${skill.name}"
+                                       th:checked="${selectedSkillIds != null and #lists.contains(selectedSkillIds, skill.id)}"
+                                       onchange="syncFilters()"/>
+                                <span th:text="${skill.name}"></span>
+                            </label>
+                        </div>
+                    </div>
+                </th:block>
+
+                <div class="sidebar-apply">
+                    <button type="button" class="btn-apply-filter" onclick="submitFilters()">
+                        Apply Filters
+                    </button>
+                </div>
+            </aside>
+
+            <!-- ╔══════════════════════════════════╗
+                 ║  MAIN CONTENT                    ║
+                 ╚══════════════════════════════════╝ -->
+            <main>
+
+                <!-- ── Job Cards ──────────────────── -->
+                <div th:if="${#lists.isEmpty(jobs)}" class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                              d="M9.172 16.172a4 4 0 0 1 5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/>
+                    </svg>
+                    <p>No jobs found matching your criteria.</p>
+                </div>
+
+                <div th:unless="${#lists.isEmpty(jobs)}" class="job-cards">
+                    <div class="job-card" th:each="job : ${jobs}">
+
+                        <img th:if="${job.company.imageUrl != null}"
+                             th:src="${job.company.imageUrl}"
+                             th:alt="${job.company.nameCompany}"
+                             class="jc-logo"
+                             onerror="this.style.display='none'"/>
+                        <div th:unless="${job.company.imageUrl != null}" class="jc-logo-placeholder">
+                            <span th:text="${#strings.substring(job.company.nameCompany,0,1)}"></span>
+                        </div>
+
+                        <div class="jc-body">
+                            <div class="jc-title">
+                                <a th:href="@{/jobs/{id}(id=${job.id})}" th:text="${job.title}">Job Title</a>
+                            </div>
+                            <div class="jc-company" th:text="${job.company.nameCompany}"></div>
+
+                            <div class="jc-meta">
+                                <span class="jc-meta-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M17.657 16.657L13.414 20.9a2 2 0 0 1-2.828 0l-4.243-4.243a8 8 0 1 1 11.314 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                                    </svg>
+                                    <span th:text="${job.location}"></span>
+                                </span>
+                                <span class="jc-meta-item" th:if="${job.expiredAt != null}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/>
+                                    </svg>
+                                    Expires <span th:text="${#temporals.format(job.expiredAt,'dd/MM/yyyy')}"></span>
+                                </span>
+                            </div>
+
+                            <div class="jc-tags">
+                                <span class="jc-tag type" th:switch="${job.jobType.name()}">
+                                    <span th:case="'FULLTIME'">Full-time</span>
+                                    <span th:case="'PART_TIME'">Part-time</span>
+                                    <span th:case="'INTERN'">Internship</span>
+                                    <span th:case="'REMOTE'">Remote</span>
+                                    <span th:case="*" th:text="${job.jobType}"></span>
+                                </span>
+                                <span class="jc-tag exp" th:switch="${job.experienceLevel.name()}">
+                                    <span th:case="'JUNIOR'">Junior</span>
+                                    <span th:case="'MID'">Mid-level</span>
+                                    <span th:case="'SENIOR'">Senior</span>
+                                    <span th:case="*" th:text="${job.experienceLevel}"></span>
+                                </span>
+                                <span class="jc-tag" th:each="skill : ${job.skills}"
+                                      th:text="${skill.name}"></span>
+                            </div>
+                        </div>
+
+                        <div class="jc-right">
+                            <div class="jc-salary">
+                                <span>Salary</span>
+                                <span th:text="${#numbers.formatInteger(job.minSalary,0,'COMMA')}
+                                             + ' – '
+                                             + ${#numbers.formatInteger(job.maxSalary,0,'COMMA')}
+                                             + ' VND'"></span>
+                            </div>
+                            <a th:href="@{/jobs/{id}(id=${job.id})}" class="btn-detail">View Detail</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Pagination ─────────────────── -->
+                <nav th:if="${jobPage.totalPages > 1}" class="pagination" aria-label="Pagination">
+                    <a th:if="${currentPage > 0}"
+                       th:href="@{/jobs(page=${currentPage - 1}, keyword=${keyword}, location=${location})}"
+                       class="page-btn">← Prev</a>
+                    <span th:unless="${currentPage > 0}" class="page-btn disabled">← Prev</span>
+
+                    <th:block th:each="i : ${#numbers.sequence(0, jobPage.totalPages - 1)}">
+                        <span th:if="${i == currentPage - 2 and i > 1}" class="page-ellipsis">…</span>
+                        <a th:if="${i == 0 or i == jobPage.totalPages-1
+                                    or (i >= currentPage-1 and i <= currentPage+1)}"
+                           th:href="@{/jobs(page=${i}, keyword=${keyword}, location=${location})}"
+                           th:text="${i + 1}"
+                           th:classappend="${i == currentPage} ? ' active'"
+                           class="page-btn"></a>
+                        <span th:if="${i == currentPage + 2 and i < jobPage.totalPages - 2}" class="page-ellipsis">…</span>
+                    </th:block>
+
+                    <a th:if="${currentPage < jobPage.totalPages - 1}"
+                       th:href="@{/jobs(page=${currentPage + 1}, keyword=${keyword}, location=${location})}"
+                       class="page-btn">Next →</a>
+                    <span th:unless="${currentPage < jobPage.totalPages - 1}"
+                          class="page-btn disabled">Next →</span>
+                </nav>
+
+            </main>
         </div>
     </div>
-    <hr/>
 </div>
 
-<!-- ─── Kết quả tìm kiếm ─────────────────────────────────── -->
-<p>
-    <span th:text="|#{job.list.found} ${jobPage.totalElements}|"></span>
-    — <span th:text="#{common.page}">Page</span>
-    <strong th:text="${currentPage + 1}"></strong>
-    <span th:text="#{common.of}">of</span>
-    <strong th:text="${jobPage.totalPages}"></strong>
-</p>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
-<div th:if="${#lists.isEmpty(jobs)}">
-    <p th:text="#{job.list.empty}">No jobs found.</p>
-</div>
+<!-- ══════════════════════════════════════════════
+     FILTER JS
+     ══════════════════════════════════════════════ -->
+<script>
+    const JOB_TYPE_LABELS = {
+        FULLTIME: 'Full-time', PART_TIME: 'Part-time',
+        INTERN: 'Internship', REMOTE: 'Remote'
+    };
+    const EXP_LABELS = {
+        JUNIOR: 'Junior', MID: 'Mid-level', SENIOR: 'Senior'
+    };
 
-<table th:unless="${#lists.isEmpty(jobs)}"
-       border="1" cellpadding="8" cellspacing="0">
-    <thead>
-    <tr>
-        <th>Logo</th>
-        <th th:text="#{job.list.company}">Company</th>
-        <th>Vị trí</th>
-        <th>Địa điểm</th>
-        <th th:text="#{job.list.salary}">Salary</th>
-        <th>Loại</th>
-        <th th:text="#{job.list.expires}">Expires</th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="job : ${jobs}">
+    function getLabel(cb) {
+        if (cb.classList.contains('cb-jobType')) return JOB_TYPE_LABELS[cb.value] || cb.value;
+        if (cb.classList.contains('cb-exp'))     return EXP_LABELS[cb.value]     || cb.value;
+        if (cb.classList.contains('cb-skill'))   return cb.dataset.label         || cb.value;
+        return cb.value;
+    }
 
-        <!-- Company logo nhỏ -->
-        <td style="text-align:center;">
-            <img th:if="${job.company.imageUrl != null}"
-                 th:src="${job.company.imageUrl}"
-                 th:alt="${job.company.nameCompany}"
-                 style="width:36px; height:36px; object-fit:contain; border-radius:4px;"
-                 onerror="this.style.display='none'"/>
-            <span th:unless="${job.company.imageUrl != null}"
-                  style="font-size:18px; color:#ccc;">🏢</span>
-        </td>
+    function toggleGroup(id) {
+        document.getElementById(id).classList.toggle('collapsed');
+    }
 
-        <td th:text="${job.company.nameCompany}"></td>
-        <td><strong th:text="${job.title}"></strong></td>
-        <td th:text="${job.location}"></td>
-        <td>
-            <span th:text="${#numbers.formatInteger(job.minSalary, 0, 'COMMA')}"></span>
-            —
-            <span th:text="${#numbers.formatInteger(job.maxSalary, 0, 'COMMA')}"></span>
-        </td>
-        <td th:text="${job.jobType}"></td>
-        <td>
-                <span th:if="${job.expiredAt != null}"
-                      th:text="${#temporals.format(job.expiredAt, 'dd/MM/yyyy')}">
-                </span>
-            <span th:unless="${job.expiredAt != null}"
-                  style="color:gray;">∞</span>
-        </td>
-        <td>
-            <a th:href="@{/jobs/{id}(id=${job.id})}"
-               th:text="#{job.list.detail}">View Detail</a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+    function syncFilters() {
+        const bar = document.getElementById('activeFilters');
+        bar.innerHTML = '';
+        document.querySelectorAll('.sidebar input[type=checkbox]:checked').forEach(cb => {
+            const chip = document.createElement('span');
+            chip.className = 'filter-chip';
+            chip.innerHTML = getLabel(cb) + '<button type="button" aria-label="Remove">×</button>';
+            chip.querySelector('button').addEventListener('click', () => {
+                cb.checked = false;
+                syncFilters();
+            });
+            bar.appendChild(chip);
+        });
+    }
 
-<!-- ─── Pagination ───────────────────────────────────────── -->
-<div th:if="${jobPage.totalPages > 1}" style="margin-top:16px;">
-    <a th:if="${currentPage > 0}"
-       th:href="@{/jobs(page=${currentPage - 1}, keyword=${keyword},
-                        location=${location}, jobType=${selectedJobType},
-                        experienceLevel=${selectedExperience},
-                        skillId=${selectedSkillId})}"
-       th:text="#{common.prev}">Previous</a>
-    <span th:unless="${currentPage > 0}" style="color:gray;"
-          th:text="#{common.prev}">Previous</span>
-    &nbsp;
-    <span th:each="i : ${#numbers.sequence(0, jobPage.totalPages - 1)}">
-        <a th:if="${i != currentPage}"
-           th:href="@{/jobs(page=${i}, keyword=${keyword},
-                            location=${location}, jobType=${selectedJobType},
-                            experienceLevel=${selectedExperience},
-                            skillId=${selectedSkillId})}"
-           th:text="${i + 1}"></a>
-        <strong th:if="${i == currentPage}" th:text="${i + 1}"></strong>
-        &nbsp;
-    </span>
-    <a th:if="${currentPage < jobPage.totalPages - 1}"
-       th:href="@{/jobs(page=${currentPage + 1}, keyword=${keyword},
-                        location=${location}, jobType=${selectedJobType},
-                        experienceLevel=${selectedExperience},
-                        skillId=${selectedSkillId})}"
-       th:text="#{common.next}">Next</a>
-    <span th:unless="${currentPage < jobPage.totalPages - 1}"
-          style="color:gray;" th:text="#{common.next}">Next</span>
-</div>
+    function submitFilters() {
+        const form   = document.getElementById('filterForm');
+        const hidden = document.getElementById('hiddenInputs');
+        hidden.innerHTML = '';
+        document.querySelectorAll('.sidebar input[type=checkbox]:checked').forEach(cb => {
+            const inp   = document.createElement('input');
+            inp.type    = 'hidden';
+            inp.name    = cb.classList.contains('cb-jobType') ? 'jobType'
+                : cb.classList.contains('cb-exp')     ? 'experienceLevel'
+                    : 'skillId';
+            inp.value   = cb.value;
+            hidden.appendChild(inp);
+        });
+        form.submit();
+    }
+
+    document.querySelectorAll('.search-bar input').forEach(el => {
+        el.addEventListener('keydown', e => { if (e.key === 'Enter') submitFilters(); });
+    });
+
+    syncFilters(); // restore chips from server-rendered checked state
+</script>
 
 </body>
 </html>

@@ -1,67 +1,159 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Ứng tuyển</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="'Ứng tuyển: ' + ${job.title} + ' — JobHunter'">Ứng tuyển</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}"/>
+    <link rel="stylesheet" th:href="@{/css/nav.css}"/>
+    <link rel="stylesheet" th:href="@{/css/footer.css}"/>
+    <link rel="stylesheet" th:href="@{/css/apply.css}"/>
 </head>
 <body>
-
 <div th:replace="~{fragments/nav :: nav}"></div>
 
-<h2>Ứng tuyển: <span th:text="${job.title}"></span></h2>
+<div class="ap-page">
+    <div class="ap-wrap">
 
-<table border="0" cellpadding="6">
-    <tr>
-        <td><strong>Công ty:</strong></td>
-        <td th:text="${job.company.nameCompany}"></td>
-    </tr>
-    <tr>
-        <td><strong>Địa điểm:</strong></td>
-        <td th:text="${job.location}"></td>
-    </tr>
-    <tr>
-        <td><strong>Hết hạn:</strong></td>
-        <td th:text="${job.expiredAt != null} ? ${#temporals.format(job.expiredAt, 'dd/MM/yyyy HH:mm')} : 'Không giới hạn'"></td>
-    </tr>
-</table>
+        <div class="ap-page-head">
+            <h1 class="ap-page-title" th:text="'Ứng tuyển: ' + ${job.title}"></h1>
+            <p class="ap-page-sub">Hoàn thành form bên dưới để nộp đơn ứng tuyển</p>
+        </div>
 
-<hr/>
+        <div th:if="${errorMessage}" class="ap-error">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span th:text="${errorMessage}"></span>
+        </div>
 
-<div th:if="${errorMessage}" style="color:red; font-weight:bold;">
-    <p th:text="${errorMessage}"></p>
+        <!-- Job info -->
+        <div class="ap-job-card">
+            <div class="ap-job-card-title">Thông tin công việc</div>
+            <div class="ap-job-meta">
+                <div class="ap-job-meta-item">
+                    <div class="ap-job-meta-key">Công ty</div>
+                    <div class="ap-job-meta-val" th:text="${job.company.nameCompany}"></div>
+                </div>
+                <div class="ap-job-meta-item">
+                    <div class="ap-job-meta-key">Địa điểm</div>
+                    <div class="ap-job-meta-val" th:text="${job.location}"></div>
+                </div>
+                <div class="ap-job-meta-item">
+                    <div class="ap-job-meta-key">Hạn nộp</div>
+                    <div class="ap-job-meta-val"
+                         th:text="${job.expiredAt != null ? #temporals.format(job.expiredAt, 'dd/MM/yyyy HH:mm') : 'Không giới hạn'}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form card -->
+        <div class="ap-form-card">
+            <form th:action="@{/jobs/{id}/apply(id=${job.id})}"
+                  method="post" enctype="multipart/form-data" id="applyForm">
+
+                <!-- CV Upload -->
+                <div>
+                    <div class="ap-upload-label">
+                        Upload CV (PDF, tối đa 5MB) <span class="ap-upload-required">*</span>
+                    </div>
+                    <div class="ap-dropzone" id="dropzone"
+                         ondragover="apDragover(event)"
+                         ondragleave="apDragleave(event)"
+                         ondrop="apDrop(event)">
+                        <input type="file" name="cvFile" id="cvFile" accept=".pdf" required
+                               onchange="apFileSelected(this)"/>
+                        <div class="ap-upload-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                        </div>
+                        <div class="ap-drop-text">Kéo và thả file PDF vào đây</div>
+                        <div class="ap-drop-or">hoặc</div>
+                        <div class="ap-choose-btn">Chọn file</div>
+                        <div class="ap-drop-hint">Chỉ chấp nhận file PDF, tối đa 5MB</div>
+                    </div>
+                    <div class="ap-file-selected" id="fileSelected">
+                        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        <span class="ap-file-name" id="fileName"></span>
+                        <button type="button" class="ap-file-remove" onclick="apRemoveFile()">×</button>
+                    </div>
+                </div>
+
+                <!-- Cover Letter -->
+                <div class="ap-cl-group">
+                    <div class="ap-cl-label">
+                        Cover Letter <span class="ap-upload-required">*</span>
+                    </div>
+                    <textarea class="ap-cl-textarea" name="coverLetter" id="coverLetter"
+                              rows="6" maxlength="2000" required
+                              oninput="apCountChars(this)"
+                              placeholder="Giới thiệu về bản thân, kinh nghiệm làm việc và lý do bạn phù hợp với vị trí này..."></textarea>
+                    <div class="ap-cl-counter"><span id="charCount">0</span> ký tự</div>
+                </div>
+
+                <div class="ap-actions">
+                    <a th:href="@{/jobs/{id}(id=${job.id})}" class="ap-btn-cancel">Huỷ</a>
+                    <button type="submit" class="ap-btn-submit" id="submitBtn">
+                        <svg viewBox="0 0 24 24">
+                            <line x1="22" y1="2" x2="11" y2="13"/>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                        Nộp đơn
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <div class="ap-cta">
+        <h2>Ready to Start Your IT Career Journey?</h2>
+        <p>Join thousands of IT professionals who found their dream jobs. Create your free account today and get matched with the perfect opportunities.</p>
+        <div class="ap-cta-btns">
+            <a th:href="@{/jobs}" class="ap-cta-white">Get Started Free</a>
+            <a th:href="@{/jobs}" class="ap-cta-outline">Learn More</a>
+        </div>
+    </div>
 </div>
 
-<!-- enctype="multipart/form-data" bắt buộc khi upload file -->
-<form th:action="@{/jobs/{id}/apply(id=${job.id})}"
-      method="post"
-      enctype="multipart/form-data">
+<div th:replace="~{fragments/footer :: footer}"></div>
 
-    <div>
-        <label>Upload CV (PDF, tối đa 5MB):</label><br/>
-        <input type="file"
-               name="cvFile"
-               accept=".pdf"
-               required/>
-        <br/>
-        <small style="color:gray;">Chỉ chấp nhận file PDF, tối đa 5MB</small>
-    </div>
-
-    <br/>
-
-    <div>
-        <label>Cover Letter:</label><br/>
-        <textarea name="coverLetter"
-                  rows="6"
-                  cols="60"
-                  placeholder="Giới thiệu bản thân và lý do bạn phù hợp với vị trí này...">
-        </textarea>
-    </div>
-
-    <br/>
-    <button type="submit">Nộp đơn</button>
-    <a th:href="@{/jobs/{id}(id=${job.id})}">Huỷ</a>
-
-</form>
-
+<script>
+    function apDragover(e) { e.preventDefault(); document.getElementById('dropzone').classList.add('dragover'); }
+    function apDragleave()  { document.getElementById('dropzone').classList.remove('dragover'); }
+    function apDrop(e) {
+        e.preventDefault();
+        document.getElementById('dropzone').classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        if (file) apHandleFile(file);
+    }
+    function apFileSelected(input) { if (input.files[0]) apHandleFile(input.files[0]); }
+    function apHandleFile(file) {
+        if (!file.name.toLowerCase().endsWith('.pdf')) { alert('Chỉ chấp nhận file PDF!'); return; }
+        if (file.size > 5 * 1024 * 1024) { alert('File vượt quá 5MB!'); return; }
+        const dt = new DataTransfer(); dt.items.add(file);
+        document.getElementById('cvFile').files = dt.files;
+        document.getElementById('fileName').textContent = file.name;
+        document.getElementById('fileSelected').classList.add('show');
+        document.getElementById('dropzone').style.opacity = '.6';
+    }
+    function apRemoveFile() {
+        document.getElementById('cvFile').value = '';
+        document.getElementById('fileSelected').classList.remove('show');
+        document.getElementById('dropzone').style.opacity = '1';
+    }
+    function apCountChars(el) { document.getElementById('charCount').textContent = el.value.length; }
+    document.getElementById('applyForm').addEventListener('submit', function(e) {
+        if (!document.getElementById('cvFile').files[0]) {
+            e.preventDefault(); alert('Vui lòng chọn file CV!'); return;
+        }
+        const btn = document.getElementById('submitBtn');
+        btn.innerHTML = 'Đang nộp...'; btn.disabled = true;
+    });
+</script>
 </body>
 </html>

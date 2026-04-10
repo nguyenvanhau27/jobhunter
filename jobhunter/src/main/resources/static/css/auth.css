@@ -1,0 +1,321 @@
+/* auth.css — Login, Register, Forgot/Reset password
+   Depends on: variables.css
+*/
+
+/* ── Page background ── */
+.auth-page {
+    min-height: 100vh;
+    background: #f0f2f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px var(--px);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Code pattern decoration — 2 corners */
+.auth-page::before,
+.auth-page::after {
+    content: '</>';
+    position: absolute;
+    font-size: 180px;
+    font-weight: 800;
+    color: rgba(37,99,235,.06);
+    font-family: monospace;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+}
+.auth-page::before { bottom: -20px; left: -20px; }
+.auth-page::after  { top: -20px;    right: -20px; transform: rotate(180deg); }
+
+/* ── Card ── */
+.auth-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.08);
+    padding: 40px 40px 36px;
+    width: 100%;
+    max-width: 440px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Logo / icon top ── */
+.auth-logo {
+    width: 56px;
+    height: 56px;
+    background: var(--primary);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -1px;
+}
+
+/* ── Title ── */
+.auth-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-dark);
+    text-align: center;
+    margin-bottom: 6px;
+}
+.auth-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+/* ── Flash messages ── */
+.auth-success {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.auth-error {
+    background: #fef2f2;
+    color: var(--danger);
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.auth-success svg, .auth-error svg {
+    width: 16px; height: 16px; flex-shrink: 0;
+    fill: none; stroke: currentColor;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+
+/* ── Form group ── */
+.auth-group { margin-bottom: 18px; }
+.auth-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 7px;
+}
+
+/* ── Input wrapper (icon + input) ── */
+.auth-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.auth-input-icon {
+    position: absolute;
+    left: 14px;
+    width: 17px;
+    height: 17px;
+    stroke: #9ca3af;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+    flex-shrink: 0;
+}
+.auth-input {
+    width: 100%;
+    background: #f3f4f6;
+    border: 1.5px solid transparent;
+    border-radius: 10px;
+    padding: 12px 14px 12px 42px;
+    font-size: 15px;
+    color: var(--text-dark);
+    font-family: var(--font);
+    outline: none;
+    transition: border-color .2s, background .2s;
+}
+.auth-input::placeholder { color: #9ca3af; }
+.auth-input:focus {
+    background: #fff;
+    border-color: var(--primary);
+}
+.auth-input.has-error { border-color: var(--danger); background: #fff; }
+
+/* password toggle eye */
+.auth-eye {
+    position: absolute;
+    right: 14px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+}
+.auth-eye svg {
+    width: 17px; height: 17px;
+    stroke: #9ca3af; fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    transition: stroke .2s;
+}
+.auth-eye:hover svg { stroke: var(--primary); }
+
+/* field error */
+.auth-field-error {
+    font-size: 12px;
+    color: var(--danger);
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ── Forgot password link ── */
+.auth-forgot {
+    display: block;
+    text-align: right;
+    font-size: 13px;
+    color: var(--primary);
+    margin-top: -10px;
+    margin-bottom: 18px;
+    transition: opacity .2s;
+}
+.auth-forgot:hover { opacity: .75; }
+
+/* ── Checkbox ── */
+.auth-checkbox-wrap {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.auth-checkbox-wrap input[type="checkbox"] {
+    width: 17px; height: 17px;
+    accent-color: var(--primary);
+    margin-top: 2px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+.auth-checkbox-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+.auth-checkbox-label a { color: var(--primary); }
+
+/* ── Submit button ── */
+.auth-btn {
+    width: 100%;
+    background: var(--primary);
+    color: #fff;
+    padding: 13px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background .2s;
+    font-family: var(--font);
+    margin-bottom: 20px;
+}
+.auth-btn:hover { background: var(--primary-dark); }
+.auth-btn:active { transform: scale(.99); }
+
+/* ── Divider ── */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+}
+.auth-divider span { font-size: 13px; color: var(--text-muted); white-space: nowrap; }
+
+/* ── Google button ── */
+.auth-google {
+    width: 100%;
+    background: #fff;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: border-color .2s, background .2s;
+    font-family: var(--font);
+    margin-bottom: 24px;
+}
+.auth-google:hover { border-color: var(--primary); background: var(--primary-light); }
+
+/* Google G icon */
+.google-g {
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+}
+
+/* ── Bottom link ── */
+.auth-bottom {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+.auth-bottom a { color: var(--primary); font-weight: 500; }
+.auth-bottom a:hover { text-decoration: underline; }
+
+/* ── Copyright ── */
+.auth-copyright {
+    margin-top: 24px;
+    font-size: 13px;
+    color: #9ca3af;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Pre-fill email note ── */
+.auth-prefill-note {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #1d4ed8;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.auth-prefill-note svg {
+    width: 15px; height: 15px; flex-shrink: 0;
+    stroke: currentColor; fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+
+@media (max-width: 480px) {
+    .auth-card { padding: 32px 24px 28px; border-radius: 16px; }
+    .auth-title { font-size: 22px; }
+    .auth-page::before, .auth-page::after { font-size: 120px; }
+}

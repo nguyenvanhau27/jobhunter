@@ -5,6 +5,7 @@ import com.jobhunter.jobhunter.entity.User;
 import com.jobhunter.jobhunter.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,20 +26,28 @@ public class AdminUserController {
     // ─── GET /admin/users ────────────────────────────────────────
     @GetMapping
     public String list(
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "0")  int page,
+            @RequestParam(required = false)    String keyword,   // ← thêm
             Model model) {
 
-        Page<User> userPage = userRepository.findAll(
-                PageRequest.of(page, PAGE_SIZE, Sort.by("createdAt").descending()));
+        Pageable pageable = PageRequest.of(page, PAGE_SIZE,
+                Sort.by("createdAt").descending());
 
-        model.addAttribute("userPage", userPage);
-        model.addAttribute("users", userPage.getContent());
+        // Nếu có keyword → dùng search query, không thì lấy tất cả
+        String kw = (keyword != null && !keyword.isBlank()) ? keyword.trim() : null;
+
+        Page<User> userPage = (kw != null)
+                ? userRepository.searchUsers(kw, pageable)
+                : userRepository.findAll(pageable);
+
+        model.addAttribute("userPage",    userPage);
+        model.addAttribute("users",       userPage.getContent());
         model.addAttribute("currentPage", page);
+        model.addAttribute("keyword",     keyword);  // ← trả về để giữ giá trị input
         return "admin/user/list";
     }
 
     // ─── POST /admin/users/{id}/toggle-status ────────────────────
-    // Khoá / mở tài khoản
     @PostMapping("/{id}/toggle-status")
     public String toggleStatus(
             @PathVariable Long id,

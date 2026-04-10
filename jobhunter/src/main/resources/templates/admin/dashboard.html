@@ -1,117 +1,299 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Dashboard – ITJobHub Admin</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}"/>
 </head>
-<body>
+<body class="admin-body">
 
-<div th:replace="~{fragments/nav :: nav}"></div>
+<div class="admin-shell">
 
-<h2>Dashboard</h2>
-<p style="color:gray;">
-    Cập nhật lúc: <span th:text="${#temporals.format(now, 'dd/MM/yyyy HH:mm')}"></span>
-</p>
-<hr/>
+    <!-- ╔═══════════════════════════════╗
+         ║  SIDEBAR                     ║
+         ╚═══════════════════════════════╝ -->
+    <aside class="admin-sidebar" id="adminSidebar">
 
-<!-- ─── Thống kê tổng quan ───────────────────────────────── -->
-<table border="0" cellpadding="12" cellspacing="0">
-    <tr>
-        <!-- Job -->
-        <td style="border:1px solid #ccc; padding:16px; min-width:150px;">
-            <div style="font-size:12px; color:gray;">TỔNG JOB</div>
-            <div style="font-size:28px; font-weight:bold;"
-                 th:text="${totalJobs}"></div>
-            <div style="margin-top:6px;">
-                <span style="color:green;">OPEN: <strong th:text="${openJobs}"></strong></span>
-                &nbsp;|&nbsp;
-                <span style="color:red;">CLOSED: <strong th:text="${closedJobs}"></strong></span>
+        <!-- Brand -->
+        <div class="admin-sidebar-brand">
+            <div class="admin-sidebar-brand-icon">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
             </div>
-            <a th:href="@{/admin/jobs}" style="font-size:12px;">→ Quản lý Job</a>
-        </td>
-
-        <!-- Application -->
-        <td style="border:1px solid #ccc; padding:16px; min-width:150px;">
-            <div style="font-size:12px; color:gray;">TỔNG ĐƠN ỨNG TUYỂN</div>
-            <div style="font-size:28px; font-weight:bold;"
-                 th:text="${totalApplications}"></div>
-            <div style="margin-top:6px;">
-                <span style="color:orange;">Chờ: <strong th:text="${pendingApplications}"></strong></span>
-                &nbsp;|&nbsp;
-                <span style="color:green;">Duyệt: <strong th:text="${approvedApplications}"></strong></span>
-                &nbsp;|&nbsp;
-                <span style="color:red;">Từ chối: <strong th:text="${rejectedApplications}"></strong></span>
+            <div class="admin-sidebar-brand-text">
+                <div class="admin-sidebar-brand-name">Admin Panel</div>
+                <div class="admin-sidebar-brand-sub">ITJobHub</div>
             </div>
-        </td>
+        </div>
 
-        <!-- User -->
-        <td style="border:1px solid #ccc; padding:16px; min-width:150px;">
-            <div style="font-size:12px; color:gray;">TỔNG USER</div>
-            <div style="font-size:28px; font-weight:bold;"
-                 th:text="${totalUsers}"></div>
-            <div style="margin-top:6px;">
-                <span style="color:green;">Active: <strong th:text="${activeUsers}"></strong></span>
-                &nbsp;|&nbsp;
-                <span style="color:red;">Khoá: <strong
-                        th:text="${totalUsers - activeUsers}"></strong></span>
-            </div>
-            <a th:href="@{/admin/users}" style="font-size:12px;">→ Quản lý User</a>
-        </td>
+        <!-- Nav -->
+        <nav class="admin-sidebar-nav">
+            <div class="admin-sidebar-section-label">Main</div>
 
-        <!-- Company -->
-        <td style="border:1px solid #ccc; padding:16px; min-width:150px;">
-            <div style="font-size:12px; color:gray;">TỔNG CÔNG TY</div>
-            <div style="font-size:28px; font-weight:bold;"
-                 th:text="${totalCompanies}"></div>
-            <a th:href="@{/admin/companies}" style="font-size:12px;">→ Quản lý Công ty</a>
-        </td>
-    </tr>
-</table>
-
-<hr/>
-
-<!-- ─── 10 đơn ứng tuyển mới nhất ───────────────────────── -->
-<h3>Đơn ứng tuyển mới nhất</h3>
-
-<div th:if="${#lists.isEmpty(recentApplications)}">
-    <p style="color:gray;">Chưa có đơn ứng tuyển nào.</p>
-</div>
-
-<table th:unless="${#lists.isEmpty(recentApplications)}"
-       border="1" cellpadding="8" cellspacing="0">
-    <thead>
-    <tr>
-        <th>Ứng viên</th>
-        <th>Email</th>
-        <th>Vị trí</th>
-        <th>Công ty</th>
-        <th>Ngày nộp</th>
-        <th>Trạng thái</th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="app : ${recentApplications}">
-        <td th:text="${app.user.fullName}"></td>
-        <td th:text="${app.user.email}"></td>
-        <td th:text="${app.job.title}"></td>
-        <td th:text="${app.job.company.nameCompany}"></td>
-        <td th:text="${#temporals.format(app.appliedAt, 'dd/MM/yyyy HH:mm')}"></td>
-        <td>
-                <span th:text="${app.status}"
-                      th:style="${app.status.toString() == 'APPROVED'} ? 'color:green; font-weight:bold'
-                               : (${app.status.toString() == 'REJECTED'} ? 'color:red'
-                               : 'color:orange')">
-                </span>
-        </td>
-        <td>
-            <a th:href="@{/admin/jobs/{jobId}/applications(jobId=${app.job.id})}">
-                Xem đơn
+            <a th:href="@{/admin/dashboard}" class="admin-nav-item active">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                Dashboard
             </a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+
+            <div class="admin-sidebar-section-label" style="margin-top:8px;">Management</div>
+
+            <a th:href="@{/admin/jobs}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Quản lý Job
+            </a>
+
+            <a th:href="@{/admin/users}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Quản lý User
+            </a>
+
+            <a th:href="@{/admin/companies}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Quản lý Công ty
+            </a>
+
+            <a th:href="@{/admin/skills}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Quản lý Kỹ năng
+            </a>
+
+            <div class="admin-sidebar-section-label" style="margin-top:8px;">System</div>
+
+            <a th:href="@{/admin/settings}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                Cài đặt hệ thống
+            </a>
+        </nav>
+
+        <!-- Footer -->
+        <div class="admin-sidebar-footer">
+            <div class="admin-sidebar-collapse" id="sidebarCollapseBtn">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                <span>Thu gọn</span>
+            </div>
+        </div>
+    </aside>
+    <!-- /sidebar -->
+
+    <!-- ╔═══════════════════════════════╗
+         ║  MAIN AREA                   ║
+         ╚═══════════════════════════════╝ -->
+    <div class="admin-main">
+
+        <!-- Top bar -->
+        <header class="admin-topbar">
+            <div class="admin-breadcrumb">
+                <a th:href="@{/}">Home</a>
+                <span class="sep">›</span>
+                <span class="current">Dashboard</span>
+            </div>
+            <div class="admin-topbar-right">
+                <div class="admin-topbar-time">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    <span>Cập nhật lúc:&nbsp;</span>
+                    <span th:text="${#temporals.format(now, 'HH:mm dd/MM/yyyy')}">00:00</span>
+                </div>
+                <div class="admin-topbar-avatar">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page content -->
+        <main class="admin-content">
+
+            <!-- Page header -->
+            <div class="admin-page-header">
+                <div>
+                    <h1 class="admin-page-title">Dashboard</h1>
+                    <p class="admin-page-subtitle">Tổng quan hệ thống tuyển dụng IT</p>
+                </div>
+                <div class="admin-page-actions">
+                    <a th:href="@{/admin/jobs/new}" class="btn-admin-primary">
+                        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Đăng Job mới
+                    </a>
+                </div>
+            </div>
+
+            <!-- ── Stat cards ──────────────────── -->
+            <div class="stat-grid">
+
+                <!-- Jobs -->
+                <div class="stat-card blue">
+                    <div class="stat-card-header">
+                        <div class="stat-card-label">Tổng Job</div>
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" th:text="${totalJobs}">0</div>
+                    <div class="stat-card-meta">
+                        <span class="stat-badge open">
+                            OPEN: <span th:text="${openJobs}">0</span>
+                        </span>
+                        <span class="stat-badge closed">
+                            CLOSED: <span th:text="${closedJobs}">0</span>
+                        </span>
+                    </div>
+                    <a th:href="@{/admin/jobs}" class="stat-card-link">
+                        Quản lý Job
+                        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                </div>
+
+                <!-- Applications -->
+                <div class="stat-card orange">
+                    <div class="stat-card-header">
+                        <div class="stat-card-label">Tổng Đơn Ứng Tuyển</div>
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" th:text="${totalApplications}">0</div>
+                    <div class="stat-card-meta">
+                        <span class="stat-badge pending">
+                            Chờ: <span th:text="${pendingApplications}">0</span>
+                        </span>
+                        <span class="stat-badge approved">
+                            Duyệt: <span th:text="${approvedApplications}">0</span>
+                        </span>
+                        <span class="stat-badge rejected">
+                            Từ chối: <span th:text="${rejectedApplications}">0</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Users -->
+                <div class="stat-card green">
+                    <div class="stat-card-header">
+                        <div class="stat-card-label">Tổng User</div>
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" th:text="${totalUsers}">0</div>
+                    <div class="stat-card-meta">
+                        <span class="stat-badge active">
+                            Active: <span th:text="${activeUsers}">0</span>
+                        </span>
+                        <span class="stat-badge locked">
+                            Khoá: <span th:text="${totalUsers - activeUsers}">0</span>
+                        </span>
+                    </div>
+                    <a th:href="@{/admin/users}" class="stat-card-link">
+                        Quản lý User
+                        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                </div>
+
+                <!-- Companies -->
+                <div class="stat-card purple">
+                    <div class="stat-card-header">
+                        <div class="stat-card-label">Tổng Công ty</div>
+                        <div class="stat-card-icon">
+                            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        </div>
+                    </div>
+                    <div class="stat-card-value" th:text="${totalCompanies}">0</div>
+                    <div class="stat-card-meta">&nbsp;</div>
+                    <a th:href="@{/admin/companies}" class="stat-card-link">
+                        Quản lý Công ty
+                        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                </div>
+
+            </div>
+            <!-- /stat-grid -->
+
+            <!-- ── Recent Applications ──────────── -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <div>
+                        <div class="admin-card-title">Đơn ứng tuyển mới nhất</div>
+                        <div class="admin-card-subtitle">10 đơn gần nhất theo thời gian nộp</div>
+                    </div>
+                    <a th:href="@{/admin/applications}" class="admin-card-action">Xem tất cả →</a>
+                </div>
+
+                <!-- Empty -->
+                <div th:if="${#lists.isEmpty(recentApplications)}" class="admin-empty">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <p>Chưa có đơn ứng tuyển nào.</p>
+                </div>
+
+                <!-- Table -->
+                <table th:unless="${#lists.isEmpty(recentApplications)}" class="admin-table">
+                    <thead>
+                    <tr>
+                        <th>Ứng viên</th>
+                        <th>Email</th>
+                        <th>Vị trí</th>
+                        <th>Công ty</th>
+                        <th>Ngày nộp</th>
+                        <th>Trạng thái</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="app : ${recentApplications}">
+                        <td class="td-name" th:text="${app.user.fullName}"></td>
+                        <td class="td-email" th:text="${app.user.email}"></td>
+                        <td class="td-position" th:text="${app.job.title}"></td>
+                        <td class="td-company" th:text="${app.job.company.nameCompany}"></td>
+                        <td th:text="${#temporals.format(app.appliedAt, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td>
+                            <!-- PENDING -->
+                            <span th:if="${app.status.toString() == 'PENDING'}"
+                                  class="status-badge pending">Chờ</span>
+                            <!-- APPROVED -->
+                            <span th:if="${app.status.toString() == 'APPROVED'}"
+                                  class="status-badge approved">Duyệt</span>
+                            <!-- REJECTED -->
+                            <span th:if="${app.status.toString() == 'REJECTED'}"
+                                  class="status-badge rejected">Từ chối</span>
+                        </td>
+                        <td>
+                            <a th:href="@{/admin/jobs/{jobId}/applications(jobId=${app.job.id})}"
+                               class="btn-view">
+                                Xem đơn
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /admin-card -->
+
+        </main>
+    </div>
+    <!-- /admin-main -->
+
+</div>
+<!-- /admin-shell -->
+
+<script>
+    // Mobile sidebar toggle
+    const sidebar  = document.getElementById('adminSidebar');
+    const collapseBtn = document.getElementById('sidebarCollapseBtn');
+
+    collapseBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('open');
+    });
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener('click', e => {
+        if (window.innerWidth <= 768 &&
+            !sidebar.contains(e.target)) {
+            sidebar.classList.remove('open');
+        }
+    });
+</script>
 
 </body>
 </html>
