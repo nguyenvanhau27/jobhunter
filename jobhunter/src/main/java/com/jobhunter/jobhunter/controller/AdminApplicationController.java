@@ -10,7 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping("/admin/jobs")
@@ -26,15 +26,36 @@ public class AdminApplicationController {
     }
 
     // ─── UC16: Xem danh sách ứng viên theo job ──────────────────
-    @GetMapping("/{jobId}/applications")
-    public String applicantList(@PathVariable Long jobId, Model model) {
-        Job job = adminJobService.findById(jobId);
-        List<Application> applications = adminApplicationService.findByJobId(jobId);
+//    @GetMapping("/{jobId}/applications")
+//    public String applicantList(@PathVariable Long jobId, Model model) {
+//        Job job = adminJobService.findById(jobId);
+//        List<Application> applications = adminApplicationService.findByJobId(jobId);
+//
+//        model.addAttribute("job", job);
+//        model.addAttribute("applications", applications);
+//        return "admin/application/list";
+//    }
 
-        model.addAttribute("job", job);
-        model.addAttribute("applications", applications);
-        return "admin/application/list";
-    }
+//    @GetMapping("/{jobId}/applications/{appId}")
+//    public String applicantDetail(
+//            @PathVariable Long jobId,
+//            @PathVariable Long appId,
+//            Model model) {
+//
+//        Job job = adminJobService.findById(jobId);
+//
+//        // ← EntityGraph eager load user + userSkills + skill
+//        Application application = adminApplicationService.findByIdEager(appId);
+//
+//        // Tính matching percent — service tự xử lý null-safe
+//        int matchingPct = adminApplicationService.calcMatchingPercent(application, jobId);
+//
+//        model.addAttribute("job", job);
+//        model.addAttribute("application", application);
+//        model.addAttribute("matchingPct", matchingPct);
+//        model.addAttribute("now", LocalDateTime.now());
+//        return "admin/application/detail";
+//    }
 
     // ─── UC17: Duyệt đơn — APPROVED ─────────────────────────────
     @PostMapping("/{jobId}/applications/{appId}/approve")

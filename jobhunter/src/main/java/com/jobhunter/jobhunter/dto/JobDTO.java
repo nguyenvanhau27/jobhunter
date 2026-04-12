@@ -41,6 +41,7 @@ public class JobDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime expiredAt;
 
+
     // Validate minSalary <= maxSalary
     public boolean isSalaryValid() {
         if (minSalary == null || maxSalary == null) return true;

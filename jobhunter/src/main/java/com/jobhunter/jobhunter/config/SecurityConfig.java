@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/static/js/**", "/images/**", "/uploads/**").permitAll()
                         .requestMatchers("/register", "/login", "/forgot-password", "/reset-password").permitAll()
-                        .requestMatchers("/jobs", "/jobs/**").permitAll()
+                        .requestMatchers("/" ,"/home" , "/jobs", "/jobs/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/profile/**").hasRole("USER")
                         .requestMatchers("/user/**").hasRole("USER")

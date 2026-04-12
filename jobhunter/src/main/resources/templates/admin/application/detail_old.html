@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Chi tiết ứng viên – ITJobHub Admin</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin-job.css}"/>
+    <style>
+        /* ── Action buttons ─────────────────── */
+        .btn-approve-lg {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 22px; border-radius: var(--radius);
+            font-size: 14px; font-weight: 700; cursor: pointer;
+            font-family: var(--font); border: none; transition: all .2s;
+            background: var(--success); color: #fff;
+        }
+        .btn-approve-lg:hover { background: #15803d; transform: translateY(-1px); }
+
+        .btn-reject-lg {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 22px; border-radius: var(--radius);
+            font-size: 14px; font-weight: 700; cursor: pointer;
+            font-family: var(--font); border: none; transition: all .2s;
+            background: var(--danger); color: #fff;
+        }
+        .btn-reject-lg:hover { background: #b91c1c; transform: translateY(-1px); }
+
+        .btn-interview-lg {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 22px; border-radius: var(--radius);
+            font-size: 14px; font-weight: 700; cursor: pointer;
+            font-family: var(--font); border: none; transition: all .2s;
+            background: #f97316; color: #fff;
+        }
+        .btn-interview-lg:hover { background: #ea6c00; transform: translateY(-1px); }
+
+        .btn-approve-lg svg, .btn-reject-lg svg, .btn-interview-lg svg {
+            width: 16px; height: 16px; stroke: currentColor;
+            fill: none; stroke-width: 2.5; stroke-linecap: round;
+        }
+
+        /* ── Detail layout ──────────────────── */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* ── Profile card (left) ────────────── */
+        .profile-card {
+            background: var(--bg-white); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 28px 22px;
+            text-align: center;
+        }
+        .profile-avatar-lg {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: var(--primary-light); color: var(--primary);
+            font-size: 32px; font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 14px; border: 3px solid var(--primary-hover);
+        }
+        .profile-name {
+            font-size: 18px; font-weight: 700; color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+        .profile-applied {
+            font-size: 12px; color: var(--text-muted); margin-bottom: 20px;
+        }
+        .profile-meta { text-align: left; margin-top: 16px; }
+        .profile-meta-item {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 10px 0; border-bottom: 1px solid var(--border-gray);
+            font-size: 13px;
+        }
+        .profile-meta-item:last-child { border-bottom: none; }
+        .profile-meta-label { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+        .profile-meta-value { font-weight: 500; color: var(--text-dark); }
+        .profile-meta-icon {
+            width: 32px; height: 32px; border-radius: 8px;
+            background: var(--bg-light); display: flex;
+            align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .profile-meta-icon svg {
+            width: 15px; height: 15px; stroke: var(--text-muted);
+            fill: none; stroke-width: 2; stroke-linecap: round;
+        }
+
+        /* ── Skills card ────────────────────── */
+        .skills-section { margin-top: 20px; text-align: left; }
+        .skills-section h3 { font-size: 14px; font-weight: 700; color: var(--text-dark); margin-bottom: 12px; }
+        .skills-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+        .skill-tag-item {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+            background: var(--primary-light); color: var(--primary-dark);
+            border: 1px solid var(--primary-hover);
+        }
+        .skill-tag-item.matched {
+            background: #f0fdf4; color: #15803d; border-color: #bbf7d0;
+        }
+        .skill-tag-item svg { width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+
+        /* ── Right column sections ──────────── */
+        .right-col { display: flex; flex-direction: column; gap: 16px; }
+
+        .detail-section {
+            background: var(--bg-white); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 20px 22px;
+        }
+        .detail-section-title {
+            font-size: 15px; font-weight: 700; color: var(--text-dark);
+            margin-bottom: 14px; padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .detail-section-title svg {
+            width: 16px; height: 16px; stroke: var(--primary);
+            fill: none; stroke-width: 2; stroke-linecap: round;
+        }
+
+        /* Cover letter */
+        .cover-letter-box {
+            background: var(--bg-light); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 16px;
+            font-size: 13px; color: var(--text-body); line-height: 1.8;
+            white-space: pre-wrap; max-height: 280px; overflow-y: auto;
+        }
+
+        /* CV area */
+        .cv-box {
+            border: 2px dashed var(--border); border-radius: var(--radius-lg);
+            padding: 32px 20px; text-align: center;
+            background: var(--bg-light);
+        }
+        .cv-box svg { width: 48px; height: 48px; stroke: var(--border); fill: none; stroke-width: 1.5; margin: 0 auto 10px; }
+        .cv-filename { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; }
+        .cv-filename strong { color: var(--primary); }
+        .btn-view-cv {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 10px 24px; background: var(--primary); color: #fff;
+            border-radius: var(--radius); font-size: 14px; font-weight: 600;
+            text-decoration: none; transition: background .2s;
+        }
+        .btn-view-cv:hover { background: var(--primary-dark); }
+        .btn-view-cv svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+        /* matching badge */
+        .match-badge-lg {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700;
+        }
+        .match-badge-lg.high   { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .match-badge-lg.medium { background: var(--primary-light); color: var(--primary-dark); border: 1px solid var(--primary-hover); }
+        .match-badge-lg.low    { background: var(--bg-light); color: var(--text-muted); border: 1px solid var(--border); }
+
+        /* status badge */
+        .app-status-lg {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 700;
+        }
+        .app-status-lg.pending  { background:#fff7ed; color:#c2410c; border:1px solid #fed7aa; }
+        .app-status-lg.approved { background:#f0fdf4; color:#15803d; border:1px solid #bbf7d0; }
+        .app-status-lg.rejected { background:var(--danger-bg); color:var(--danger); border:1px solid #fecaca; }
+
+        /* back link */
+        .back-link {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 13px; color: var(--text-muted); text-decoration: none;
+            transition: color .15s; margin-bottom: 16px;
+        }
+        .back-link:hover { color: var(--primary); }
+        .back-link svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+
+        @media (max-width: 900px) {
+            .detail-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="admin-body">
+
+<div class="admin-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="admin-sidebar-brand">
+            <div class="admin-sidebar-brand-icon">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+            </div>
+            <div class="admin-sidebar-brand-text">
+                <div class="admin-sidebar-brand-name">Admin Panel</div>
+                <div class="admin-sidebar-brand-sub">ITJobHub</div>
+            </div>
+        </div>
+        <nav class="admin-sidebar-nav">
+            <div class="admin-sidebar-section-label">Main</div>
+            <a th:href="@{/admin/dashboard}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                Dashboard
+            </a>
+            <div class="admin-sidebar-section-label" style="margin-top:8px;">Management</div>
+            <a th:href="@{/admin/jobs}" class="admin-nav-item active">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Quản lý Job
+            </a>
+            <a th:href="@{/admin/users}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                Quản lý User
+            </a>
+            <a th:href="@{/admin/companies}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Quản lý Công ty
+            </a>
+            <a th:href="@{/admin/skills}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Quản lý Kỹ năng
+            </a>
+            <div class="admin-sidebar-section-label" style="margin-top:8px;">System</div>
+            <a th:href="@{/admin/settings}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                Cài đặt hệ thống
+            </a>
+        </nav>
+        <div class="admin-sidebar-footer">
+            <div class="admin-sidebar-collapse" id="sidebarCollapseBtn">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                <span>Thu gọn</span>
+            </div>
+        </div>
+    </aside>
+
+    <div class="admin-main">
+
+        <header class="admin-topbar">
+            <div class="admin-breadcrumb">
+                <a th:href="@{/}">Home</a>
+                <span class="sep">›</span>
+                <a th:href="@{/admin/dashboard}">Dashboard</a>
+                <span class="sep">›</span>
+                <a th:href="@{/admin/jobs}">Quản lý Job</a>
+                <span class="sep">›</span>
+                <a th:href="@{/admin/jobs/{id}/applications(id=${job.id})}" th:text="'Danh sách ứng viên'">Ứng viên</a>
+                <span class="sep">›</span>
+                <span class="current">Chi tiết đơn</span>
+            </div>
+            <div class="admin-topbar-right">
+                <div class="admin-topbar-time">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span th:text="${#temporals.format(now, 'HH:mm dd/MM/yyyy')}">00:00</span>
+                </div>
+                <div class="admin-topbar-avatar">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-content">
+
+            <a th:href="@{/admin/jobs/{id}/applications(id=${job.id})}" class="back-link">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                Quay lại danh sách ứng viên
+            </a>
+
+            <!-- Page header + action buttons -->
+            <div class="admin-page-header" style="margin-bottom:20px;">
+                <div>
+                    <h1 class="admin-page-title">Chi tiết ứng viên</h1>
+                    <p class="admin-page-subtitle">
+                        Vị trí ứng tuyển: <strong th:text="${job.title}"></strong>
+                    </p>
+                </div>
+                <!-- Action buttons — Approve / Reject / Interview -->
+                <div class="admin-page-actions" style="gap:10px;">
+                    <!-- Approve -->
+                    <!--
+                        th:data-msg with string concat causes NPE if user is null.
+                        Instead store applicantName separately as data-name (safe, read in JS).
+                    -->
+                    <form th:action="@{/admin/jobs/{jId}/applications/{aId}/approve(jId=${job.id},aId=${application.id})}"
+                          method="post" style="display:inline;" id="approveForm">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="button"
+                                class="btn-approve-lg js-action-btn"
+                                th:data-form="'approveForm'"
+                                th:data-action="'approve'"
+                                th:data-name="${application.user != null ? application.user.fullName : ''}"
+                                th:disabled="${application.status != null and application.status.name() == 'APPROVED'}">
+                            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                            Duyệt hồ sơ
+                        </button>
+                    </form>
+
+                    <!-- Reject -->
+                    <form th:action="@{/admin/jobs/{jId}/applications/{aId}/reject(jId=${job.id},aId=${application.id})}"
+                          method="post" style="display:inline;" id="rejectForm">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="button"
+                                class="btn-reject-lg js-action-btn"
+                                th:data-form="'rejectForm'"
+                                th:data-action="'reject'"
+                                th:data-name="${application.user != null ? application.user.fullName : ''}"
+                                th:disabled="${application.status != null and application.status.name() == 'REJECTED'}">
+                            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            Từ chối
+                        </button>
+                    </form>
+
+                    <!-- Interview (placeholder — no backend yet, shows toast) -->
+                    <button type="button" class="btn-interview-lg" id="btnInterview">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Hẹn phỏng vấn
+                    </button>
+                </div>
+            </div>
+
+            <!-- Flash -->
+            <div th:if="${successMessage}" class="flash-success" style="margin-bottom:16px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span th:text="${successMessage}"></span>
+                </div>
+            </div>
+
+            <!-- Current status bar -->
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+                <span style="font-size:13px;color:var(--text-muted);">Trạng thái hiện tại:</span>
+                <span class="app-status-lg pending"
+                      th:if="${application.status != null and application.status.name() == 'PENDING'}">⏳ Chờ duyệt</span>
+                <span class="app-status-lg approved"
+                      th:if="${application.status != null and application.status.name() == 'APPROVED'}">✓ Đã duyệt</span>
+                <span class="app-status-lg rejected"
+                      th:if="${application.status != null and application.status.name() == 'REJECTED'}">✗ Đã từ chối</span>
+
+                <span style="font-size:13px;color:var(--text-muted);">Độ phù hợp:</span>
+                <span class="match-badge-lg"
+                      th:classappend="${matchingPct >= 80} ? ' high' : (${matchingPct >= 40} ? ' medium' : ' low')"
+                      th:text="${matchingPct} + '%'">0%</span>
+            </div>
+
+            <!-- 2-column detail layout -->
+            <div class="detail-grid">
+
+                <!-- LEFT: Profile card -->
+                <div>
+                    <div class="profile-card">
+                        <div class="profile-avatar-lg"
+                             th:text="${application.user != null and application.user.fullName != null}
+                                      ? ${#strings.substring(application.user.fullName, 0, 1)} : '?'">U</div>
+                        <div class="profile-name"
+                             th:text="${application.user != null ? application.user.fullName : '—'}">Tên ứng viên</div>
+                        <div class="profile-applied">
+                            Ngày nộp:
+                            <span th:if="${application.appliedAt != null}"
+                                  th:text="${#temporals.format(application.appliedAt,'dd/MM/yyyy HH:mm')}"></span>
+                        </div>
+
+                        <div class="profile-meta" th:if="${application.user != null}">
+                            <!-- Email -->
+                            <div class="profile-meta-item">
+                                <div class="profile-meta-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                </div>
+                                <div>
+                                    <div class="profile-meta-label">Email</div>
+                                    <div class="profile-meta-value" th:text="${application.user.email}"></div>
+                                </div>
+                            </div>
+                            <!-- Phone -->
+                            <div class="profile-meta-item" th:if="${application.user.phone != null}">
+                                <div class="profile-meta-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.25h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.84a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg>
+                                </div>
+                                <div>
+                                    <div class="profile-meta-label">Số điện thoại</div>
+                                    <div class="profile-meta-value" th:text="${application.user.phone}"></div>
+                                </div>
+                            </div>
+                            <!-- Address -->
+                            <div class="profile-meta-item" th:if="${application.user.address != null}">
+                                <div class="profile-meta-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a2 2 0 0 1-2.828 0l-4.243-4.243a8 8 0 1 1 11.314 0z"/><path d="M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
+                                </div>
+                                <div>
+                                    <div class="profile-meta-label">Địa chỉ</div>
+                                    <div class="profile-meta-value" th:text="${application.user.address}"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- User skills — use userSkills (UserSkill junction entity) -->
+                        <div class="skills-section"
+                             th:if="${application.user != null
+                                      and application.user.userSkills != null
+                                      and !application.user.userSkills.isEmpty()}">
+                            <h3>Kỹ năng</h3>
+                            <div class="skills-tags">
+                                <!--
+                                    UserSkill is a junction entity: us.getSkill() → Skill
+                                    Mark as 'matched' if job.skills contains this Skill
+                                -->
+                                <span th:each="us : ${application.user.userSkills}"
+                                      class="skill-tag-item"
+                                      th:if="${us.skill != null}"
+                                      th:classappend="${job.skills.contains(us.skill)} ? ' matched'">
+                                    <svg th:if="${job.skills.contains(us.skill)}"
+                                         viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <span th:text="${us.skill.name}"></span>
+                                </span>
+                            </div>
+                            <p style="font-size:11px;color:var(--text-muted);margin-top:8px;">
+                                ✓ Kỹ năng phù hợp với yêu cầu job được đánh dấu màu xanh
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- /LEFT -->
+
+                <!-- RIGHT: Content sections -->
+                <div class="right-col">
+
+                    <!-- Thư giới thiệu -->
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                            Thư giới thiệu
+                        </div>
+                        <div th:if="${application.coverLetter != null and !#strings.isEmpty(application.coverLetter)}"
+                             class="cover-letter-box"
+                             th:text="${application.coverLetter}">
+                        </div>
+                        <p th:unless="${application.coverLetter != null and !#strings.isEmpty(application.coverLetter)}"
+                           style="font-size:13px;color:var(--text-muted);font-style:italic;">
+                            Ứng viên không cung cấp thư giới thiệu.
+                        </p>
+                    </div>
+
+                    <!-- CV / Hồ sơ -->
+                    <div class="detail-section">
+                        <div class="detail-section-title">
+                            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            CV / Hồ sơ
+                        </div>
+                        <div th:if="${application.cvFile != null and !#strings.isEmpty(application.cvFile)}"
+                             class="cv-box">
+                            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                            <div class="cv-filename">
+                                File CV: <strong th:text="${application.cvFile}"></strong>
+                            </div>
+                            <a th:href="@{/{f}(f=${application.cvFile})}"
+                               class="btn-view-cv" target="_blank" rel="noopener noreferrer">
+                                <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                Xem CV bản đầy đủ
+                            </a>
+                        </div>
+                        <p th:unless="${application.cvFile != null and !#strings.isEmpty(application.cvFile)}"
+                           style="font-size:13px;color:var(--text-muted);font-style:italic;">
+                            Ứng viên chưa upload CV.
+                        </p>
+                    </div>
+
+                </div>
+                <!-- /RIGHT -->
+
+            </div>
+            <!-- /detail-grid -->
+
+        </main>
+    </div>
+</div>
+
+<!-- Confirm modal for approve/reject -->
+<div class="modal-backdrop" id="actionBackdrop" onclick="hideActionModal()"></div>
+<div class="modal" id="actionModal">
+    <div class="modal-header">
+        <div>
+            <h3 class="modal-title" id="actionModalTitle">Xác nhận</h3>
+        </div>
+        <button class="modal-close" onclick="hideActionModal()">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="delete-warning" id="actionWarningBox">
+            <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <p id="actionModalMsg"></p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn-modal-cancel" onclick="hideActionModal()">Huỷ</button>
+        <button type="button" id="confirmActionBtn" class="btn-modal-confirm">Xác nhận</button>
+    </div>
+</div>
+
+<!-- Interview toast -->
+<div id="interviewToast" style="
+    display:none; position:fixed; bottom:24px; right:24px;
+    background:#f97316; color:#fff; padding:14px 20px; border-radius:var(--radius-lg);
+    font-size:13px; font-weight:600; box-shadow:0 8px 24px rgba(249,115,22,.3);
+    z-index:300; align-items:center; gap:8px;">
+    📅 Tính năng hẹn phỏng vấn sẽ được cập nhật sớm!
+</div>
+
+<script>
+    document.getElementById('sidebarCollapseBtn').addEventListener('click', () => {
+        document.getElementById('adminSidebar').classList.toggle('open');
+    });
+
+    // ── Action buttons (approve/reject) ──────────
+    let pendingFormId = null;
+
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.js-action-btn');
+        if (btn && !btn.disabled) {
+            pendingFormId       = btn.dataset.form;
+            const action        = btn.dataset.action;           // 'approve' or 'reject'
+            const applicantName = btn.dataset.name || 'ứng viên này';
+            const isApprove     = action === 'approve';
+
+            document.getElementById('actionModalTitle').textContent =
+                isApprove ? 'Duyệt hồ sơ' : 'Từ chối hồ sơ';
+            document.getElementById('actionModalMsg').textContent =
+                (isApprove ? 'Duyệt hồ sơ của ' : 'Từ chối hồ sơ của ')
+                + applicantName + '?';
+
+            const box        = document.getElementById('actionWarningBox');
+            const confirmBtn = document.getElementById('confirmActionBtn');
+            if (isApprove) {
+                box.style.background  = '#f0fdf4';
+                box.style.borderColor = '#bbf7d0';
+                confirmBtn.textContent = '✓ Duyệt';
+                confirmBtn.className   = 'btn-modal-confirm';
+            } else {
+                box.style.background  = '#fff7ed';
+                box.style.borderColor = '#fed7aa';
+                confirmBtn.textContent = '✗ Từ chối';
+                confirmBtn.className   = 'btn-modal-delete';
+            }
+
+            document.getElementById('actionModal').classList.add('open');
+            document.getElementById('actionBackdrop').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+    });
+
+    function hideActionModal() {
+        document.getElementById('actionModal').classList.remove('open');
+        document.getElementById('actionBackdrop').classList.remove('open');
+        document.body.style.overflow = '';
+        pendingFormId = null;
+    }
+
+    document.getElementById('confirmActionBtn').addEventListener('click', () => {
+        if (pendingFormId) document.getElementById(pendingFormId).submit();
+    });
+
+    // ── Interview button (toast placeholder) ─────
+    document.getElementById('btnInterview').addEventListener('click', () => {
+        const toast = document.getElementById('interviewToast');
+        toast.style.display = 'flex';
+        setTimeout(() => toast.style.display = 'none', 3000);
+    });
+</script>
+
+</body>
+</html>

@@ -1,5 +1,6 @@
 package com.jobhunter.jobhunter.repository;
 
+import com.jobhunter.jobhunter.dto.JobListItemDTO;
 import com.jobhunter.jobhunter.entity.AppEnums;
 import com.jobhunter.jobhunter.entity.Job;
 import org.springframework.data.domain.Page;
@@ -77,4 +78,31 @@ public interface JobRepository extends JpaRepository<Job, Long> {
                                @Param("since") LocalDateTime since,
                                Pageable pageable);
 
+    /**
+     * Lấy job list với candidateCount + pendingCount.
+     * Sort: job có đơn mới nhất lên đầu (MAX appliedAt DESC NULLS LAST).
+     */
+    @Query("""
+        SELECT new com.jobhunter.jobhunter.dto.JobListItemDTO(
+            j.id,
+            j.title,
+            j.company.nameCompany,
+            CAST(j.statusJob AS string),
+            j.expiredAt,
+            j.updatedAt,
+            COUNT(a.id),
+            SUM(CASE WHEN a.status = "PENDING"
+                     THEN 1L ELSE 0L END)
+        )
+        FROM Job j
+        LEFT JOIN Application a ON a.job.id = j.id
+        GROUP BY j.id, j.title, j.company.nameCompany,
+                 j.statusJob, j.expiredAt, j.updatedAt
+        ORDER BY MAX(a.appliedAt) DESC NULLS LAST, j.createdAt DESC
+        """)
+    Page<JobListItemDTO> findAllWithCandidateCounts(Pageable pageable);
+
+    // Đếm số ứng viên của 1 job cụ thể (dùng cho detail nếu cần)
+    @Query("SELECT COUNT(a) FROM Application a WHERE a.job.id = :jobId")
+    long countApplicationsByJobId(@Param("jobId") Long jobId);
 }

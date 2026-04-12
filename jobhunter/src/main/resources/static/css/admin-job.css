@@ -579,7 +579,49 @@
     stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
 }
 
-/* ── Responsive ──────────────────────────────────── */
+/* ── Candidates column ───────────────────────── */
+.candidates-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px 4px 8px;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border: 1px solid var(--primary-hover);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background .15s, box-shadow .15s;
+    white-space: nowrap;
+}
+.candidates-btn:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 2px 8px rgba(37,99,235,.15);
+}
+.candidates-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px; height: 18px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 0 5px;
+    line-height: 1;
+}
+.candidates-empty {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+
 @media (max-width: 700px) {
     .form-row { grid-template-columns: 1fr; }
     .form-section { padding: 16px; }

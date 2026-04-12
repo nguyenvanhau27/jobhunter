@@ -1,7 +1,10 @@
 package com.jobhunter.jobhunter.entity;
+import com.jobhunter.jobhunter.entity.userSkill.UserSkill;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -40,6 +43,13 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<UserSkill> userSkills = new HashSet<>();
+
+
+    public Set<UserSkill> getUserSkills() {
+        return userSkills;
+    }
     // ✅ Viết tay getter/setter
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

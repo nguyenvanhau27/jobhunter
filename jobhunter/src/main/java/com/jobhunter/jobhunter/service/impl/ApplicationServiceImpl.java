@@ -57,7 +57,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         // E2: Đã apply rồi
-        if (applicationRepository.existsByUserIdAndJobId(userId, jobId)) {
+        if (applicationRepository.existsByUser_IdAndJob_Id(userId, jobId)) {
             throw new IllegalStateException("Bạn đã ứng tuyển vị trí này");
         }
 
@@ -86,7 +86,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<Application> getByUserId(Long userId) {
-        return applicationRepository.findByUserId(userId);
+        return applicationRepository.findByUser_Id(userId);
     }
 
     // ─── Validate + lưu file CV ──────────────────────────────────
