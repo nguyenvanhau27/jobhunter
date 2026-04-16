@@ -620,8 +620,8 @@
 
                 <span style="font-size:13px;color:var(--text-muted);">Độ phù hợp:</span>
                 <span class="match-badge-lg"
-                      th:classappend="${matchingPct >= 80} ? ' high' : (${matchingPct >= 40} ? ' medium' : ' low')"
-                      th:text="${matchingPct} + '%'">0%</span>
+                      th:classappend="${detail.matchingPercent >= 80} ? ' high' : (${detail.matchingPercent >= 40} ? ' medium' : ' low')"
+                      th:text="${detail.matchingPercent} + '%'">0%</span>
             </div>
 
             <!-- 2-column detail layout -->

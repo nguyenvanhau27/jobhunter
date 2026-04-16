@@ -2,6 +2,7 @@ package com.jobhunter.jobhunter.entity;
 
 import com.jobhunter.jobhunter.entity.userSkill.UserSkill;
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,19 +40,23 @@ public class User {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     private Role role;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<UserSkill> userSkills = new HashSet<>();
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        if (this.statusUser == null) this.statusUser = AppEnums.UserStatus.ACTIVE;
+    }
 
     public Set<UserSkill> getUserSkills() {
         return userSkills;
     }
 
-    // ✅ Viết tay getter/setter
     public Long getId() {
         return id;
     }
@@ -138,13 +143,5 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-        if (this.statusUser == null) {
-            this.statusUser = AppEnums.UserStatus.ACTIVE;
-        }
     }
 }

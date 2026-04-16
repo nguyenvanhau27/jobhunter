@@ -365,6 +365,12 @@
     font-size: 15px; font-weight: 600; display: inline-block; transition: all .2s;
 }
 .sk-cta-outline:hover { border-color: #fff; background: rgba(255,255,255,.1); }
+.search-result-tag {
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--primary-light); color:var(--primary-dark);
+    border:1px solid var(--primary-hover); border-radius:20px;
+    padding:4px 12px; font-size:12px; font-weight:600;
+}
 
 @media (max-width: 768px) {
     .sk-wrap { padding: 24px var(--px) 0; }

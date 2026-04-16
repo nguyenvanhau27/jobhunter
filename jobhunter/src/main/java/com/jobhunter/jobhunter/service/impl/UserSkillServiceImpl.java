@@ -10,7 +10,10 @@ import com.jobhunter.jobhunter.repository.UserSkillRepository;
 import com.jobhunter.jobhunter.service.UserSkillService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserSkillServiceImpl implements UserSkillService {
@@ -30,6 +33,30 @@ public class UserSkillServiceImpl implements UserSkillService {
     @Override
     public List<UserSkill> getSkillsByUserId(Long userId) {
         return userSkillRepository.findByUserId(userId);
+    }
+
+    @Override
+    public Map<String, Object> getPagedSkills(Long userId, String keyword, String category, int page, int pageSize) {
+        // 1. Lấy dữ liệu đã lọc từ Repository
+        List<UserSkill> allFiltered = userSkillRepository.searchMySkills(userId, keyword, category);
+
+        // 2. Xử lý phân trang "thủ công" (hoặc dùng Pageable nếu bạn muốn nâng cấp sau này)
+        int totalSkills = allFiltered.size();
+        int totalPages = Math.max(1, (int) Math.ceil((double) totalSkills / pageSize));
+        int safePage = Math.min(page, totalPages - 1);
+        int start = Math.max(0, safePage * pageSize);
+        int end = Math.min(start + pageSize, totalSkills);
+
+        List<UserSkill> pagedList = totalSkills > 0 ? allFiltered.subList(start, end) : List.of();
+
+        // 3. Đóng gói kết quả trả về
+        Map<String, Object> result = new HashMap<>();
+        result.put("content", pagedList);
+        result.put("totalElements", totalSkills);
+        result.put("totalPages", totalPages);
+        result.put("currentPage", safePage);
+
+        return result;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.jobhunter.jobhunter.entity;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -56,7 +55,7 @@ public class Job {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    @ManyToMany(fetch = FetchType.EAGER,
+    @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "job_skills",
@@ -72,9 +71,7 @@ public class Job {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        if (this.statusJob == null) {
-            this.statusJob = AppEnums.JobStatus.OPEN;
-        }
+        if (this.statusJob == null) this.statusJob = AppEnums.JobStatus.OPEN;
     }
 
     @PreUpdate
@@ -82,10 +79,8 @@ public class Job {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // Helper: kiểm tra job đã hết hạn chưa
     public boolean isExpired() {
-        return this.expiredAt != null
-                && LocalDateTime.now().isAfter(this.expiredAt);
+        return this.expiredAt != null && LocalDateTime.now().isAfter(this.expiredAt);
     }
 
     public Long getId() {
@@ -108,103 +103,103 @@ public class Job {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescription(String d) {
+        this.description = d;
     }
 
     public String getRequirements() {
         return requirements;
     }
 
-    public void setRequirements(String requirements) {
-        this.requirements = requirements;
+    public void setRequirements(String r) {
+        this.requirements = r;
     }
 
     public Long getMinSalary() {
         return minSalary;
     }
 
-    public void setMinSalary(Long minSalary) {
-        this.minSalary = minSalary;
+    public void setMinSalary(Long v) {
+        this.minSalary = v;
     }
 
     public Long getMaxSalary() {
         return maxSalary;
     }
 
-    public void setMaxSalary(Long maxSalary) {
-        this.maxSalary = maxSalary;
+    public void setMaxSalary(Long v) {
+        this.maxSalary = v;
     }
 
     public String getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setLocation(String v) {
+        this.location = v;
     }
 
     public AppEnums.JobType getJobType() {
         return jobType;
     }
 
-    public void setJobType(AppEnums.JobType jobType) {
-        this.jobType = jobType;
+    public void setJobType(AppEnums.JobType v) {
+        this.jobType = v;
     }
 
     public AppEnums.ExperienceLevel getExperienceLevel() {
         return experienceLevel;
     }
 
-    public void setExperienceLevel(AppEnums.ExperienceLevel level) {
-        this.experienceLevel = level;
+    public void setExperienceLevel(AppEnums.ExperienceLevel v) {
+        this.experienceLevel = v;
     }
 
     public AppEnums.JobStatus getStatusJob() {
         return statusJob;
     }
 
-    public void setStatusJob(AppEnums.JobStatus statusJob) {
-        this.statusJob = statusJob;
+    public void setStatusJob(AppEnums.JobStatus v) {
+        this.statusJob = v;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedAt(LocalDateTime v) {
+        this.createdAt = v;
     }
 
     public LocalDateTime getExpiredAt() {
         return expiredAt;
     }
 
-    public void setExpiredAt(LocalDateTime expiredAt) {
-        this.expiredAt = expiredAt;
+    public void setExpiredAt(LocalDateTime v) {
+        this.expiredAt = v;
     }
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdatedAt(LocalDateTime v) {
+        this.updatedAt = v;
     }
 
     public Company getCompany() {
         return company;
     }
 
-    public void setCompany(Company company) {
-        this.company = company;
+    public void setCompany(Company v) {
+        this.company = v;
     }
 
     public Set<Skill> getSkills() {
         return skills;
     }
 
-    public void setSkills(Set<Skill> skills) {
-        this.skills = skills;
+    public void setSkills(Set<Skill> v) {
+        this.skills = v;
     }
 }

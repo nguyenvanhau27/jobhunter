@@ -58,27 +58,25 @@
                 </div>
             </div>
         </div>
-
         <div class="jd-header-right">
             <div th:if="${job.statusJob.toString() == 'OPEN' and !job.isExpired()}">
-                <sec:authorize access="hasRole('USER')">
-                    <a th:href="@{/jobs/{id}/apply(id=${job.id})}" class="jd-apply-btn">
+                <a th:if="${#authorization.expression('isAuthenticated()')}"
+                   th:href="@{/jobs/{id}/apply(id=${job.id})}" class="jd-apply-btn">
                         <svg viewBox="0 0 24 24">
                             <line x1="22" y1="2" x2="11" y2="13"/>
                             <polygon points="22 2 15 22 11 13 2 9 22 2"/>
                         </svg>
                         Ứng tuyển ngay
-                    </a>
-                </sec:authorize>
-                <sec:authorize access="isAnonymous()">
-                    <a th:href="@{/login}" class="jd-apply-btn">
+                </a>
+
+                <a th:if="${#authorization.expression('isAnonymous()')}"
+                   th:href="@{/login}" class="jd-apply-btn">
                         <svg viewBox="0 0 24 24">
                             <line x1="22" y1="2" x2="11" y2="13"/>
                             <polygon points="22 2 15 22 11 13 2 9 22 2"/>
                         </svg>
                         Đăng nhập để ứng tuyển
-                    </a>
-                </sec:authorize>
+                </a>
             </div>
             <div th:if="${job.statusJob.toString() == 'CLOSED' or job.isExpired()}" class="jd-expired-tag">
                 <svg viewBox="0 0 24 24">
@@ -179,26 +177,26 @@
                 </div>
 
                 <div class="jd-apply-box">
-                    <div th:if="${job.statusJob.toString() == 'OPEN' and !job.isExpired()}">
-                        <sec:authorize access="hasRole('USER')">
-                            <a th:href="@{/jobs/{id}/apply(id=${job.id})}" class="jd-apply-btn">
-                                <svg viewBox="0 0 24 24">
-                                    <line x1="22" y1="2" x2="11" y2="13"/>
-                                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                                </svg>
-                                Ứng tuyển ngay
-                            </a>
-                        </sec:authorize>
-                        <sec:authorize access="isAnonymous()">
-                            <a th:href="@{/login}" class="jd-apply-btn">
-                                <svg viewBox="0 0 24 24">
-                                    <line x1="22" y1="2" x2="11" y2="13"/>
-                                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                                </svg>
-                                Đăng nhập để ứng tuyển
-                            </a>
-                        </sec:authorize>
-                    </div>
+<!--                    <div th:if="${job.statusJob.toString() == 'OPEN' and !job.isExpired()}">-->
+<!--                        <sec:authorize access="hasRole('USER')">-->
+<!--                            <a th:href="@{/jobs/{id}/apply(id=${job.id})}" class="jd-apply-btn">-->
+<!--                                <svg viewBox="0 0 24 24">-->
+<!--                                    <line x1="22" y1="2" x2="11" y2="13"/>-->
+<!--                                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>-->
+<!--                                </svg>-->
+<!--                                Ứng tuyển ngay-->
+<!--                            </a>-->
+<!--                        </sec:authorize>-->
+<!--                        <sec:authorize access="isAnonymous()">-->
+<!--                            <a th:href="@{/login}" class="jd-apply-btn">-->
+<!--                                <svg viewBox="0 0 24 24">-->
+<!--                                    <line x1="22" y1="2" x2="11" y2="13"/>-->
+<!--                                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>-->
+<!--                                </svg>-->
+<!--                                Đăng nhập để ứng tuyển-->
+<!--                            </a>-->
+<!--                        </sec:authorize>-->
+<!--                    </div>-->
 
                     <div class="jd-share-row" style="margin-top:10px;">
                         <button class="jd-share-btn" onclick="shareJob()">

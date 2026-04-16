@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -73,6 +74,34 @@ public class UserSkillController {
         model.addAttribute("currentPage", safePage);
         return "user/skills";
     }
+
+//    @GetMapping
+//    public String skillsPage(
+//            @AuthenticationPrincipal UserDetails userDetails,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(required = false) String keyword,
+//            @RequestParam(required = false) String category,
+//            Model model) {
+//
+//        User user = userService.findByEmail(userDetails.getUsername());
+//
+//        // Gọi Service xử lý thay vì tự tính toán
+//        Map<String, Object> skillData = userSkillService.getPagedSkills(
+//                user.getId(), keyword, category, page, PAGE_SIZE);
+//
+//        // Đổ dữ liệu từ Map vào Model
+//        model.addAttribute("mySkills", skillData.get("content"));
+//        model.addAttribute("totalSkills", skillData.get("totalElements"));
+//        model.addAttribute("totalPages", skillData.get("totalPages"));
+//        model.addAttribute("currentPage", skillData.get("currentPage"));
+//
+//        // Các dữ liệu bổ trợ khác
+//        model.addAttribute("keyword", keyword);
+//        model.addAttribute("selectedCat", category);
+//        model.addAttribute("allSkills", skillRepository.findAllByOrderByCategoryAscNameAsc());
+//
+//        return "user/skills";
+//    }
 
     @PostMapping("/add")
     public String addSkill(

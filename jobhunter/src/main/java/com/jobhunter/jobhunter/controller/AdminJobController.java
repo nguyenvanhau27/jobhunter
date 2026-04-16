@@ -4,9 +4,13 @@ import com.jobhunter.jobhunter.dto.ApplicationDetailDTO;
 import com.jobhunter.jobhunter.dto.ApplicationListItemDTO;
 import com.jobhunter.jobhunter.dto.JobDTO;
 import com.jobhunter.jobhunter.dto.JobListItemDTO;
-import com.jobhunter.jobhunter.entity.*;
-import com.jobhunter.jobhunter.repository.*;
+import com.jobhunter.jobhunter.entity.AppEnums;
+import com.jobhunter.jobhunter.entity.Job;
+import com.jobhunter.jobhunter.entity.Skill;
+import com.jobhunter.jobhunter.repository.CompanyRepository;
+import com.jobhunter.jobhunter.repository.SkillRepository;
 import com.jobhunter.jobhunter.service.AdminJobService;
+import com.jobhunter.jobhunter.service.ApplicationDetailService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -17,7 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
+
 
 @Controller
 @RequestMapping("/admin/jobs")
@@ -25,34 +29,37 @@ public class AdminJobController {
 
     private static final int PAGE_SIZE = 20;
 
-    private final UserRepository userRepository;
-    private final UserSkillRepository userSkillRepository;
     private final AdminJobService adminJobService;
     private final CompanyRepository companyRepository;
     private final SkillRepository skillRepository;
-    private final ApplicationRepository applicationRepository;
+    private final ApplicationDetailService applicationDetailService;
 
     public AdminJobController(AdminJobService adminJobService,
                               CompanyRepository companyRepository,
                               SkillRepository skillRepository,
-                              UserSkillRepository userSkillRepository,
-                              UserRepository userRepository,
-                              ApplicationRepository applicationRepository) {
+                              ApplicationDetailService applicationDetailService) {
         this.adminJobService = adminJobService;
         this.companyRepository = companyRepository;
         this.skillRepository = skillRepository;
-        this.userRepository = userRepository;
-        this.userSkillRepository = userSkillRepository;
-        this.applicationRepository = applicationRepository;
+        this.applicationDetailService = applicationDetailService;
     }
-
 
     private void loadFormData(Model model) {
         model.addAttribute("companies", companyRepository.findAll());
         model.addAttribute("allSkills", skillRepository.findAll());
         model.addAttribute("jobTypes", AppEnums.JobType.values());
         model.addAttribute("experienceLevels", AppEnums.ExperienceLevel.values());
-        model.addAttribute("now", java.time.LocalDateTime.now());
+        model.addAttribute("now", LocalDateTime.now());
+    }
+
+    @GetMapping
+    public String jobList(@RequestParam(defaultValue = "0") int page, Model model) {
+        Page<JobListItemDTO> jobPage = adminJobService.findAllWithCandidateCounts(page, PAGE_SIZE);
+        model.addAttribute("jobPage", jobPage);
+        model.addAttribute("jobs", jobPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("now", LocalDateTime.now());
+        return "admin/job/list";
     }
 
     @GetMapping("/create")
@@ -67,36 +74,27 @@ public class AdminJobController {
     }
 
     @PostMapping("/create")
-    public String create(
-            @Valid @ModelAttribute("jobDTO") JobDTO dto,
-            BindingResult bindingResult,
-            Model model,
-            RedirectAttributes redirectAttributes) {
+    public String create(@Valid @ModelAttribute("jobDTO") JobDTO dto,
+                         BindingResult bindingResult, Model model,
+                         RedirectAttributes redirectAttributes) {
         if (!dto.isSalaryValid()) {
             bindingResult.rejectValue("minSalary", "salary.invalid",
                     "Lương tối thiểu không được lớn hơn lương tối đa");
         }
-        if (bindingResult.hasErrors()) {
-            loadFormData(model);
-            return "admin/job/form";
-        }
-
+        if (bindingResult.hasErrors()) { loadFormData(model); return "admin/job/form"; }
         try {
             adminJobService.createJob(dto);
             redirectAttributes.addFlashAttribute("successMessage", "Tạo job thành công!");
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            loadFormData(model);
-            return "admin/job/form";
+            loadFormData(model); return "admin/job/form";
         }
         return "redirect:/admin/jobs";
     }
 
-
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
         Job job = adminJobService.findById(id);
-
         JobDTO dto = new JobDTO();
         dto.setTitle(job.getTitle());
         dto.setDescription(job.getDescription());
@@ -109,56 +107,40 @@ public class AdminJobController {
         dto.setCompanyId(job.getCompany().getId());
         dto.setExpiredAt(job.getExpiredAt());
         dto.setSkillIds(job.getSkills().stream()
-                .map(Skill::getId)
-                .collect(java.util.stream.Collectors.toList()));
-
+                .map(Skill::getId).collect(java.util.stream.Collectors.toList()));
         loadFormData(model);
         model.addAttribute("jobDTO", dto);
         model.addAttribute("jobId", id);
         return "admin/job/form";
     }
 
-
     @PostMapping("/{id}/edit")
-    public String update(
-            @PathVariable Long id,
-            @Valid @ModelAttribute("jobDTO") JobDTO dto,
-            BindingResult bindingResult,
-            Model model,
-            RedirectAttributes redirectAttributes) {
+    public String update(@PathVariable Long id,
+                         @Valid @ModelAttribute("jobDTO") JobDTO dto,
+                         BindingResult bindingResult, Model model,
+                         RedirectAttributes redirectAttributes) {
         if (!dto.isSalaryValid()) {
             bindingResult.rejectValue("minSalary", "salary.invalid",
                     "Lương tối thiểu không được lớn hơn lương tối đa");
         }
         if (bindingResult.hasErrors()) {
-            loadFormData(model);
-            model.addAttribute("jobId", id);
-            return "admin/job/form";
+            loadFormData(model); model.addAttribute("jobId", id); return "admin/job/form";
         }
-
         try {
             adminJobService.updateJob(id, dto);
             redirectAttributes.addFlashAttribute("successMessage", "Cập nhật job thành công!");
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
-            loadFormData(model);
-            model.addAttribute("jobId", id);
-            return "admin/job/form";
+            loadFormData(model); model.addAttribute("jobId", id); return "admin/job/form";
         }
         return "redirect:/admin/jobs";
     }
 
-
     @PostMapping("/{id}/reopen")
-    public String reopen(
-            @PathVariable Long id,
-            @RequestParam String newExpiredAt,  // ← nhận String trước
-            RedirectAttributes redirectAttributes) {
-
+    public String reopen(@PathVariable Long id, @RequestParam String newExpiredAt,
+                         RedirectAttributes redirectAttributes) {
         try {
-            // Parse thủ công
-            LocalDateTime expiredAt = LocalDateTime.parse(newExpiredAt);
-            adminJobService.reopenJob(id, expiredAt);
+            adminJobService.reopenJob(id, LocalDateTime.parse(newExpiredAt));
             redirectAttributes.addFlashAttribute("successMessage", "Job đã được mở lại!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: " + e.getMessage());
@@ -166,107 +148,31 @@ public class AdminJobController {
         return "redirect:/admin/jobs";
     }
 
-
     @PostMapping("/{id}/delete")
-    public String delete(
-            @PathVariable Long id,
-            RedirectAttributes redirectAttributes) {
-        String result = adminJobService.deleteJob(id);
-        redirectAttributes.addFlashAttribute("successMessage", result);
+    public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("successMessage", adminJobService.deleteJob(id));
         return "redirect:/admin/jobs";
     }
 
-    @GetMapping
-    public String jobList(
-            @RequestParam(defaultValue = "0") int page,
-            Model model) {
-
-        Page<JobListItemDTO> jobPage =
-                adminJobService.findAllWithCandidateCounts(page, PAGE_SIZE);
-
-        model.addAttribute("jobPage", jobPage);
-        model.addAttribute("jobs", jobPage.getContent());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("now", java.time.LocalDateTime.now());
-        return "admin/job/list";
-    }
-
-
     @GetMapping("/{jobId}/applications")
-    public String applicationList(
-            @PathVariable Long jobId,
-            @RequestParam(defaultValue = "false") boolean sortByMatching,
-            Model model) {
-
-        Job job = adminJobService.findById(jobId);
-        List<ApplicationListItemDTO> applications =
-                adminJobService.getApplicationsWithMatching(jobId, sortByMatching);
-
-        model.addAttribute("job", job);
-        model.addAttribute("applications", applications);
+    public String applicationList(@PathVariable Long jobId,
+                                  @RequestParam(defaultValue = "false") boolean sortByMatching,
+                                  Model model) {
+        model.addAttribute("job", adminJobService.findById(jobId));
+        model.addAttribute("applications",
+                adminJobService.getApplicationsWithMatching(jobId, sortByMatching));
         model.addAttribute("sortByMatching", sortByMatching);
-        model.addAttribute("now", java.time.LocalDateTime.now());
+        model.addAttribute("now", LocalDateTime.now());
         return "admin/application/list";
     }
 
+    // FIX #3: 60 dòng → 5 dòng
     @GetMapping("/{jobId}/applications/{appId}")
-    public String applicationDetail(
-            @PathVariable Long jobId,
-            @PathVariable Long appId,
-            Model model) {
-
-        // 1. Load Job (show title + skills request)
-        Job job = adminJobService.findById(jobId);
-        Set<Long> jobSkillIds = job.getSkills().stream()
-                .map(com.jobhunter.jobhunter.entity.Skill::getId)
-                .collect(java.util.stream.Collectors.toSet());
-
-        // 2. Load Application by findById (get ID + scalar fields)
-        Application application = applicationRepository.findById(appId)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
-
-        // 3. Load User by userRepository.findById
-        com.jobhunter.jobhunter.entity.User user =
-                userRepository.findById(application.getUserId())
-                        .orElse(null);
-
-        // 4. Load UserSkill form UserSkillRepository
-        List<com.jobhunter.jobhunter.entity.userSkill.UserSkill> userSkills =
-                user != null ? userSkillRepository.findByUserId(user.getId())
-                        : java.util.Collections.emptyList();
-
-        // 5. Caculator matching %
-        int matchingPct = 0;
-        if (!jobSkillIds.isEmpty() && !userSkills.isEmpty()) {
-            long common = userSkills.stream()
-                    .filter(us -> us.getSkill() != null
-                            && jobSkillIds.contains(us.getSkill().getId()))
-                    .count();
-            matchingPct = (int) Math.round((double) common / jobSkillIds.size() * 100);
-        }
-
-        // 6. Build DTO — all flat
-        ApplicationDetailDTO detail = new ApplicationDetailDTO();
-        detail.setAppId(application.getId());
-        detail.setStatus(application.getStatus() != null
-                ? application.getStatus().name() : "PENDING");
-        detail.setAppliedAt(application.getAppliedAt());
-        detail.setCvFile(application.getCvFile());
-        detail.setCoverLetter(application.getCoverLetter());
-        detail.setMatchingPercent(matchingPct);
-        detail.setUserSkills(userSkills);
-
-        if (user != null) {
-            detail.setUserId(user.getId());
-            detail.setFullName(user.getFullName());
-            detail.setEmail(user.getEmail());
-            detail.setPhone(user.getPhone());
-            detail.setAddress(user.getAddress());
-        }
-
-        model.addAttribute("job", job);
-        model.addAttribute("detail", detail);
-        model.addAttribute("now", java.time.LocalDateTime.now());
+    public String applicationDetail(@PathVariable Long jobId, @PathVariable Long appId,
+                                    Model model) {
+        model.addAttribute("job", adminJobService.findById(jobId));
+        model.addAttribute("detail", applicationDetailService.getDetail(jobId, appId));
+        model.addAttribute("now", LocalDateTime.now());
         return "admin/application/detail";
     }
 }
