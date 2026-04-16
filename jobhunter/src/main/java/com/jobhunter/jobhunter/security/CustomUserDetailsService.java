@@ -3,19 +3,21 @@ package com.jobhunter.jobhunter.security;
 import com.jobhunter.jobhunter.entity.AppEnums;
 import com.jobhunter.jobhunter.entity.User;
 import com.jobhunter.jobhunter.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Spring Security uses this class to load the user from the database during login.
- */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
+
+    private static final Logger log = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
     private final UserRepository userRepository;
 
@@ -24,15 +26,20 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy user: " + email));
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "Không tìm thấy user: " + email));
 
-        // Check account is_lock
+        // Cập nhật lastLogin đúng nơi: service security, không phải config
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
+
         boolean enabled = user.getStatusUser() == AppEnums.UserStatus.ACTIVE;
-
-        // Spring Security request prefix "ROLE_" → "ROLE_USER" / "ROLE_ADMIN"
         String roleWithPrefix = "ROLE_" + user.getRole().getName();
+
+        log.info("LOGIN | email={} | role={} | enabled={}", email, roleWithPrefix, enabled);
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())

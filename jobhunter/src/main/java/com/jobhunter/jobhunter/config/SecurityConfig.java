@@ -55,52 +55,22 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
+                        // lastLogin update in CustomUserDetailsService
                         .successHandler((request, response, authentication) -> {
-                            String email = authentication.getName();
-                            userRepository.findByEmail(email).ifPresent(user -> {
-                                user.setLastLogin(LocalDateTime.now()); //save last_login
-                                userRepository.save(user);
-                            });
                             String role = authentication.getAuthorities()
                                     .iterator().next().getAuthority();
-                            System.out.println("=================================");
-                            System.out.println("LOGIN SUCCESS");
-                            System.out.println("Email  : " + email);
-                            System.out.println("Role   : " + role);
-                            System.out.println("Time   : " + java.time.LocalDateTime.now());
-                            System.out.println("=================================");
                             if ("ROLE_ADMIN".equals(role)) {
                                 response.sendRedirect("/admin/dashboard");
                             } else {
                                 response.sendRedirect("/");
                             }
                         })
-                        .failureHandler((request, response, exception) -> {
-                            String email = request.getParameter("email");
-                            System.out.println("=================================");
-                            System.out.println("LOGIN FAILED");
-                            System.out.println("Email  : " + email);
-                            System.out.println("Reason : " + exception.getMessage());
-                            System.out.println("Time   : " + java.time.LocalDateTime.now());
-                            System.out.println("=================================");
-
-                            response.sendRedirect("/login?error=true");
-                        })
+                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessHandler((request, response, authentication) -> {
-                            // Log logout
-                            String email = authentication != null ? authentication.getName() : "unknown";
-                            System.out.println("=================================");
-                            System.out.println("LOGOUT SUCCESS");
-                            System.out.println("Email  : " + email);
-                            System.out.println("Time   : " + java.time.LocalDateTime.now());
-                            System.out.println("=================================");
-
-                            response.sendRedirect("/login?logout=true");
-                        })
+                        .logoutSuccessUrl("/login?logout=true")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
