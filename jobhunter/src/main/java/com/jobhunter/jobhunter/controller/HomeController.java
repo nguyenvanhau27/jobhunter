@@ -16,16 +16,14 @@ public class HomeController {
     private final JobService jobService;
     private final CompanyService companyService;
 
-    public HomeController(JobService jobService, CompanyService companyService   ) {
+    public HomeController(JobService jobService, CompanyService companyService) {
         this.jobService = jobService;
         this.companyService = companyService;
     }
 
     @GetMapping("/")
     public String home(Model model) {
-        // Top 8 trending jobs
         List<Job> trendingJobs = jobService.findTrendingJobs(8);
-        // Top 8 companies
         List<Company> topCompanies = companyService.findTopCompanies(8);
 
         model.addAttribute("trendingJobs", trendingJobs);

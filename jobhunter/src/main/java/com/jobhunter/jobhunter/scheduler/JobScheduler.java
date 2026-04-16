@@ -7,7 +7,6 @@ import com.jobhunter.jobhunter.repository.PasswordResetTokenRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class JobScheduler {
         this.tokenRepository = tokenRepository;
     }
 
-    // ─── Tự động CLOSED job hết hạn — chạy mỗi ngày lúc 00:00 ──
+    // Auto CLOSED job expired — run at 00:00
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void closeExpiredJobs() {
@@ -43,7 +42,7 @@ public class JobScheduler {
         System.out.println("[Scheduler] Total closed: " + expiredJobs.size() + " jobs.");
     }
 
-    // ─── Dọn token reset password hết hạn — chạy mỗi ngày lúc 01:00 ──
+    // Clear expired tokens and reset passwords — runs daily at 01:00
     @Scheduled(cron = "0 0 1 * * *")
     @Transactional
     public void cleanExpiredTokens() {

@@ -23,31 +23,30 @@ public class AdminUserController {
         this.userRepository = userRepository;
     }
 
-    // ─── GET /admin/users ────────────────────────────────────────
+
     @GetMapping
     public String list(
-            @RequestParam(defaultValue = "0")  int page,
-            @RequestParam(required = false)    String keyword,   // ← thêm
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String keyword,
             Model model) {
 
         Pageable pageable = PageRequest.of(page, PAGE_SIZE,
                 Sort.by("createdAt").descending());
 
-        // Nếu có keyword → dùng search query, không thì lấy tất cả
         String kw = (keyword != null && !keyword.isBlank()) ? keyword.trim() : null;
 
         Page<User> userPage = (kw != null)
                 ? userRepository.searchUsers(kw, pageable)
                 : userRepository.findAll(pageable);
 
-        model.addAttribute("userPage",    userPage);
-        model.addAttribute("users",       userPage.getContent());
+        model.addAttribute("userPage", userPage);
+        model.addAttribute("users", userPage.getContent());
         model.addAttribute("currentPage", page);
-        model.addAttribute("keyword",     keyword);  // ← trả về để giữ giá trị input
+        model.addAttribute("keyword", keyword);
         return "admin/user/list";
     }
 
-    // ─── POST /admin/users/{id}/toggle-status ────────────────────
+
     @PostMapping("/{id}/toggle-status")
     public String toggleStatus(
             @PathVariable Long id,

@@ -36,7 +36,7 @@ public class AdminDashboardController {
     @GetMapping("/admin/dashboard")
     public String dashboard(Model model) {
 
-        // ─── Job stats ───────────────────────────────────────────
+        //Job stats
         model.addAttribute("totalJobs",
                 jobRepository.count());
         model.addAttribute("openJobs",
@@ -44,7 +44,7 @@ public class AdminDashboardController {
         model.addAttribute("closedJobs",
                 jobRepository.countByStatusJob(AppEnums.JobStatus.CLOSED));
 
-        // ─── Application stats ───────────────────────────────────
+        //Application stats
         model.addAttribute("totalApplications",
                 applicationRepository.count());
         model.addAttribute("pendingApplications",
@@ -54,17 +54,17 @@ public class AdminDashboardController {
         model.addAttribute("rejectedApplications",
                 applicationRepository.countByStatus(AppEnums.ApplicationStatus.REJECTED));
 
-        // ─── User stats ──────────────────────────────────────────
+        //User stats
         model.addAttribute("totalUsers",
                 userRepository.count());
         model.addAttribute("activeUsers",
                 userRepository.countByStatusUser(AppEnums.UserStatus.ACTIVE));
 
-        // ─── Company stats ───────────────────────────────────────
+        //Company stats
         model.addAttribute("totalCompanies",
                 companyRepository.count());
 
-        // ─── 10 đơn ứng tuyển mới nhất ──────────────────────────
+        //New 10 applied
         List<Application> recentApplications = applicationRepository.findAll(
                 PageRequest.of(0, 10, Sort.by("appliedAt").descending())
         ).getContent();

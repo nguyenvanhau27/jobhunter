@@ -4,7 +4,6 @@ import com.jobhunter.jobhunter.entity.PasswordResetToken;
 import com.jobhunter.jobhunter.entity.User;
 import com.jobhunter.jobhunter.repository.PasswordResetTokenRepository;
 import com.jobhunter.jobhunter.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -38,12 +37,11 @@ public class PasswordService {
         this.mailSender = mailSender;
     }
 
-    // ─── UC: Đổi password (đã đăng nhập) ───────────────────────
+
     public void changePassword(String email, String oldPassword, String newPassword) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User không tồn tại"));
 
-        // Xác nhận password cũ đúng không
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new IllegalArgumentException("Mật khẩu hiện tại không chính xác");
         }
@@ -61,9 +59,7 @@ public class PasswordService {
         System.out.println("=================================");
     }
 
-    // ─── UC: Quên password — gửi email reset ────────────────────
     public void sendResetEmail(String email) {
-        // Kiểm tra email tồn tại — không thông báo lỗi ra ngoài (bảo mật)
         userRepository.findByEmail(email).orElseThrow(
                 () -> new IllegalArgumentException("Email không tồn tại trong hệ thống")
         );
@@ -71,7 +67,7 @@ public class PasswordService {
         // Xoá token cũ nếu có
         tokenRepository.deleteByEmail(email);
 
-        // Tạo token mới
+        // create new token
         String token = UUID.randomUUID().toString();
         PasswordResetToken resetToken = new PasswordResetToken();
         resetToken.setToken(token);
@@ -79,7 +75,7 @@ public class PasswordService {
         resetToken.setExpiryTime(LocalDateTime.now().plusMinutes(expiryMinutes));
         tokenRepository.save(resetToken);
 
-        // Gửi email
+        // Send email
         String resetLink = baseUrl + "/reset-password?token=" + token;
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
@@ -102,7 +98,7 @@ public class PasswordService {
         System.out.println("=================================");
     }
 
-    // ─── UC: Đặt lại password bằng token ────────────────────────
+
     public void resetPassword(String token, String newPassword) {
         PasswordResetToken resetToken = tokenRepository.findByToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("Token không hợp lệ"));
@@ -119,14 +115,14 @@ public class PasswordService {
             throw new IllegalArgumentException("Mật khẩu phải có ít nhất 6 ký tự");
         }
 
-        // Cập nhật password
+        // Update password
         User user = userRepository.findByEmail(resetToken.getEmail())
                 .orElseThrow(() -> new RuntimeException("User không tồn tại"));
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
-        // Đánh dấu token đã dùng
+        // Tick token used
         resetToken.setUsed(true);
         tokenRepository.save(resetToken);
 

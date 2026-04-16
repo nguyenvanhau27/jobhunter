@@ -1,7 +1,6 @@
 package com.jobhunter.jobhunter.service.impl;
 
 import com.jobhunter.jobhunter.entity.AppEnums;
-import com.jobhunter.jobhunter.entity.Company;
 import com.jobhunter.jobhunter.entity.Job;
 import com.jobhunter.jobhunter.repository.JobRepository;
 import com.jobhunter.jobhunter.service.JobService;
@@ -10,7 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -59,7 +57,7 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public List<Job> findTrendingJobs(int limit) {
-        // Job có nhiều application nhất trong 7 ngày gần đây
+        // Job have most application in 7 day
         LocalDateTime since = LocalDateTime.now().minusDays(7);
         return jobRepository.findTrendingJobs(
                 LocalDateTime.now(), since,

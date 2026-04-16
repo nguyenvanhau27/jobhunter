@@ -10,10 +10,15 @@
     <style>
         /* ── Skill-specific styles ─────────────────── */
         .category-badge {
-            display: inline-flex; align-items: center;
-            padding: 3px 10px; border-radius: 20px;
-            font-size: 11px; font-weight: 700; white-space: nowrap;
-            background: var(--primary-light); color: var(--primary-dark);
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            background: var(--primary-light);
+            color: var(--primary-dark);
             border: 1px solid var(--primary-hover);
         }
 
@@ -22,106 +27,205 @@
             padding: 5px 9px;
             border: 1.5px solid var(--border);
             border-radius: var(--radius);
-            font-size: 13px; font-family: var(--font);
-            color: var(--text-dark); background: var(--bg-white);
-            width: 100%; transition: border-color .2s;
+            font-size: 13px;
+            font-family: var(--font);
+            color: var(--text-dark);
+            background: var(--bg-white);
+            width: 100%;
+            transition: border-color .2s;
         }
+
         .inline-input:focus {
-            outline: none; border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(37,99,235,.08);
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, .08);
         }
+
         .inline-select {
             padding: 5px 28px 5px 9px;
             border: 1.5px solid var(--border);
             border-radius: var(--radius);
-            font-size: 13px; font-family: var(--font);
-            color: var(--text-dark); background: var(--bg-white);
-            appearance: none; -webkit-appearance: none;
-            transition: border-color .2s; cursor: pointer;
+            font-size: 13px;
+            font-family: var(--font);
+            color: var(--text-dark);
+            background: var(--bg-white);
+            appearance: none;
+            -webkit-appearance: none;
+            transition: border-color .2s;
+            cursor: pointer;
             width: 100%;
         }
-        .inline-select:focus { outline: none; border-color: var(--primary); }
-        .inline-select-wrap { position: relative; }
+
+        .inline-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .inline-select-wrap {
+            position: relative;
+        }
+
         .inline-select-wrap svg {
-            position: absolute; right: 7px; top: 50%;
+            position: absolute;
+            right: 7px;
+            top: 50%;
             transform: translateY(-50%);
-            width: 13px; height: 13px;
-            stroke: var(--text-muted); fill: none; stroke-width: 2;
+            width: 13px;
+            height: 13px;
+            stroke: var(--text-muted);
+            fill: none;
+            stroke-width: 2;
             pointer-events: none;
         }
 
         .btn-save {
-            background: #f0fdf4; color: #15803d;
+            background: #f0fdf4;
+            color: #15803d;
             border: 1px solid #bbf7d0;
         }
-        .btn-save:hover { background: #dcfce7; }
+
+        .btn-save:hover {
+            background: #dcfce7;
+        }
 
         /* add skill form */
         .add-skill-form {
-            display: flex; gap: 10px; align-items: flex-start;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
             flex-wrap: wrap;
         }
-        .add-skill-form .form-input { width: 220px; }
-        .add-skill-form .select-wrap { min-width: 160px; }
+
+        .add-skill-form .form-input {
+            width: 220px;
+        }
+
+        .add-skill-form .select-wrap {
+            min-width: 160px;
+        }
 
         /* filter bar */
         .filter-bar {
-            display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
         }
-        .filter-bar .job-search-field { flex: 1; min-width: 200px; }
+
+        .filter-bar .job-search-field {
+            flex: 1;
+            min-width: 200px;
+        }
 
         /* stat pill */
         .skill-stat {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 4px 12px; border-radius: 20px;
-            background: var(--primary-light); color: var(--primary-dark);
-            font-size: 12px; font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-size: 12px;
+            font-weight: 600;
             border: 1px solid var(--primary-hover);
         }
 
         /* search result tag */
         .filter-tag {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: var(--primary-light); color: var(--primary-dark);
-            border: 1px solid var(--primary-hover); border-radius: 20px;
-            padding: 4px 12px; font-size: 12px; font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            border: 1px solid var(--primary-hover);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 600;
         }
 
         /* filter submit button */
         .btn-filter-submit {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 9px 16px; background: var(--primary); color: #fff;
-            border: none; border-radius: var(--radius); font-size: 13px;
-            font-weight: 600; cursor: pointer; font-family: var(--font);
-            transition: background .2s; white-space: nowrap;
-        }
-        .btn-filter-submit:hover { background: var(--primary-dark); }
-        .btn-filter-reset {
-            display: inline-flex; align-items: center; gap: 5px;
-            padding: 9px 14px; background: var(--bg-white); color: var(--text-muted);
-            border: 1.5px solid var(--border); border-radius: var(--radius);
-            font-size: 13px; font-weight: 500; cursor: pointer;
-            font-family: var(--font); text-decoration: none; transition: all .15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 16px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: var(--font);
+            transition: background .2s;
             white-space: nowrap;
         }
-        .btn-filter-reset:hover { border-color: var(--primary); color: var(--primary); }
+
+        .btn-filter-submit:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-filter-reset {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 9px 14px;
+            background: var(--bg-white);
+            color: var(--text-muted);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: var(--font);
+            text-decoration: none;
+            transition: all .15s;
+            white-space: nowrap;
+        }
+
+        .btn-filter-reset:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
 
         /* category filter select */
-        .cat-select-wrap { position: relative; min-width: 170px; }
-        .cat-select-wrap select {
-            width: 100%; padding: 9px 28px 9px 12px;
-            border: 1.5px solid var(--border); border-radius: var(--radius);
-            font-size: 13px; font-family: var(--font);
-            appearance: none; -webkit-appearance: none;
-            background: var(--bg-white); color: var(--text-dark);
-            cursor: pointer; transition: border-color .2s;
+        .cat-select-wrap {
+            position: relative;
+            min-width: 170px;
         }
-        .cat-select-wrap select:focus { outline: none; border-color: var(--primary); }
+
+        .cat-select-wrap select {
+            width: 100%;
+            padding: 9px 28px 9px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-family: var(--font);
+            appearance: none;
+            -webkit-appearance: none;
+            background: var(--bg-white);
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: border-color .2s;
+        }
+
+        .cat-select-wrap select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
         .cat-select-wrap svg {
-            position: absolute; right: 9px; top: 50%;
+            position: absolute;
+            right: 9px;
+            top: 50%;
             transform: translateY(-50%);
-            width: 14px; height: 14px;
-            stroke: var(--text-muted); fill: none; stroke-width: 2;
+            width: 14px;
+            height: 14px;
+            stroke: var(--text-muted);
+            fill: none;
+            stroke-width: 2;
             pointer-events: none;
         }
     </style>
@@ -136,7 +240,12 @@
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="admin-sidebar-brand">
             <div class="admin-sidebar-brand-icon">
-                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <rect x="2" y="7" width="20" height="14" rx="2"/>
+                    <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                    <line x1="12" y1="12" x2="12" y2="16"/>
+                    <line x1="10" y1="14" x2="14" y2="14"/>
+                </svg>
             </div>
             <div class="admin-sidebar-brand-text">
                 <div class="admin-sidebar-brand-name">Admin Panel</div>
@@ -146,35 +255,59 @@
         <nav class="admin-sidebar-nav">
             <div class="admin-sidebar-section-label">Main</div>
             <a th:href="@{/admin/dashboard}" class="admin-nav-item">
-                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
                 Dashboard
             </a>
             <div class="admin-sidebar-section-label" style="margin-top:8px;">Management</div>
             <a th:href="@{/admin/jobs}" class="admin-nav-item">
-                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <rect x="2" y="7" width="20" height="14" rx="2"/>
+                    <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                </svg>
                 Quản lý Job
             </a>
             <a th:href="@{/admin/users}" class="admin-nav-item">
-                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
                 Quản lý User
             </a>
             <a th:href="@{/admin/companies}" class="admin-nav-item">
-                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
                 Quản lý Công ty
             </a>
             <a th:href="@{/admin/skills}" class="admin-nav-item active">
-                <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <polygon
+                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
                 Quản lý Kỹ năng
             </a>
             <div class="admin-sidebar-section-label" style="margin-top:8px;">System</div>
             <a th:href="@{/admin/settings}" class="admin-nav-item">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
                 Cài đặt hệ thống
             </a>
         </nav>
         <div class="admin-sidebar-footer">
             <div class="admin-sidebar-collapse" id="sidebarCollapseBtn">
-                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
                 <span>Thu gọn</span>
             </div>
         </div>
@@ -193,7 +326,10 @@
             </div>
             <div class="admin-topbar-right">
                 <div class="admin-topbar-avatar">
-                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
                 </div>
             </div>
         </header>
@@ -210,7 +346,9 @@
                 </div>
                 <div class="admin-page-actions">
                     <span class="skill-stat">
-                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                             stroke-width="2"><polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                         <span th:text="${skillPage.totalElements}">0</span> kết quả tìm kiếm
                     </span>
                 </div>
@@ -219,13 +357,21 @@
             <!-- Flash messages -->
             <div th:if="${successMessage}" class="flash-success" style="margin-bottom:16px;">
                 <div style="display:flex;align-items:center;gap:8px;">
-                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="flex-shrink:0"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                         style="flex-shrink:0">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
                     <span th:text="${successMessage}"></span>
                 </div>
             </div>
             <div th:if="${errorMessage}" class="flash-error" style="margin-bottom:16px;">
                 <div style="display:flex;align-items:center;gap:8px;">
-                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                         style="flex-shrink:0">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
                     <span th:text="${errorMessage}"></span>
                 </div>
             </div>
@@ -233,7 +379,11 @@
             <!-- ── Add Skill Form ──────────────────── -->
             <div class="admin-card" style="margin-bottom:16px; padding:18px 22px;">
                 <div class="admin-card-title" style="margin-bottom:14px;">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="vertical-align:middle;margin-right:6px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" style="vertical-align:middle;margin-right:6px;">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
                     Thêm skill mới
                 </div>
                 <form th:action="@{/admin/skills/add}" method="post" class="add-skill-form">
@@ -257,7 +407,9 @@
                                             th:text="${cat}"></option>
                                     <option value="__new__">+ Tạo category mới...</option>
                                 </select>
-                                <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                                <svg viewBox="0 0 24 24">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
                             </div>
                         </div>
                         <!-- Hidden/text input for actual value -->
@@ -268,7 +420,11 @@
 
                     <div style="align-self:flex-end;">
                         <button type="submit" class="btn-admin-primary" style="padding:9px 20px;">
-                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor"
+                                 stroke-width="2.5" stroke-linecap="round">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
                             Thêm
                         </button>
                     </div>
@@ -280,7 +436,10 @@
                 <form th:action="@{/admin/skills}" method="get" class="filter-bar">
                     <!-- Keyword search -->
                     <div class="job-search-field">
-                        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
                         <input type="text" name="keyword"
                                th:value="${keyword}"
                                placeholder="Tìm theo tên skill..."/>
@@ -294,16 +453,25 @@
                                     th:text="${cat}"
                                     th:selected="${cat == category}"></option>
                         </select>
-                        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
                     </div>
 
                     <button type="submit" class="btn-filter-submit">
-                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                        </svg>
                         Lọc
                     </button>
                     <a th:href="@{/admin/skills}" class="btn-filter-reset"
                        th:if="${(keyword != null and !#strings.isEmpty(keyword)) or (category != null and !#strings.isEmpty(category))}">
-                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
                         Xoá lọc
                     </a>
                 </form>
@@ -317,7 +485,8 @@
                     <span th:if="${category != null and !#strings.isEmpty(category)}" class="filter-tag">
                         🏷 Category: <span th:text="${category}"></span>
                     </span>
-                    <span class="filter-tag" style="background:var(--bg-light);color:var(--text-muted);border-color:var(--border);">
+                    <span class="filter-tag"
+                          style="background:var(--bg-light);color:var(--text-muted);border-color:var(--border);">
                         <span th:text="${skillPage.totalElements}"></span> kết quả
                     </span>
                 </div>
@@ -338,7 +507,10 @@
 
                 <!-- Empty -->
                 <div th:if="${#lists.isEmpty(skills)}" class="admin-empty">
-                    <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <svg viewBox="0 0 24 24">
+                        <polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
                     <p>Không tìm thấy kỹ năng phù hợp.</p>
                 </div>
 
@@ -387,7 +559,9 @@
                                                 th:text="${cat}"
                                                 th:selected="${cat == skill.category}"></option>
                                     </select>
-                                    <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                                    <svg viewBox="0 0 24 24">
+                                        <polyline points="6 9 12 15 18 9"/>
+                                    </svg>
                                 </div>
                             </td>
 
@@ -399,7 +573,10 @@
                                             class="btn-action edit js-edit-toggle"
                                             th:data-skill-id="${skill.id}"
                                             title="Sửa">
-                                        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
                                         Sửa
                                     </button>
 
@@ -408,14 +585,19 @@
                                           method="post"
                                           th:id="'updateForm-' + ${skill.id}"
                                           style="display:none;">
-                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                                        <input type="hidden" name="name"     th:id="'hidden-name-' + ${skill.id}"/>
+                                        <input type="hidden" th:name="${_csrf.parameterName}"
+                                               th:value="${_csrf.token}"/>
+                                        <input type="hidden" name="name" th:id="'hidden-name-' + ${skill.id}"/>
                                         <input type="hidden" name="category" th:id="'hidden-cat-'  + ${skill.id}"/>
                                         <button type="button"
                                                 class="btn-action btn-save js-save-skill"
                                                 th:data-skill-id="${skill.id}"
                                                 title="Lưu">
-                                            <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                                            <svg viewBox="0 0 24 24">
+                                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                                <polyline points="17 21 17 13 7 13 7 21"/>
+                                                <polyline points="7 3 7 8 15 8"/>
+                                            </svg>
                                             Lưu
                                         </button>
                                     </form>
@@ -425,13 +607,20 @@
                                           method="post"
                                           th:id="'deleteForm-' + ${skill.id}"
                                           style="display:inline;">
-                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                        <input type="hidden" th:name="${_csrf.parameterName}"
+                                               th:value="${_csrf.token}"/>
                                         <button type="button"
                                                 class="btn-action delete js-delete-skill"
                                                 th:data-skill-id="${skill.id}"
                                                 th:data-skill-name="${skill.name}"
                                                 title="Xoá">
-                                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                                            <svg viewBox="0 0 24 24">
+                                                <polyline points="3 6 5 6 21 6"/>
+                                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                                                <path d="M10 11v6"/>
+                                                <path d="M14 11v6"/>
+                                                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                                            </svg>
                                             Xoá
                                         </button>
                                     </form>
@@ -457,7 +646,8 @@
                            th:text="${i + 1}"
                            th:classappend="${i == currentPage} ? ' active'"
                            class="page-btn"></a>
-                        <span th:if="${i == currentPage + 2 and i < skillPage.totalPages - 2}" class="page-ellipsis">…</span>
+                        <span th:if="${i == currentPage + 2 and i < skillPage.totalPages - 2}"
+                              class="page-ellipsis">…</span>
                     </th:block>
 
                     <a th:if="${currentPage < skillPage.totalPages - 1}"
@@ -483,21 +673,32 @@
             <p class="modal-subtitle">Hành động này không thể hoàn tác</p>
         </div>
         <button class="modal-close" onclick="hideDeleteModal()">
-            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <svg viewBox="0 0 24 24">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
         </button>
     </div>
     <div class="modal-body">
         <div class="delete-warning">
-            <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <svg viewBox="0 0 24 24">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
             <p>Bạn có chắc muốn xoá skill <strong id="deleteSkillName"></strong>?
-                <br/><small style="color:var(--text-muted);">Lưu ý: Không thể xoá nếu skill đang được dùng trong một Job.</small>
+                <br/><small style="color:var(--text-muted);">Lưu ý: Không thể xoá nếu skill đang được dùng trong một
+                    Job.</small>
             </p>
         </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn-modal-cancel" onclick="hideDeleteModal()">Huỷ</button>
         <button type="button" class="btn-modal-delete" id="confirmDeleteBtn">
-            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            <svg viewBox="0 0 24 24">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            </svg>
             Xoá
         </button>
     </div>
@@ -541,9 +742,9 @@
         // ── Save button ──────────────────────────
         const saveBtn = e.target.closest('.js-save-skill');
         if (saveBtn) {
-            const id       = saveBtn.dataset.skillId;
-            const nameVal  = document.getElementById('edit-name-' + id).value.trim();
-            const catVal   = document.getElementById('edit-cat-'  + id).querySelector('select').value;
+            const id = saveBtn.dataset.skillId;
+            const nameVal = document.getElementById('edit-name-' + id).value.trim();
+            const catVal = document.getElementById('edit-cat-' + id).querySelector('select').value;
 
             if (!nameVal || !catVal) {
                 alert('Tên skill và category không được để trống.');
@@ -551,15 +752,15 @@
             }
 
             document.getElementById('hidden-name-' + id).value = nameVal;
-            document.getElementById('hidden-cat-'  + id).value = catVal;
-            document.getElementById('updateForm-'  + id).submit();
+            document.getElementById('hidden-cat-' + id).value = catVal;
+            document.getElementById('updateForm-' + id).submit();
             return;
         }
 
         // ── Delete button ────────────────────────
         const delBtn = e.target.closest('.js-delete-skill');
         if (delBtn) {
-            const id   = delBtn.dataset.skillId;
+            const id = delBtn.dataset.skillId;
             const name = delBtn.dataset.skillName;
             pendingDeleteId = id;
             document.getElementById('deleteSkillName').textContent = '\u201c' + name + '\u201d';

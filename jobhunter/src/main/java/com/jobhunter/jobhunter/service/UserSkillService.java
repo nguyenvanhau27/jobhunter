@@ -6,7 +6,6 @@ import java.util.List;
 
 public interface UserSkillService {
 
-    // Lấy danh sách skill của user
     List<com.jobhunter.jobhunter.entity.userSkill.UserSkill> getSkillsByUserId(Long userId);
 
     // Thêm skill

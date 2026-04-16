@@ -11,7 +11,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // ─── 404 — Not Found ────────────────────────────────────────
+    // 404 — Not Found
     @ExceptionHandler({NoHandlerFoundException.class, NoResourceFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handle404(Exception ex, Model model) {
@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
         return "error/error";
     }
 
-    // ─── RuntimeException — dữ liệu không tìm thấy ──────────────
+    // RuntimeException — data not found
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNotFound(RuntimeException ex, Model model) {
@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
         return "error/error";
     }
 
-    // ─── 403 — Access Denied ────────────────────────────────────
+    // 403 — Access Denied
     @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public String handle403(Model model) {
@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
         return "error/error";
     }
 
-    // ─── 500 — Internal Server Error ────────────────────────────
+    // 500 — Internal Server Error
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public String handle500(Exception ex, Model model) {

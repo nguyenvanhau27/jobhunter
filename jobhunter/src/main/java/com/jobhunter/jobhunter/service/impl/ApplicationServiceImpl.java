@@ -11,12 +11,10 @@ import com.jobhunter.jobhunter.service.ApplicationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -26,7 +24,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final UserRepository userRepository;
     private final JobRepository jobRepository;
 
-    // Thư mục lưu CV — cấu hình trong application.properties
+    // The folder where CVs are saved — configured in application.properties
     @Value("${app.upload.cv-dir:uploads/cv}")
     private String cvUploadDir;
 
@@ -48,7 +46,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Job không tồn tại"));
 
-        // E3: Job đã đóng hoặc hết hạn
+        // E3: Job đã close or expired
         if (job.getStatusJob() == AppEnums.JobStatus.CLOSED) {
             throw new IllegalStateException("Vị trí này đã đóng tuyển dụng");
         }
@@ -56,7 +54,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new IllegalStateException("Vị trí này đã hết hạn tuyển dụng");
         }
 
-        // E2: Đã apply rồi
+        // E2: applied
         if (applicationRepository.existsByUser_IdAndJob_Id(userId, jobId)) {
             throw new IllegalStateException("Bạn đã ứng tuyển vị trí này");
         }
@@ -64,7 +62,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         // E1: Validate file
         String cvPath = validateAndSaveFile(cvFile, userId, jobId);
 
-        // Tạo Application
+        // create Application
         Application application = new Application();
         application.setUser(user);
         application.setJob(job);
@@ -89,7 +87,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         return applicationRepository.findByUser_Id(userId);
     }
 
-    // ─── Validate + lưu file CV ──────────────────────────────────
+
     private String validateAndSaveFile(MultipartFile file, Long userId, Long jobId) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("Vui lòng upload file CV");
@@ -115,10 +113,10 @@ public class ApplicationServiceImpl implements ApplicationService {
             String fileName = userId + "_" + jobId + "_" + System.currentTimeMillis() + ".pdf";
             Path filePath = uploadPath.resolve(fileName);
 
-            // Dùng Files.copy thay vì transferTo — hoạt động tốt trên Windows
+            // Use Files.copy instead of transferTo — it works well on Windows
             Files.copy(file.getInputStream(), filePath);
 
-            // Lưu relative path vào DB
+            // Save relative path to DB
             return "uploads/cv/" + fileName;
 
         } catch (IOException e) {

@@ -5,7 +5,6 @@ import com.jobhunter.jobhunter.entity.Company;
 import com.jobhunter.jobhunter.repository.CompanyRepository;
 import com.jobhunter.jobhunter.service.CompanyService;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;

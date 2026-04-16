@@ -38,7 +38,8 @@ public class Application {
     @JoinColumn(name = "job_id", nullable = false)
     private Job job;
 
-    public Application() {}
+    public Application() {
+    }
 
     @PrePersist
     protected void onCreate() {
@@ -56,29 +57,70 @@ public class Application {
     public Long getUserId() {
         return user != null ? user.getId() : null;
     }
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
-    public String getCvFile() { return cvFile; }
-    public void setCvFile(String cvFile) { this.cvFile = cvFile; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getCoverLetter() { return coverLetter; }
-    public void setCoverLetter(String coverLetter) { this.coverLetter = coverLetter; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public AppEnums.ApplicationStatus getStatus() { return status; }
-    public void setStatus(AppEnums.ApplicationStatus status) { this.status = status; }
+    public String getCvFile() {
+        return cvFile;
+    }
 
-    public LocalDateTime getAppliedAt() { return appliedAt; }
-    public void setAppliedAt(LocalDateTime appliedAt) { this.appliedAt = appliedAt; }
+    public void setCvFile(String cvFile) {
+        this.cvFile = cvFile;
+    }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public String getCoverLetter() {
+        return coverLetter;
+    }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public void setCoverLetter(String coverLetter) {
+        this.coverLetter = coverLetter;
+    }
 
-    public Job getJob() { return job; }
-    public void setJob(Job job) { this.job = job; }
+    public AppEnums.ApplicationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AppEnums.ApplicationStatus status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getAppliedAt() {
+        return appliedAt;
+    }
+
+    public void setAppliedAt(LocalDateTime appliedAt) {
+        this.appliedAt = appliedAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Job getJob() {
+        return job;
+    }
+
+    public void setJob(Job job) {
+        this.job = job;
+    }
 
     @Override
     public String toString() {

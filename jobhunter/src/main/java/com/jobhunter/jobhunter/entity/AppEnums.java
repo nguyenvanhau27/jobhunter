@@ -2,20 +2,20 @@ package com.jobhunter.jobhunter.entity;
 
 public class AppEnums {
 
-    // Tạo file JobType.java
-    public enum JobType { FULLTIME, PART_TIME, INTERN, REMOTE }
+    // Create file JobType.java
+    public enum JobType {FULLTIME, PART_TIME, INTERN, REMOTE}
 
-    // Tạo file ExperienceLevel.java
-    public enum ExperienceLevel { JUNIOR, MID, SENIOR}
+    // Create file ExperienceLevel.java
+    public enum ExperienceLevel {JUNIOR, MID, SENIOR}
 
-    // Tạo file ApplicationStatus.java
-    public enum ApplicationStatus { PENDING, APPROVED, REJECTED }
+    // Create file ApplicationStatus.java
+    public enum ApplicationStatus {PENDING, APPROVED, REJECTED}
 
-    // Tạo file UserStatus.java
-    public enum UserStatus { ACTIVE, INACTIVE }
+    // Create file UserStatus.java
+    public enum UserStatus {ACTIVE, INACTIVE}
 
-    // Tạo file JobStatus.java
-    public enum JobStatus { OPEN, CLOSED }
+    // Create file JobStatus.java
+    public enum JobStatus {OPEN, CLOSED}
 
     public enum SkillLevel {
         BEGINNER, INTERMEDIATE, ADVANCED

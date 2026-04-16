@@ -10,7 +10,6 @@ import com.jobhunter.jobhunter.repository.UserSkillRepository;
 import com.jobhunter.jobhunter.service.UserSkillService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
@@ -35,7 +34,6 @@ public class UserSkillServiceImpl implements UserSkillService {
 
     @Override
     public void addSkill(Long userId, Long skillId, AppEnums.SkillLevel level) {
-        // E1: Kiểm tra skill đã tồn tại chưa
         if (userSkillRepository.existsByUserIdAndSkillId(userId, skillId)) {
             throw new IllegalArgumentException("Bạn đã có skill này");
         }

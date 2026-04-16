@@ -11,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
 @Controller
 @RequestMapping("/admin/skills")
 public class AdminSkillController {
@@ -24,7 +23,7 @@ public class AdminSkillController {
         this.skillRepository = skillRepository;
     }
 
-    // ─── GET /admin/skills ───────────────────────────────────────
+
     @GetMapping
     public String list(
             @RequestParam(defaultValue = "0")  int    page,
@@ -51,8 +50,7 @@ public class AdminSkillController {
         return "admin/skill/list";
     }
 
-    // ─── POST /admin/skills/add ──────────────────────────────────
-    // Thêm skill mới (inline form trong trang list)
+
     @PostMapping("/add")
     public String add(
             @RequestParam String name,
@@ -83,8 +81,7 @@ public class AdminSkillController {
         return "redirect:/admin/skills";
     }
 
-    // ─── POST /admin/skills/{id}/update ──────────────────────────
-    // Inline edit tên + category
+
     @PostMapping("/{id}/update")
     public String update(
             @PathVariable Long id,
@@ -104,7 +101,7 @@ public class AdminSkillController {
         return "redirect:/admin/skills";
     }
 
-    // ─── POST /admin/skills/{id}/delete ──────────────────────────
+
     @PostMapping("/{id}/delete")
     public String delete(
             @PathVariable Long id,

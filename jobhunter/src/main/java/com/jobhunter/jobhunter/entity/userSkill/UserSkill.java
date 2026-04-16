@@ -1,6 +1,5 @@
 package com.jobhunter.jobhunter.entity.userSkill;
 
-
 import com.jobhunter.jobhunter.entity.AppEnums;
 import com.jobhunter.jobhunter.entity.Skill;
 import com.jobhunter.jobhunter.entity.User;
@@ -25,14 +24,30 @@ public class UserSkill {
     @Column(name = "level_skill")
     private AppEnums.SkillLevel levelSkill;
 
-    public UserSkill() {}
+    public UserSkill() {
+    }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public User getUser() {
+        return user;
+    }
 
-    public Skill getSkill() { return skill; }
-    public void setSkill(Skill skill) { this.skill = skill; }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-    public AppEnums.SkillLevel getLevelSkill() { return levelSkill; }
-    public void setLevelSkill(AppEnums.SkillLevel levelSkill) { this.levelSkill = levelSkill; }
+    public Skill getSkill() {
+        return skill;
+    }
+
+    public void setSkill(Skill skill) {
+        this.skill = skill;
+    }
+
+    public AppEnums.SkillLevel getLevelSkill() {
+        return levelSkill;
+    }
+
+    public void setLevelSkill(AppEnums.SkillLevel levelSkill) {
+        this.levelSkill = levelSkill;
+    }
 }

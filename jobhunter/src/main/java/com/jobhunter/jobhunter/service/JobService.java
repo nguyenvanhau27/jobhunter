@@ -3,7 +3,6 @@ package com.jobhunter.jobhunter.service;
 import com.jobhunter.jobhunter.entity.AppEnums;
 import com.jobhunter.jobhunter.entity.Job;
 import org.springframework.data.domain.Page;
-
 import java.util.List;
 
 public interface JobService {
@@ -19,7 +18,7 @@ public interface JobService {
 
     Page<Job> findOpenJobs(int page, int size);
 
-    // Trending: top job nhiều apply nhất trong 7 ngày
+    // Trending: top job most apply in 7 day
     List<Job> findTrendingJobs(int limit);
 
 

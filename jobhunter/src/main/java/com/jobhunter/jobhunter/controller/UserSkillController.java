@@ -47,10 +47,10 @@ public class UserSkillController {
 
         // Pagination
         int totalSkills = allMySkills.size();
-        int totalPages  = Math.max(1, (int) Math.ceil((double) totalSkills / PAGE_SIZE));
-        int safePage    = Math.min(page, totalPages - 1);
-        int start       = safePage * PAGE_SIZE;
-        int end         = Math.min(start + PAGE_SIZE, totalSkills);
+        int totalPages = Math.max(1, (int) Math.ceil((double) totalSkills / PAGE_SIZE));
+        int safePage = Math.min(page, totalPages - 1);
+        int start = safePage * PAGE_SIZE;
+        int end = Math.min(start + PAGE_SIZE, totalSkills);
         List<UserSkill> pagedSkills = totalSkills > 0 ? allMySkills.subList(start, end) : List.of();
 
         // All system skills for search dropdown
@@ -63,13 +63,13 @@ public class UserSkillController {
                 .distinct().sorted()
                 .collect(Collectors.toList());
 
-        model.addAttribute("mySkills",    pagedSkills);
-        model.addAttribute("allSkills",   allSkills);
-        model.addAttribute("categories",  categories);
-        model.addAttribute("levels",      AppEnums.SkillLevel.values());
-        model.addAttribute("user",        user);
+        model.addAttribute("mySkills", pagedSkills);
+        model.addAttribute("allSkills", allSkills);
+        model.addAttribute("categories", categories);
+        model.addAttribute("levels", AppEnums.SkillLevel.values());
+        model.addAttribute("user", user);
         model.addAttribute("totalSkills", totalSkills);
-        model.addAttribute("totalPages",  totalPages);
+        model.addAttribute("totalPages", totalPages);
         model.addAttribute("currentPage", safePage);
         return "user/skills";
     }

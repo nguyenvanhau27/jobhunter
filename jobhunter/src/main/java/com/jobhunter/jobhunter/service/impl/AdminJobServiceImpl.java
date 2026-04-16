@@ -16,11 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class AdminJobServiceImpl implements AdminJobService {
@@ -51,7 +49,7 @@ public class AdminJobServiceImpl implements AdminJobService {
         return jobRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Job không tồn tại"));
     }
-    // ─── Validate chung ──────────────────────────────────────────
+
     private void validate(JobDTO dto) {
         // Validate salary
         if (dto.getMinSalary() != null && dto.getMaxSalary() != null
@@ -61,7 +59,7 @@ public class AdminJobServiceImpl implements AdminJobService {
         }
     }
 
-    // ─── Validate expiredAt ──────────────────────────────────────
+
     private void validateExpiredAt(LocalDateTime expiredAt) {
         if (expiredAt == null) return;
         if (expiredAt.isBefore(LocalDateTime.now())) {
@@ -70,7 +68,7 @@ public class AdminJobServiceImpl implements AdminJobService {
         }
     }
 
-    // ─── Create ──────────────────────────────────────────────────
+
     @Override
     @Transactional
     public Job createJob(JobDTO dto) {
@@ -86,7 +84,7 @@ public class AdminJobServiceImpl implements AdminJobService {
         return jobRepository.save(job);
     }
 
-    // ─── Update ──────────────────────────────────────────────────
+
     @Override
     @Transactional
     public Job updateJob(Long id, JobDTO dto) {
@@ -98,7 +96,7 @@ public class AdminJobServiceImpl implements AdminJobService {
 
         setJobFields(job, dto, company);
 
-        // Nếu job đang CLOSED mà admin cập nhật expiredAt mới → tự động OPEN lại
+        // If the job is CLOSED and the admin updates the expirationAt value, it will automatically reopen.
         if (job.getStatusJob() == AppEnums.JobStatus.CLOSED
                 && dto.getExpiredAt() != null
                 && dto.getExpiredAt().isAfter(LocalDateTime.now())) {
@@ -109,7 +107,7 @@ public class AdminJobServiceImpl implements AdminJobService {
         return jobRepository.save(job);
     }
 
-    // ─── Reopen job (Admin gia hạn thêm thời gian) ──────────────
+
     @Override
     @Transactional
     public Job reopenJob(Long id, LocalDateTime newExpiredAt) {
@@ -131,7 +129,7 @@ public class AdminJobServiceImpl implements AdminJobService {
         return jobRepository.save(job);
     }
 
-    // ─── Delete ──────────────────────────────────────────────────
+
     @Override
     @Transactional
     public String deleteJob(Long id) {
@@ -150,7 +148,7 @@ public class AdminJobServiceImpl implements AdminJobService {
         return "Đã xoá job \"" + job.getTitle() + "\" thành công!";
     }
 
-    // ─── Helper: set các field chung cho create/update ───────────
+
     private void setJobFields(Job job, JobDTO dto, Company company) {
         job.setTitle(dto.getTitle());
         job.setDescription(dto.getDescription());
@@ -176,53 +174,7 @@ public class AdminJobServiceImpl implements AdminJobService {
         return jobRepository.findAllWithCandidateCounts(PageRequest.of(page, size));
     }
 
-    /**
-     * Lấy danh sách ứng viên kèm skill-matching %.
-     * Algorithm: matchingPercent = (userSkills ∩ jobSkills).size / jobSkills.size * 100
-     *
-     * @param sortByMatching true → sort matching DESC, false → sort appliedAt DESC
-     */
-//    @Override
-//    public List<ApplicationListItemDTO> getApplicationsWithMatching(
-//            Long jobId, boolean sortByMatching) {
-//
-//        Job job = findById(jobId);
-//        Set<Long> jobSkillIds = job.getSkills().stream()
-//                .map(Skill::getId)
-//                .collect(java.util.stream.Collectors.toSet());
-//
-//        // ← Dùng eager query để tránh LazyInitializationException
-//        List<Application> applications = applicationRepository
-//                .findByJobIdWithUserEager(jobId);
-//
-//        List<ApplicationListItemDTO> dtos = applications.stream()
-//                .map(app -> {
-//                    int pct = 0;
-//                    if (!jobSkillIds.isEmpty() && app.getUser() != null
-//                            && app.getUser().getUserSkills() != null) {
-//
-//                        Set<Long> userSkillIds = app.getUser().getUserSkills().stream()
-//                                .filter(us -> us.getSkill() != null)
-//                                .map(us -> us.getSkill().getId())
-//                                .collect(java.util.stream.Collectors.toSet());
-//
-//                        long common = userSkillIds.stream()
-//                                .filter(jobSkillIds::contains)
-//                                .count();
-//                        pct = (int) Math.round((double) common / jobSkillIds.size() * 100);
-//                    }
-//                    return new ApplicationListItemDTO(app, pct);
-//                })
-//                .collect(java.util.stream.Collectors.toList());
-//
-//        if (sortByMatching) {
-//            dtos.sort(java.util.Comparator
-//                    .comparingInt(ApplicationListItemDTO::getMatchingPercent).reversed()
-//                    .thenComparing(ApplicationListItemDTO::getAppliedAt,
-//                            java.util.Comparator.reverseOrder()));
-//        }
-//        return dtos;
-//    }
+
     @Override
     public List<ApplicationListItemDTO> getApplicationsWithMatching(
             Long jobId, boolean sortByMatching) {
@@ -232,7 +184,7 @@ public class AdminJobServiceImpl implements AdminJobService {
                 .map(Skill::getId)
                 .collect(java.util.stream.Collectors.toSet());
 
-        // ← dùng EntityGraph version để user luôn được load
+        // Use EntityGraph version so the user is always loaded.
         List<Application> applications = applicationRepository
                 .findWithUserByJobId(jobId);
 

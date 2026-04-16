@@ -1,4 +1,5 @@
 package com.jobhunter.jobhunter.config;
+
 import com.jobhunter.jobhunter.repository.UserRepository;
 import com.jobhunter.jobhunter.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/static/js/**", "/images/**", "/uploads/**").permitAll()
                         .requestMatchers("/register", "/login", "/forgot-password", "/reset-password").permitAll()
-                        .requestMatchers("/" ,"/home" , "/jobs", "/jobs/**").permitAll()
+                        .requestMatchers("/", "/home", "/jobs", "/jobs/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/profile/**").hasRole("USER")
                         .requestMatchers("/user/**").hasRole("USER")
@@ -90,7 +91,7 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessHandler((request, response, authentication) -> {
-                            // ✅ Log khi logout
+                            // Log logout
                             String email = authentication != null ? authentication.getName() : "unknown";
                             System.out.println("=================================");
                             System.out.println("LOGOUT SUCCESS");

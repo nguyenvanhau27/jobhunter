@@ -6,12 +6,9 @@ import com.jobhunter.jobhunter.dto.JobDTO;
 import com.jobhunter.jobhunter.dto.JobListItemDTO;
 import com.jobhunter.jobhunter.entity.*;
 import com.jobhunter.jobhunter.repository.*;
-import com.jobhunter.jobhunter.service.AdminApplicationService;
 import com.jobhunter.jobhunter.service.AdminJobService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -58,20 +55,6 @@ public class AdminJobController {
         model.addAttribute("now", java.time.LocalDateTime.now());
     }
 
-    // ─── GET /admin/jobs ─────────────────────────────────────────
-//    @GetMapping
-//    public String jobList(
-//            @RequestParam(defaultValue = "0") int page,
-//            Model model) {
-//        Page<Job> jobPage = adminJobService.findAll(page, PAGE_SIZE);
-//        model.addAttribute("jobPage", jobPage);
-//        model.addAttribute("jobs", jobPage.getContent());
-//        model.addAttribute("currentPage", page);
-//        model.addAttribute("now", LocalDateTime.now());
-//        return "admin/job/list";
-//    }
-
-    // ─── GET /admin/jobs/create ──────────────────────────────────
     @GetMapping("/create")
     public String createForm(Model model) {
         if (companyRepository.findAll().isEmpty()) {
@@ -83,7 +66,6 @@ public class AdminJobController {
         return "admin/job/form";
     }
 
-    // ─── POST /admin/jobs/create ─────────────────────────────────
     @PostMapping("/create")
     public String create(
             @Valid @ModelAttribute("jobDTO") JobDTO dto,
@@ -110,7 +92,7 @@ public class AdminJobController {
         return "redirect:/admin/jobs";
     }
 
-    // ─── GET /admin/jobs/{id}/edit ───────────────────────────────
+
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
         Job job = adminJobService.findById(id);
@@ -136,7 +118,7 @@ public class AdminJobController {
         return "admin/job/form";
     }
 
-    // ─── POST /admin/jobs/{id}/edit ──────────────────────────────
+
     @PostMapping("/{id}/edit")
     public String update(
             @PathVariable Long id,
@@ -166,7 +148,7 @@ public class AdminJobController {
         return "redirect:/admin/jobs";
     }
 
-    // ─── POST /admin/jobs/{id}/reopen ────────────────────────────
+
     @PostMapping("/{id}/reopen")
     public String reopen(
             @PathVariable Long id,
@@ -184,7 +166,7 @@ public class AdminJobController {
         return "redirect:/admin/jobs";
     }
 
-    // ─── POST /admin/jobs/{id}/delete ────────────────────────────
+
     @PostMapping("/{id}/delete")
     public String delete(
             @PathVariable Long id,
@@ -202,16 +184,14 @@ public class AdminJobController {
         Page<JobListItemDTO> jobPage =
                 adminJobService.findAllWithCandidateCounts(page, PAGE_SIZE);
 
-        model.addAttribute("jobPage",     jobPage);
-        model.addAttribute("jobs",        jobPage.getContent());
+        model.addAttribute("jobPage", jobPage);
+        model.addAttribute("jobs", jobPage.getContent());
         model.addAttribute("currentPage", page);
-        model.addAttribute("now",         java.time.LocalDateTime.now());
+        model.addAttribute("now", java.time.LocalDateTime.now());
         return "admin/job/list";
     }
 
-    // ─── GET /admin/jobs/{jobId}/applications  ────────────────────
-    // (Thêm mới — ApplicationController hiện chỉ có endpoint này nhưng
-    //  cần inject AdminJobService để lấy matching; ta thêm vào đây)
+
     @GetMapping("/{jobId}/applications")
     public String applicationList(
             @PathVariable Long jobId,
@@ -222,10 +202,10 @@ public class AdminJobController {
         List<ApplicationListItemDTO> applications =
                 adminJobService.getApplicationsWithMatching(jobId, sortByMatching);
 
-        model.addAttribute("job",             job);
-        model.addAttribute("applications",    applications);
-        model.addAttribute("sortByMatching",  sortByMatching);
-        model.addAttribute("now",             java.time.LocalDateTime.now());
+        model.addAttribute("job", job);
+        model.addAttribute("applications", applications);
+        model.addAttribute("sortByMatching", sortByMatching);
+        model.addAttribute("now", java.time.LocalDateTime.now());
         return "admin/application/list";
     }
 
@@ -235,35 +215,27 @@ public class AdminJobController {
             @PathVariable Long appId,
             Model model) {
 
-        // 1. Load Job (để hiển thị title + skills yêu cầu)
+        // 1. Load Job (show title + skills request)
         Job job = adminJobService.findById(jobId);
         Set<Long> jobSkillIds = job.getSkills().stream()
                 .map(com.jobhunter.jobhunter.entity.Skill::getId)
                 .collect(java.util.stream.Collectors.toSet());
 
-        // 2. Load Application bằng findById bình thường (chỉ lấy ID + scalar fields)
+        // 2. Load Application by findById (get ID + scalar fields)
         Application application = applicationRepository.findById(appId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
 
-        // 3. Load User bằng userRepository.findById — không qua LAZY
+        // 3. Load User by userRepository.findById
         com.jobhunter.jobhunter.entity.User user =
-                userRepository.findById(application.getUserId())   //
+                userRepository.findById(application.getUserId())
                         .orElse(null);
 
-        // NOTE: Application entity không có getUserId() trực tiếp.
-        // Thêm method này vào Application entity:
-        //   public Long getUserId() {
-        //       return user != null ? user.getId() : null;
-        //   }
-        // HOẶC dùng native query để lấy user_id từ applications table.
-        // Cách đơn giản nhất: thêm @Column user_id vào Application để lấy trực tiếp.
-
-        // 4. Load UserSkill qua UserSkillRepository (đã có EntityGraph)
+        // 4. Load UserSkill form UserSkillRepository
         List<com.jobhunter.jobhunter.entity.userSkill.UserSkill> userSkills =
                 user != null ? userSkillRepository.findByUserId(user.getId())
                         : java.util.Collections.emptyList();
 
-        // 5. Tính matching %
+        // 5. Caculator matching %
         int matchingPct = 0;
         if (!jobSkillIds.isEmpty() && !userSkills.isEmpty()) {
             long common = userSkills.stream()
@@ -273,7 +245,7 @@ public class AdminJobController {
             matchingPct = (int) Math.round((double) common / jobSkillIds.size() * 100);
         }
 
-        // 6. Build DTO — tất cả flat, không có entity LAZY
+        // 6. Build DTO — all flat
         ApplicationDetailDTO detail = new ApplicationDetailDTO();
         detail.setAppId(application.getId());
         detail.setStatus(application.getStatus() != null
@@ -292,36 +264,9 @@ public class AdminJobController {
             detail.setAddress(user.getAddress());
         }
 
-        model.addAttribute("job",        job);
-        model.addAttribute("detail",     detail);   // ← đổi tên model attr thành "detail"
-        model.addAttribute("now",        java.time.LocalDateTime.now());
+        model.addAttribute("job", job);
+        model.addAttribute("detail", detail);
+        model.addAttribute("now", java.time.LocalDateTime.now());
         return "admin/application/detail";
     }
-
-    // ─── GET /admin/jobs/{jobId}/applications/{appId}  ───────────
-//    @GetMapping("/{jobId}/applications/{appId}")
-//    public String applicationDetail(
-//            @PathVariable Long jobId,
-//            @PathVariable Long appId,
-//            Model model) {
-//
-//        Job job = adminJobService.findById(jobId);
-//
-//        // ← Dùng eager version để tránh LazyInit trên template
-//        Application application = adminApplicationService.findByIdEager(appId);
-//
-//        // Matching % cho đơn cụ thể này
-//        List<ApplicationListItemDTO> list =
-//                adminJobService.getApplicationsWithMatching(jobId, false);
-//        int matchingPct = list.stream()
-//                .filter(d -> d.getId().equals(appId))
-//                .mapToInt(ApplicationListItemDTO::getMatchingPercent)
-//                .findFirst().orElse(0);
-//
-//        model.addAttribute("job",         job);
-//        model.addAttribute("application", application);
-//        model.addAttribute("matchingPct", matchingPct);
-//        model.addAttribute("now",         java.time.LocalDateTime.now());
-//        return "admin/application/detail";
-//    }
 }

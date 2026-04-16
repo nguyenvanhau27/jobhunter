@@ -13,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.util.List;
 
 @Controller
@@ -31,7 +30,7 @@ public class ApplicationController {
         this.userService = userService;
     }
 
-    // ─── GET /jobs/{id}/apply — form apply ──────────────────────
+
     @GetMapping("/jobs/{id}/apply")
     public String applyForm(
             @PathVariable Long id,
@@ -41,7 +40,7 @@ public class ApplicationController {
         return "user/apply";
     }
 
-    // ─── POST /jobs/{id}/apply — submit ─────────────────────────
+
     @PostMapping("/jobs/{id}/apply")
     public String apply(
             @PathVariable Long id,
@@ -64,7 +63,7 @@ public class ApplicationController {
         }
     }
 
-    // ─── GET /applications/my — danh sách đã apply ──────────────
+
     @GetMapping("/applications/my")
     public String myApplications(
             @AuthenticationPrincipal UserDetails userDetails,

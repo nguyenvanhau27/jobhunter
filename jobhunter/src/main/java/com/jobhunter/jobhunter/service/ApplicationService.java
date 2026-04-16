@@ -1,6 +1,5 @@
 package com.jobhunter.jobhunter.service;
 
-
 import com.jobhunter.jobhunter.entity.Application;
 import org.springframework.web.multipart.MultipartFile;
 

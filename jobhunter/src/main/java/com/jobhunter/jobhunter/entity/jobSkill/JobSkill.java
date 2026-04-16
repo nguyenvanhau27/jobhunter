@@ -19,11 +19,22 @@ public class JobSkill {
     @JoinColumn(name = "skill_id")
     private Skill skill;
 
-    public JobSkill() {}
+    public JobSkill() {
+    }
 
-    public Job getJob() { return job; }
-    public void setJob(Job job) { this.job = job; }
+    public Job getJob() {
+        return job;
+    }
 
-    public Skill getSkill() { return skill; }
-    public void setSkill(Skill skill) { this.skill = skill; }
+    public void setJob(Job job) {
+        this.job = job;
+    }
+
+    public Skill getSkill() {
+        return skill;
+    }
+
+    public void setSkill(Skill skill) {
+        this.skill = skill;
+    }
 }

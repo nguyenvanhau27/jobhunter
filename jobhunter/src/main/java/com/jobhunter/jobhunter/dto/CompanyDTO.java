@@ -23,10 +23,10 @@ public class CompanyDTO {
     @Size(max = 500, message = "Image URL không được quá 500 ký tự")
     private String imageUrl;
 
-    public CompanyDTO() {}
+    public CompanyDTO() {
+    }
 
     // GETTER + SETTER
-
     public String getNameCompany() {
         return nameCompany;
     }

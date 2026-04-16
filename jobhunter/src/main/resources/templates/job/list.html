@@ -157,7 +157,8 @@
                             <span th:text="${entry.key}">Category</span>
                             <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none"
                                  viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M19 9l-7 7-7-7"/>
                             </svg>
                         </div>
                         <div class="filter-options">
@@ -182,7 +183,8 @@
                             <span>Skills</span>
                             <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none"
                                  viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M19 9l-7 7-7-7"/>
                             </svg>
                         </div>
                         <div class="filter-options">
@@ -240,7 +242,8 @@
 
                             <div class="jc-meta">
                                 <span class="jc-meta-item">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                         stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                               d="M17.657 16.657L13.414 20.9a2 2 0 0 1-2.828 0l-4.243-4.243a8 8 0 1 1 11.314 0z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -249,7 +252,8 @@
                                     <span th:text="${job.location}"></span>
                                 </span>
                                 <span class="jc-meta-item" th:if="${job.expiredAt != null}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                         stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                               d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/>
                                     </svg>
@@ -304,7 +308,8 @@
                            th:text="${i + 1}"
                            th:classappend="${i == currentPage} ? ' active'"
                            class="page-btn"></a>
-                        <span th:if="${i == currentPage + 2 and i < jobPage.totalPages - 2}" class="page-ellipsis">…</span>
+                        <span th:if="${i == currentPage + 2 and i < jobPage.totalPages - 2}"
+                              class="page-ellipsis">…</span>
                     </th:block>
 
                     <a th:if="${currentPage < jobPage.totalPages - 1}"
@@ -335,8 +340,8 @@
 
     function getLabel(cb) {
         if (cb.classList.contains('cb-jobType')) return JOB_TYPE_LABELS[cb.value] || cb.value;
-        if (cb.classList.contains('cb-exp'))     return EXP_LABELS[cb.value]     || cb.value;
-        if (cb.classList.contains('cb-skill'))   return cb.dataset.label         || cb.value;
+        if (cb.classList.contains('cb-exp')) return EXP_LABELS[cb.value] || cb.value;
+        if (cb.classList.contains('cb-skill')) return cb.dataset.label || cb.value;
         return cb.value;
     }
 
@@ -360,23 +365,25 @@
     }
 
     function submitFilters() {
-        const form   = document.getElementById('filterForm');
+        const form = document.getElementById('filterForm');
         const hidden = document.getElementById('hiddenInputs');
         hidden.innerHTML = '';
         document.querySelectorAll('.sidebar input[type=checkbox]:checked').forEach(cb => {
-            const inp   = document.createElement('input');
-            inp.type    = 'hidden';
-            inp.name    = cb.classList.contains('cb-jobType') ? 'jobType'
-                : cb.classList.contains('cb-exp')     ? 'experienceLevel'
+            const inp = document.createElement('input');
+            inp.type = 'hidden';
+            inp.name = cb.classList.contains('cb-jobType') ? 'jobType'
+                : cb.classList.contains('cb-exp') ? 'experienceLevel'
                     : 'skillId';
-            inp.value   = cb.value;
+            inp.value = cb.value;
             hidden.appendChild(inp);
         });
         form.submit();
     }
 
     document.querySelectorAll('.search-bar input').forEach(el => {
-        el.addEventListener('keydown', e => { if (e.key === 'Enter') submitFilters(); });
+        el.addEventListener('keydown', e => {
+            if (e.key === 'Enter') submitFilters();
+        });
     });
 
     syncFilters(); // restore chips from server-rendered checked state

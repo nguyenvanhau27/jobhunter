@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Spring Security dùng class này để load User từ DB khi login.
- * Phải đăng ký bean này vào SecurityConfig.
+ * Spring Security uses this class to load the user from the database during login.
  */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -29,12 +28,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy user: " + email));
 
-        // Kiểm tra tài khoản có bị khoá không
+        // Check account is_lock
         boolean enabled = user.getStatusUser() == AppEnums.UserStatus.ACTIVE;
 
-
-        // Role lưu trong DB là "USER" / "ADMIN"
-        // Spring Security yêu cầu prefix "ROLE_" → "ROLE_USER" / "ROLE_ADMIN"
+        // Spring Security request prefix "ROLE_" → "ROLE_USER" / "ROLE_ADMIN"
         String roleWithPrefix = "ROLE_" + user.getRole().getName();
 
         return org.springframework.security.core.userdetails.User

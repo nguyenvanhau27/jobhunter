@@ -28,16 +28,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(RegisterDTO dto) {
-        // Kiểm tra email đã tồn tại chưa
+        // Check email exit
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new IllegalArgumentException("Email đã được đăng ký");
         }
 
-        // Lấy role USER từ DB
+        // Get role USER form DB
         Role userRole = roleRepository.findByName("USER")
                 .orElseThrow(() -> new RuntimeException("Role USER không tồn tại trong DB"));
 
-        // Tạo user mới
+        // Create new user
         User user = new User();
         user.setEmail(dto.getEmail());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
@@ -58,11 +58,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateProfile(String email, ProfileDTO dto) {
-        // Lấy user từ email của người đang đăng nhập
+
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User không tồn tại"));
 
-        // Chỉ cập nhật các field được phép — không động đến email, password, role
         user.setFullName(dto.getFullName());
         user.setPhone(dto.getPhone());
         user.setAddress(dto.getAddress());

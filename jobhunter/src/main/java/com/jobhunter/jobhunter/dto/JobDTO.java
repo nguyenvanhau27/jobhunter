@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -50,36 +49,91 @@ public class JobDTO {
 
     private List<Long> skillIds;
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public String getRequirements() { return requirements; }
-    public void setRequirements(String requirements) { this.requirements = requirements; }
+    public String getDescription() {
+        return description;
+    }
 
-    public Long getMinSalary() { return minSalary; }
-    public void setMinSalary(Long minSalary) { this.minSalary = minSalary; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public Long getMaxSalary() { return maxSalary; }
-    public void setMaxSalary(Long maxSalary) { this.maxSalary = maxSalary; }
+    public String getRequirements() {
+        return requirements;
+    }
 
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
+    public void setRequirements(String requirements) {
+        this.requirements = requirements;
+    }
 
-    public AppEnums.JobType getJobType() { return jobType; }
-    public void setJobType(AppEnums.JobType jobType) { this.jobType = jobType; }
+    public Long getMinSalary() {
+        return minSalary;
+    }
 
-    public AppEnums.ExperienceLevel getExperienceLevel() { return experienceLevel; }
-    public void setExperienceLevel(AppEnums.ExperienceLevel experienceLevel) { this.experienceLevel = experienceLevel; }
+    public void setMinSalary(Long minSalary) {
+        this.minSalary = minSalary;
+    }
 
-    public Long getCompanyId() { return companyId; }
-    public void setCompanyId(Long companyId) { this.companyId = companyId; }
+    public Long getMaxSalary() {
+        return maxSalary;
+    }
 
-    public LocalDateTime getExpiredAt() { return expiredAt; }
-    public void setExpiredAt(LocalDateTime expiredAt) { this.expiredAt = expiredAt; }
+    public void setMaxSalary(Long maxSalary) {
+        this.maxSalary = maxSalary;
+    }
 
-    public List<Long> getSkillIds() { return skillIds; }
-    public void setSkillIds(List<Long> skillIds) { this.skillIds = skillIds; }
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public AppEnums.JobType getJobType() {
+        return jobType;
+    }
+
+    public void setJobType(AppEnums.JobType jobType) {
+        this.jobType = jobType;
+    }
+
+    public AppEnums.ExperienceLevel getExperienceLevel() {
+        return experienceLevel;
+    }
+
+    public void setExperienceLevel(AppEnums.ExperienceLevel experienceLevel) {
+        this.experienceLevel = experienceLevel;
+    }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
+    }
+
+    public LocalDateTime getExpiredAt() {
+        return expiredAt;
+    }
+
+    public void setExpiredAt(LocalDateTime expiredAt) {
+        this.expiredAt = expiredAt;
+    }
+
+    public List<Long> getSkillIds() {
+        return skillIds;
+    }
+
+    public void setSkillIds(List<Long> skillIds) {
+        this.skillIds = skillIds;
+    }
 }

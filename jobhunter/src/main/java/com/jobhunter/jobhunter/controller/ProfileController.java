@@ -38,7 +38,7 @@ public class ProfileController {
         model.addAttribute("profileDTO", dto);
     }
 
-    // ── GET /profile?tab=info|password ──────────────────────────
+
     @GetMapping
     public String show(
             @AuthenticationPrincipal UserDetails ud,
@@ -54,7 +54,7 @@ public class ProfileController {
         return "user/profile";
     }
 
-    // ── POST /profile/update ─────────────────────────────────────
+
     @PostMapping("/update")
     public String update(
             @AuthenticationPrincipal UserDetails ud,
@@ -75,7 +75,7 @@ public class ProfileController {
         return "redirect:/profile";
     }
 
-    // ── POST /profile/change-password ────────────────────────────
+
     @PostMapping("/change-password")
     public String changePassword(
             @AuthenticationPrincipal UserDetails ud,

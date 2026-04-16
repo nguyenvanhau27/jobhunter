@@ -1,7 +1,7 @@
 package com.jobhunter.jobhunter.entity;
 
-
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -27,7 +27,8 @@ public class PasswordResetToken {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    public PasswordResetToken() {}
+    public PasswordResetToken() {
+    }
 
     @PrePersist
     protected void onCreate() {
@@ -38,21 +39,51 @@ public class PasswordResetToken {
         return LocalDateTime.now().isAfter(this.expiryTime);
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getToken() { return token; }
-    public void setToken(String token) { this.token = token; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getToken() {
+        return token;
+    }
 
-    public LocalDateTime getExpiryTime() { return expiryTime; }
-    public void setExpiryTime(LocalDateTime expiryTime) { this.expiryTime = expiryTime; }
+    public void setToken(String token) {
+        this.token = token;
+    }
 
-    public boolean isUsed() { return used; }
-    public void setUsed(boolean used) { this.used = used; }
+    public String getEmail() {
+        return email;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public LocalDateTime getExpiryTime() {
+        return expiryTime;
+    }
+
+    public void setExpiryTime(LocalDateTime expiryTime) {
+        this.expiryTime = expiryTime;
+    }
+
+    public boolean isUsed() {
+        return used;
+    }
+
+    public void setUsed(boolean used) {
+        this.used = used;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

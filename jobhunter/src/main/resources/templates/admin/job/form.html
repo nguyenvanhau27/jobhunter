@@ -19,7 +19,12 @@
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="admin-sidebar-brand">
             <div class="admin-sidebar-brand-icon">
-                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <rect x="2" y="7" width="20" height="14" rx="2"/>
+                    <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                    <line x1="12" y1="12" x2="12" y2="16"/>
+                    <line x1="10" y1="14" x2="14" y2="14"/>
+                </svg>
             </div>
             <div class="admin-sidebar-brand-text">
                 <div class="admin-sidebar-brand-name">Admin Panel</div>
@@ -30,31 +35,52 @@
             <div class="admin-sidebar-section-label">Main</div>
 
             <a th:href="@{/admin/dashboard}" class="admin-nav-item">
-                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
                 Dashboard
             </a>
             <div class="admin-sidebar-section-label" style="margin-top:8px;">Management</div>
             <a th:href="@{/admin/jobs}" class="admin-nav-item active">
-                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <rect x="2" y="7" width="20" height="14" rx="2"/>
+                    <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                </svg>
                 Quản lý Job
             </a>
             <a th:href="@{/admin/users}" class="admin-nav-item">
-                <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
                 Quản lý User
             </a>
             <a th:href="@{/admin/companies}" class="admin-nav-item">
-                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
                 Quản lý Công ty
             </a>
             <div class="admin-sidebar-section-label" style="margin-top:8px;">System</div>
             <a th:href="@{/admin/settings}" class="admin-nav-item">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
                 Cài đặt hệ thống
             </a>
         </nav>
         <div class="admin-sidebar-footer">
             <div class="admin-sidebar-collapse" id="sidebarCollapseBtn">
-                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+                <svg viewBox="0 0 24 24">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
                 <span>Thu gọn</span>
             </div>
         </div>
@@ -79,12 +105,18 @@
             </div>
             <div class="admin-topbar-right">
                 <div class="admin-topbar-time">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
                     Cập nhật lúc:&nbsp;
                     <span th:text="${#temporals.format(now, 'HH:mm dd/MM/yyyy')}">00:00</span>
                 </div>
                 <div class="admin-topbar-avatar">
-                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
                 </div>
             </div>
         </header>
@@ -112,7 +144,12 @@
             <!-- Error message -->
             <div th:if="${errorMessage}" class="flash-error" style="margin-bottom:20px;">
                 <div style="display:flex;align-items:center;gap:8px;">
-                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                         style="flex-shrink:0">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
                     <span th:text="${errorMessage}"></span>
                 </div>
             </div>
@@ -157,7 +194,9 @@
                                             th:value="${c.id}"
                                             th:text="${c.nameCompany}"></option>
                                 </select>
-                                <svg class="select-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                                <svg class="select-arrow" viewBox="0 0 24 24">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
                             </div>
                             <span th:if="${#fields.hasErrors('companyId')}"
                                   class="form-error" th:errors="*{companyId}"></span>
@@ -182,7 +221,9 @@
                                         th:value="${jt}"
                                         th:text="${jt}"></option>
                             </select>
-                            <svg class="select-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="select-arrow" viewBox="0 0 24 24">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
                         </div>
                         <span th:if="${#fields.hasErrors('jobType')}"
                               class="form-error" th:errors="*{jobType}"></span>
@@ -203,7 +244,9 @@
                                         th:value="${exp}"
                                         th:text="${exp}"></option>
                             </select>
-                            <svg class="select-arrow" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+                            <svg class="select-arrow" viewBox="0 0 24 24">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
                         </div>
                         <span th:if="${#fields.hasErrors('experienceLevel')}"
                               class="form-error" th:errors="*{experienceLevel}"></span>
@@ -316,7 +359,11 @@
                 <div class="form-actions">
                     <a th:href="@{/admin/jobs}" class="btn-form-cancel">Huỷ</a>
                     <button type="submit" class="btn-form-submit">
-                        <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                            <polyline points="17 21 17 13 7 13 7 21"/>
+                            <polyline points="7 3 7 8 15 8"/>
+                        </svg>
                         <span th:text="${jobId} ? 'Lưu thay đổi' : 'Tạo Job'">Lưu</span>
                     </button>
                 </div>
@@ -351,6 +398,7 @@
             item.classList.toggle('selected', selectedSkillIds.has(parseInt(item.dataset.id)));
         });
     }
+
     refreshDropdownVisibility();
 
     // ── Dropdown show/hide ────────────────────────
@@ -358,12 +406,14 @@
         document.getElementById('skillDropdown').classList.add('open');
         document.addEventListener('click', outsideClickHandler);
     }
+
     function hideSkillDropdown() {
         document.getElementById('skillDropdown').classList.remove('open');
     }
+
     function outsideClickHandler(e) {
         const box = document.getElementById('skillTagBox');
-        const dd  = document.getElementById('skillDropdown');
+        const dd = document.getElementById('skillDropdown');
         if (!box.contains(e.target) && !dd.contains(e.target)) {
             hideSkillDropdown();
             document.removeEventListener('click', outsideClickHandler);
@@ -380,11 +430,13 @@
         });
     });
     skillSearchInput.addEventListener('focus', showSkillDropdown);
-    skillSearchInput.addEventListener('keydown', e => { if (e.key === 'Escape') hideSkillDropdown(); });
+    skillSearchInput.addEventListener('keydown', e => {
+        if (e.key === 'Escape') hideSkillDropdown();
+    });
 
     // ── Skill dropdown item click ──────────────────
     function selectSkill(el) {
-        const id   = parseInt(el.dataset.id);
+        const id = parseInt(el.dataset.id);
         const name = el.dataset.name;
         if (selectedSkillIds.has(id)) return;
         selectedSkillIds.add(id);
@@ -398,15 +450,15 @@
 
     // ── Add tag element ────────────────────────────
     function addSkillTag(id, name) {
-        const box  = document.getElementById('skillTagBox');
-        const tag  = document.createElement('span');
-        tag.className    = 'skill-tag js-skill-tag';
-        tag.dataset.id   = id;
+        const box = document.getElementById('skillTagBox');
+        const tag = document.createElement('span');
+        tag.className = 'skill-tag js-skill-tag';
+        tag.dataset.id = id;
         // Build tag with remove button — data-skill-id is numeric, no th:onclick needed
-        const labelSpan  = document.createElement('span');
+        const labelSpan = document.createElement('span');
         labelSpan.textContent = name;          // textContent = safe, no XSS
-        const removeBtn  = document.createElement('button');
-        removeBtn.type   = 'button';
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
         removeBtn.className = 'skill-tag-remove';
         removeBtn.dataset.skillId = id;        // numeric — safe
         removeBtn.textContent = '×';
@@ -420,8 +472,8 @@
         const container = document.getElementById('skillHiddenInputs');
         if (!container.querySelector('input[value="' + id + '"]')) {
             const inp = document.createElement('input');
-            inp.type  = 'hidden';
-            inp.name  = 'skillIds';
+            inp.type = 'hidden';
+            inp.name = 'skillIds';
             inp.value = id;
             container.appendChild(inp);
         }

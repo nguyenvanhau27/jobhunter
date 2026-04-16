@@ -1,6 +1,7 @@
 package com.jobhunter.jobhunter.entity;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -64,7 +65,8 @@ public class Job {
     )
     private Set<Skill> skills = new HashSet<>();
 
-    public Job() {}
+    public Job() {
+    }
 
     @PrePersist
     protected void onCreate() {
@@ -86,34 +88,123 @@ public class Job {
                 && LocalDateTime.now().isAfter(this.expiredAt);
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public String getRequirements() { return requirements; }
-    public void setRequirements(String requirements) { this.requirements = requirements; }
-    public Long getMinSalary() { return minSalary; }
-    public void setMinSalary(Long minSalary) { this.minSalary = minSalary; }
-    public Long getMaxSalary() { return maxSalary; }
-    public void setMaxSalary(Long maxSalary) { this.maxSalary = maxSalary; }
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
-    public AppEnums.JobType getJobType() { return jobType; }
-    public void setJobType(AppEnums.JobType jobType) { this.jobType = jobType; }
-    public AppEnums.ExperienceLevel getExperienceLevel() { return experienceLevel; }
-    public void setExperienceLevel(AppEnums.ExperienceLevel level) { this.experienceLevel = level; }
-    public AppEnums.JobStatus getStatusJob() { return statusJob; }
-    public void setStatusJob(AppEnums.JobStatus statusJob) { this.statusJob = statusJob; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    public LocalDateTime getExpiredAt() { return expiredAt; }
-    public void setExpiredAt(LocalDateTime expiredAt) { this.expiredAt = expiredAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
-    public Company getCompany() { return company; }
-    public void setCompany(Company company) { this.company = company; }
-    public Set<Skill> getSkills() { return skills; }
-    public void setSkills(Set<Skill> skills) { this.skills = skills; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getRequirements() {
+        return requirements;
+    }
+
+    public void setRequirements(String requirements) {
+        this.requirements = requirements;
+    }
+
+    public Long getMinSalary() {
+        return minSalary;
+    }
+
+    public void setMinSalary(Long minSalary) {
+        this.minSalary = minSalary;
+    }
+
+    public Long getMaxSalary() {
+        return maxSalary;
+    }
+
+    public void setMaxSalary(Long maxSalary) {
+        this.maxSalary = maxSalary;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public AppEnums.JobType getJobType() {
+        return jobType;
+    }
+
+    public void setJobType(AppEnums.JobType jobType) {
+        this.jobType = jobType;
+    }
+
+    public AppEnums.ExperienceLevel getExperienceLevel() {
+        return experienceLevel;
+    }
+
+    public void setExperienceLevel(AppEnums.ExperienceLevel level) {
+        this.experienceLevel = level;
+    }
+
+    public AppEnums.JobStatus getStatusJob() {
+        return statusJob;
+    }
+
+    public void setStatusJob(AppEnums.JobStatus statusJob) {
+        this.statusJob = statusJob;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getExpiredAt() {
+        return expiredAt;
+    }
+
+    public void setExpiredAt(LocalDateTime expiredAt) {
+        this.expiredAt = expiredAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public Set<Skill> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(Set<Skill> skills) {
+        this.skills = skills;
+    }
 }

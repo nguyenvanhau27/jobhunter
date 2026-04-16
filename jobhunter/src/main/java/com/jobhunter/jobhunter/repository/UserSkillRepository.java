@@ -13,10 +13,11 @@ import java.util.Optional;
 @Repository
 public interface UserSkillRepository extends JpaRepository<UserSkill, UserSkillId> {
 
-    @EntityGraph(attributePaths = {"skill"})  // ← thêm dòng này
+    @EntityGraph(attributePaths = {"skill"})
     List<UserSkill> findByUserId(Long userId);
 
     boolean existsByUserIdAndSkillId(Long userId, Long skillId);
+
     Optional<UserSkill> findByUserIdAndSkillId(Long userId, Long skillId);
 
     @Transactional

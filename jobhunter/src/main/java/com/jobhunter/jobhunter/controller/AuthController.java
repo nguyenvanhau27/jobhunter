@@ -21,7 +21,7 @@ public class AuthController {
         this.userService = userService;
     }
 
-    // ─── Page Login ────────────────────────────────────────────
+
     @GetMapping("/login")
     public String loginPage(
             @RequestParam(value = "email", required = false) String email,
@@ -32,7 +32,7 @@ public class AuthController {
         return "auth/login";
     }
 
-    // ─── Page Register ─────────────────────────────────────────
+
     @GetMapping("/register")
     public String registerPage(Model model) {
         model.addAttribute("registerDTO", new RegisterDTO());
