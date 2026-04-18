@@ -23,37 +23,133 @@
             <p class="ap-page-sub">Theo dõi trạng thái các đơn ứng tuyển của bạn</p>
         </div>
 
-        <!-- Flash success (after apply) -->
+        <!-- Flash success -->
         <div th:if="${successMessage}"
-             style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;border-radius:10px;padding:12px 16px;font-size:14px;margin-bottom:20px;display:flex;align-items:center;gap:8px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+             style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;
+              border-radius:10px;padding:12px 16px;font-size:14px;
+              margin-bottom:20px;display:flex;align-items:center;gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
             </svg>
             <span th:text="${successMessage}"></span>
         </div>
 
-        <!-- Table card -->
+        <!-- ── Search bar ── -->
+        <div style="background:#fff;border:1px solid var(--border);border-radius:14px;
+              padding:18px 22px;margin-bottom:14px;">
+
+            <form th:action="@{/applications/my}" method="get"
+                  style="display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;">
+
+                <!-- Search input -->
+                <div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:5px;">
+                    <label style="font-size:12px;font-weight:500;color:var(--text-muted);">
+                        Tên công ty
+                    </label>
+                    <div style="position:relative;">
+                        <div style="position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af"
+                                 stroke-width="2" stroke-linecap="round">
+                                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                        </div>
+                        <input type="text" name="companyName"
+                               th:value="${companyName}"
+                               placeholder="VD: Shopee, Tiki, VNG..."
+                               style="width:100%;border:1px solid #e2e8f0;border-radius:8px;
+                        padding:9px 12px 9px 34px;font-size:14px;
+                        font-family:var(--font);outline:none;height:40px;
+                        transition:border-color .2s;"
+                               onfocus="this.style.borderColor='var(--primary)'"
+                               onblur="this.style.borderColor='#e2e8f0'"/>
+                    </div>
+                </div>
+
+                <!-- Search button -->
+                <button type="submit"
+                        style="height:40px;padding:0 20px;background:var(--primary);color:#fff;
+                     border:none;border-radius:8px;font-size:14px;font-weight:600;
+                     cursor:pointer;font-family:var(--font);display:flex;
+                     align-items:center;gap:6px;transition:background .2s;white-space:nowrap;"
+                        onmouseover="this.style.background='var(--primary-dark)'"
+                        onmouseout="this.style.background='var(--primary)'">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    Tìm kiếm
+                </button>
+
+                <!-- Reset button — chỉ hiện khi đang filter -->
+                <a th:if="${isFiltering}" th:href="@{/applications/my}"
+                   style="height:40px;padding:0 16px;border:1px solid #e2e8f0;border-radius:8px;
+                font-size:14px;font-weight:500;color:var(--text-muted);
+                display:inline-flex;align-items:center;gap:5px;
+                text-decoration:none;transition:all .2s;white-space:nowrap;"
+                   onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'"
+                   onmouseout="this.style.borderColor='#e2e8f0';this.style.color='var(--text-muted)'">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                    Xoá lọc
+                </a>
+            </form>
+        </div>
+
+        <!-- ── Table card ── -->
         <div class="my-table-card">
 
-            <!-- Header count -->
-            <div class="my-table-head" th:if="${!#lists.isEmpty(applications)}">
-                Tổng <span th:text="${#lists.size(applications)}"></span> đơn ứng tuyển
+            <!-- Header -->
+            <div class="my-table-head">
+                <!-- Đang filter -->
+                <div th:if="${isFiltering}">
+                    Kết quả cho "<strong th:text="${companyName}"></strong>":
+                    <strong style="color:var(--primary);" th:text="${totalFiltered}"></strong>
+                    / <span th:text="${totalAll}"></span> đơn
+                </div>
+                <!-- Không filter -->
+                <div th:unless="${isFiltering}">
+                    Tổng <span style="color:var(--primary);font-weight:700;"
+                               th:text="${totalAll}"></span> đơn ứng tuyển
+                    <span style="font-size:12px;color:var(--text-muted);margin-left:6px;">
+          (mới nhất trên cùng)
+        </span>
+                </div>
             </div>
 
-            <!-- Empty state -->
-            <div th:if="${#lists.isEmpty(applications)}" class="my-empty">
+            <!-- Empty: chưa có đơn nào -->
+            <div th:if="${totalAll == 0}" class="my-empty">
                 <div class="my-empty-icon">
                     <svg viewBox="0 0 24 24">
                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                         <polyline points="14 2 14 8 20 8"/>
-                        <line x1="16" y1="13" x2="8" y2="13"/>
-                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
                     </svg>
                 </div>
                 <div class="my-empty-title">Chưa có đơn ứng tuyển nào</div>
                 <div class="my-empty-sub">Hãy tìm kiếm và ứng tuyển các vị trí phù hợp với bạn</div>
-                <a th:href="@{/jobs}" class="btn-primary" style="padding:11px 28px;font-size:15px;">
+                <a th:href="@{/jobs}" class="btn-primary"
+                   style="padding:10px 24px;font-size:14px;display:inline-block;">
                     Tìm việc ngay
+                </a>
+            </div>
+
+            <!-- Empty: có đơn nhưng filter không trả kết quả -->
+            <div th:if="${totalAll > 0 and totalFiltered == 0}" class="my-empty">
+                <div class="my-empty-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                </div>
+                <div class="my-empty-title">
+                    Không tìm thấy đơn ứng tuyển tại "<strong th:text="${companyName}"></strong>"
+                </div>
+                <div class="my-empty-sub">Thử tìm với tên khác hoặc xoá bộ lọc</div>
+                <a th:href="@{/applications/my}"
+                   style="font-size:14px;color:var(--primary);font-weight:500;text-decoration:none;">
+                    ← Xem tất cả đơn
                 </a>
             </div>
 
@@ -71,34 +167,45 @@
                 <tbody>
                 <tr th:each="app : ${applications}">
 
-                    <!-- Job title + link -->
+                    <!-- Job title -->
                     <td>
-                        <div class="my-job-title">
-                            <a th:href="@{/jobs/{id}(id=${app.job.id})}"
-                               th:text="${app.job.title}"
-                               style="color:var(--text-dark);text-decoration:none;transition:color .2s;"
-                               onmouseover="this.style.color='var(--primary)'"
-                               onmouseout="this.style.color='var(--text-dark)'">
-                            </a>
-                        </div>
+                        <a th:href="@{/jobs/{id}(id=${app.job.id})}"
+                           th:text="${app.job.title}"
+                           style="font-size:14px;font-weight:600;color:var(--text-dark);
+                      text-decoration:none;transition:color .2s;"
+                           onmouseover="this.style.color='var(--primary)'"
+                           onmouseout="this.style.color='var(--text-dark)'">
+                        </a>
                     </td>
 
-                    <!-- Company -->
+                    <!-- Company — highlight khi đang filter -->
                     <td>
-                        <span class="my-company" th:text="${app.job.company.nameCompany}"></span>
+            <span th:if="${!isFiltering}" class="my-company"
+                  th:text="${app.job.company.nameCompany}"></span>
+                        <span th:unless="${!isFiltering}" class="my-company"
+                              th:utext="${#strings.replace(
+                      app.job.company.nameCompany,
+                      companyName,
+                      '&lt;mark style=&quot;background:#fef9c3;border-radius:3px;padding:0 2px;&quot;&gt;'
+                      + companyName + '&lt;/mark&gt;'
+                  )}">
+            </span>
                     </td>
 
                     <!-- Date -->
                     <td th:text="${#temporals.format(app.appliedAt, 'dd/MM/yyyy HH:mm')}"></td>
 
-                    <!-- Status badge — Figma colors -->
+                    <!-- Status badge -->
                     <td>
-                        <span th:if="${app.status.toString() == 'PENDING'}"  class="my-badge my-badge-pending">PENDING</span>
-                        <span th:if="${app.status.toString() == 'APPROVED'}" class="my-badge my-badge-approved">APPROVED</span>
-                        <span th:if="${app.status.toString() == 'REJECTED'}" class="my-badge my-badge-rejected">REJECTED</span>
+            <span th:if="${app.status.toString() == 'PENDING'}"
+                  class="my-badge my-badge-pending">PENDING</span>
+                        <span th:if="${app.status.toString() == 'APPROVED'}"
+                              class="my-badge my-badge-approved">APPROVED</span>
+                        <span th:if="${app.status.toString() == 'REJECTED'}"
+                              class="my-badge my-badge-rejected">REJECTED</span>
                     </td>
 
-                    <!-- CV link with eye icon -->
+                    <!-- CV link -->
                     <td>
                         <a th:if="${app.cvFile != null}"
                            th:href="@{/{cv}(cv=${app.cvFile})}"
@@ -115,21 +222,69 @@
                 </tr>
                 </tbody>
             </table>
+
+            <!-- Pagination — giữ companyName khi chuyển trang -->
+            <div th:if="${totalPages > 1}"
+                 style="display:flex;align-items:center;justify-content:center;
+                gap:6px;padding:16px 24px;border-top:1px solid var(--border);">
+
+                <!-- Prev -->
+                <a th:href="@{/applications/my(page=${currentPage - 1}, companyName=${companyName})}"
+                   style="width:36px;height:36px;border-radius:8px;border:1px solid #e2e8f0;
+                background:#fff;display:flex;align-items:center;justify-content:center;
+                font-size:15px;text-decoration:none;color:var(--text-body);transition:all .2s;"
+                   th:style="${currentPage == 0} ? 'pointer-events:none;opacity:.35' : ''"
+                   onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'"
+                   onmouseout="this.style.borderColor='#e2e8f0';this.style.color='var(--text-body)'">
+                    ‹
+                </a>
+
+                <!-- Page numbers -->
+                <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                    <a th:href="@{/applications/my(page=${i}, companyName=${companyName})}"
+                       th:text="${i + 1}"
+                       style="width:36px;height:36px;border-radius:8px;border:1px solid #e2e8f0;
+                  background:#fff;display:flex;align-items:center;justify-content:center;
+                  font-size:14px;text-decoration:none;color:var(--text-body);transition:all .2s;"
+                       th:style="${i == currentPage}
+               ? 'background:var(--primary);color:#fff;border-color:var(--primary)'
+               : ''"
+                       onmouseover="if(this.style.background!='var(--primary)')
+                          {this.style.borderColor='var(--primary)';this.style.color='var(--primary)'}"
+                       onmouseout="if(this.style.background!='var(--primary)')
+                         {this.style.borderColor='#e2e8f0';this.style.color='var(--text-body)'}">
+                    </a>
+                </th:block>
+
+                <!-- Next -->
+                <a th:href="@{/applications/my(page=${currentPage + 1}, companyName=${companyName})}"
+                   style="width:36px;height:36px;border-radius:8px;border:1px solid #e2e8f0;
+                background:#fff;display:flex;align-items:center;justify-content:center;
+                font-size:15px;text-decoration:none;color:var(--text-body);transition:all .2s;"
+                   th:style="${currentPage >= totalPages - 1} ? 'pointer-events:none;opacity:.35' : ''"
+                   onmouseover="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'"
+                   onmouseout="this.style.borderColor='#e2e8f0';this.style.color='var(--text-body)'">
+                    ›
+                </a>
+            </div>
+
         </div>
+        <!-- end my-table-card -->
 
     </div>
 
-<!--    <div class="ap-cta">-->
-<!--        <h2>Ready to Start Your IT Career Journey?</h2>-->
-<!--        <p>Join thousands of IT professionals who found their dream jobs. Create your free account today and get matched with the perfect opportunities.</p>-->
-<!--        <div class="ap-cta-btns">-->
-<!--            <a th:href="@{/jobs}" class="ap-cta-white">Get Started Free</a>-->
-<!--            <a th:href="@{/jobs}" class="ap-cta-outline">Learn More</a>-->
-<!--        </div>-->
-<!--    </div>-->
+    <!-- CTA -->
+    <div class="ap-cta">
+        <h2>Ready to Start Your IT Career Journey?</h2>
+        <p>Join thousands of IT professionals who found their dream jobs. Create your free account today
+            and get matched with the perfect opportunities.</p>
+        <div class="ap-cta-btns">
+            <a th:href="@{/jobs}" class="ap-cta-white">Get Started Free</a>
+            <a th:href="@{/jobs}" class="ap-cta-outline">Learn More</a>
+        </div>
+    </div>
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
-
 </body>
 </html>

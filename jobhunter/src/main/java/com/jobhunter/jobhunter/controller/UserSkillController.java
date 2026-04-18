@@ -13,9 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
@@ -39,69 +37,68 @@ public class UserSkillController {
     @GetMapping
     public String skillsPage(
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "0")  int    page,
+            @RequestParam(required = false)    String searchName,
+            @RequestParam(required = false)    String searchCategory,
             Model model) {
 
         User user = userService.findByEmail(userDetails.getUsername());
 
+        // Tổng số skill gốc (không filter) — dùng để hiển thị "Tổng: X"
         List<UserSkill> allMySkills = userSkillService.getSkillsByUserId(user.getId());
 
-        // Pagination
-        int totalSkills = allMySkills.size();
-        int totalPages = Math.max(1, (int) Math.ceil((double) totalSkills / PAGE_SIZE));
-        int safePage = Math.min(page, totalPages - 1);
-        int start = safePage * PAGE_SIZE;
-        int end = Math.min(start + PAGE_SIZE, totalSkills);
-        List<UserSkill> pagedSkills = totalSkills > 0 ? allMySkills.subList(start, end) : List.of();
+        // Kết quả đã filter — logic nằm trong service
+        List<UserSkill> filtered = userSkillService.searchSkills(
+                user.getId(), searchName, searchCategory);
 
-        // All system skills for search dropdown
+        // Pagination trên kết quả filter
+        int totalFiltered = filtered.size();
+        int totalPages    = Math.max(1, (int) Math.ceil((double) totalFiltered / PAGE_SIZE));
+        int safePage      = Math.min(page, totalPages - 1);
+        int start         = safePage * PAGE_SIZE;
+        int end           = Math.min(start + PAGE_SIZE, totalFiltered);
+        List<UserSkill> pagedSkills = totalFiltered > 0
+                ? filtered.subList(start, end)
+                : List.of();
+
+        // All system skills cho add-form dropdown
         List<Skill> allSkills = skillRepository.findAllByOrderByCategoryAscNameAsc();
 
-        // Unique categories for filter dropdown
-        List<String> categories = allSkills.stream()
+        // Category có trong MY skills — cho filter dropdown
+        List<String> myCategories = allMySkills.stream()
+                .filter(us -> us.getSkill() != null
+                        && us.getSkill().getCategory() != null
+                        && !us.getSkill().getCategory().isBlank())
+                .map(us -> us.getSkill().getCategory())
+                .distinct().sorted()
+                .collect(Collectors.toList());
+
+        // Category của all skills — cho add-form dropdown
+        List<String> allCategories = allSkills.stream()
                 .map(Skill::getCategory)
                 .filter(c -> c != null && !c.isBlank())
                 .distinct().sorted()
                 .collect(Collectors.toList());
 
-        model.addAttribute("mySkills", pagedSkills);
-        model.addAttribute("allSkills", allSkills);
-        model.addAttribute("categories", categories);
-        model.addAttribute("levels", AppEnums.SkillLevel.values());
-        model.addAttribute("user", user);
-        model.addAttribute("totalSkills", totalSkills);
-        model.addAttribute("totalPages", totalPages);
-        model.addAttribute("currentPage", safePage);
+        boolean isFiltering = (searchName != null && !searchName.isBlank())
+                || (searchCategory != null && !searchCategory.isBlank());
+
+        model.addAttribute("mySkills",      pagedSkills);
+        model.addAttribute("allSkills",     allSkills);
+        model.addAttribute("myCategories",  myCategories);
+        model.addAttribute("allCategories", allCategories);
+        model.addAttribute("levels",        AppEnums.SkillLevel.values());
+        model.addAttribute("user",          user);
+        model.addAttribute("totalSkills",   allMySkills.size());
+        model.addAttribute("totalFiltered", totalFiltered);
+        model.addAttribute("totalPages",    totalPages);
+        model.addAttribute("currentPage",   safePage);
+        model.addAttribute("searchName",    searchName);
+        model.addAttribute("searchCategory", searchCategory);
+        model.addAttribute("isFiltering",   isFiltering);
+
         return "user/skills";
     }
-
-//    @GetMapping
-//    public String skillsPage(
-//            @AuthenticationPrincipal UserDetails userDetails,
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(required = false) String keyword,
-//            @RequestParam(required = false) String category,
-//            Model model) {
-//
-//        User user = userService.findByEmail(userDetails.getUsername());
-//
-//        // Gọi Service xử lý thay vì tự tính toán
-//        Map<String, Object> skillData = userSkillService.getPagedSkills(
-//                user.getId(), keyword, category, page, PAGE_SIZE);
-//
-//        // Đổ dữ liệu từ Map vào Model
-//        model.addAttribute("mySkills", skillData.get("content"));
-//        model.addAttribute("totalSkills", skillData.get("totalElements"));
-//        model.addAttribute("totalPages", skillData.get("totalPages"));
-//        model.addAttribute("currentPage", skillData.get("currentPage"));
-//
-//        // Các dữ liệu bổ trợ khác
-//        model.addAttribute("keyword", keyword);
-//        model.addAttribute("selectedCat", category);
-//        model.addAttribute("allSkills", skillRepository.findAllByOrderByCategoryAscNameAsc());
-//
-//        return "user/skills";
-//    }
 
     @PostMapping("/add")
     public String addSkill(

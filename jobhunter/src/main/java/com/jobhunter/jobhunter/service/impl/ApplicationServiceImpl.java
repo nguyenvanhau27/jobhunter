@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
@@ -123,4 +125,62 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new RuntimeException("Lỗi khi lưu file: " + e.getMessage());
         }
     }
+
+    @Override
+    public List<Application> searchMyApplications(Long userId, String companyName,
+                                                  int page, int pageSize) {
+        List<Application> filtered = applyFilter(
+                applicationRepository.findByUser_Id(userId), companyName);
+
+        filtered.sort(Comparator.comparing(Application::getAppliedAt).reversed());
+
+        int start = page * pageSize;
+        if (start >= filtered.size()) return List.of();
+        return filtered.subList(start, Math.min(start + pageSize, filtered.size()));
+    }
+
+    @Override
+    public int countMyApplications(Long userId, String companyName) {
+        return applyFilter(applicationRepository.findByUser_Id(userId), companyName).size();
+    }
+
+    // ── Filter theo tên công ty ──────────────────────────────────
+    private List<Application> applyFilter(List<Application> all, String companyName) {
+        if (companyName == null || companyName.isBlank()) return all;
+
+        String keyword = companyName.toLowerCase().trim();
+        return all.stream()
+                .filter(app -> app.getJob() != null
+                        && app.getJob().getCompany() != null
+                        && app.getJob().getCompany().getNameCompany() != null
+                        && app.getJob().getCompany().getNameCompany()
+                        .toLowerCase().contains(keyword))
+                .collect(Collectors.toList());
+    }
+
+    // ── Validate + save CV ───────────────────────────────────────
+//    private String validateAndSaveFile(MultipartFile file, Long userId, Long jobId) {
+//        if (file == null || file.isEmpty()) {
+//            throw new IllegalArgumentException("Vui lòng upload file CV");
+//        }
+//        String originalName = file.getOriginalFilename();
+//        if (originalName == null || !originalName.toLowerCase().endsWith(".pdf")) {
+//            throw new IllegalArgumentException("File không hợp lệ — chỉ chấp nhận PDF");
+//        }
+//        if (file.getSize() > 5 * 1024 * 1024) {
+//            throw new IllegalArgumentException("File vượt quá 5MB");
+//        }
+//        try {
+//            Path uploadPath = Paths.get(cvUploadDir).toAbsolutePath().normalize();
+//            if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
+//
+//            String fileName = userId + "_" + jobId + "_" + System.currentTimeMillis() + ".pdf";
+//            Path filePath = uploadPath.resolve(fileName);
+//            Files.copy(file.getInputStream(), filePath);
+//
+//            return "uploads/cv/" + fileName;
+//        } catch (IOException e) {
+//            throw new RuntimeException("Lỗi khi lưu file: " + e.getMessage());
+//        }
+//    }
 }

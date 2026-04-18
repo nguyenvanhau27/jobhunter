@@ -34,8 +34,13 @@
     font-weight: 800;
     color: #fff;
     letter-spacing: -0.5px;
-    font-family: var(--font);
 }
+
+.jh-logo-icon svg {
+    width: 18px; height: 18px; stroke: #fff; fill: none;
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+.jh-footer-logo-text { font-size: 17px; font-weight: 700; color: #fff; }
 .jh-logo-text {
     font-size: 17px;
     font-weight: 700;
