@@ -11,6 +11,8 @@
     <link rel="stylesheet" th:href="@{/css/footer.css}"/>
     <link rel="stylesheet" th:href="@{/css/home.css}"/>
     <link rel="stylesheet" th:href="@{/css/profile.css}"/>
+    <link rel="stylesheet" th:href="@{/css/logo.css}"/>
+
 </head>
 <body>
 
@@ -93,16 +95,24 @@
             <!-- Logo + bookmark -->
             <div class="job-card-top">
                 <!-- Logo công ty -->
-                <div th:if="${job.company.imageUrl != null and !#strings.isEmpty(job.company.imageUrl)}"
-                     class="job-logo">
-                    <img th:src="${job.company.imageUrl}"
+                <div class="job-logo lf-wrap">
+                    <img class="lf-img"
+                         th:src="${job.company.imageUrl}"
                          th:alt="${job.company.nameCompany}"
-                         onerror="this.parentElement.style.display='none';this.parentElement.nextElementSibling.style.display='flex'"/>
+                         onerror="lfErr(this)"/>
+                    <span class="lf-ph"
+                          th:text="${#strings.substring(job.company.nameCompany,0,1)}"></span>
                 </div>
-                <div th:if="${job.company.imageUrl == null or #strings.isEmpty(job.company.imageUrl)}"
-                     class="job-logo-placeholder"
-                     th:text="${#strings.substring(job.company.nameCompany, 0, 1)}">
-                </div>
+<!--                <div th:if="${job.company.imageUrl != null and !#strings.isEmpty(job.company.imageUrl)}"-->
+<!--                     class="job-logo">-->
+<!--                    <img th:src="${job.company.imageUrl}"-->
+<!--                         th:alt="${job.company.nameCompany}"-->
+<!--                         onerror="this.parentElement.style.display='none';this.parentElement.nextElementSibling.style.display='flex'"/>-->
+<!--                </div>-->
+<!--                <div th:if="${job.company.imageUrl == null or #strings.isEmpty(job.company.imageUrl)}"-->
+<!--                     class="job-logo-placeholder"-->
+<!--                     th:text="${#strings.substring(job.company.nameCompany, 0, 1)}">-->
+<!--                </div>-->
 
                 <!-- Bookmark icon -->
                 <div class="job-bookmark">
@@ -181,15 +191,13 @@
         <div th:each="company : ${topCompanies}" class="company-card">
 
             <!-- Logo -->
-            <div th:if="${company.imageUrl != null and !#strings.isEmpty(company.imageUrl)}"
-                 class="company-logo-wrap">
-                <img th:src="${company.imageUrl}"
+            <div class="company-logo-wrap lf-wrap">
+                <img class="lf-img"
+                     th:src="${company.imageUrl}"
                      th:alt="${company.nameCompany}"
-                     onerror="this.parentElement.style.display='none'"/>
-            </div>
-            <div th:if="${company.imageUrl == null or #strings.isEmpty(company.imageUrl)}"
-                 class="company-logo-placeholder"
-                 th:text="${#strings.substring(company.nameCompany, 0, 1)}">
+                     onerror="lfErr(this)"/>
+                <span class="lf-ph"
+                      th:text="${#strings.substring(company.nameCompany,0,1)}"></span>
             </div>
 
             <!-- Name + location -->
@@ -212,7 +220,7 @@
             </div>
 
             <!-- View company -->
-            <a th:href="@{/jobs(location=${company.location})}" class="company-card-btn">
+            <a th:href="@{/companies/{id}(id=${company.id})}" class="company-card-btn">
                 View Company
             </a>
         </div>
@@ -224,7 +232,7 @@
     </div>
 
     <div class="companies-more">
-        <a th:href="@{/jobs}" class="btn-outline" style="padding:12px 32px;font-size:15px;">
+        <a th:href="@{/companies}" class="btn-outline" style="padding:12px 32px;font-size:15px;">
             Explore All Companies →
         </a>
     </div>
@@ -317,5 +325,6 @@
 <!-- ════ FOOTER ════ -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 <script th:src="@{/js/navbar.js}"></script>
+<script th:src="@{/js/logo-helper.js}" defer></script>
 </body>
 </html>

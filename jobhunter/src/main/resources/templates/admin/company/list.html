@@ -8,6 +8,7 @@
     <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}"/>
     <link rel="stylesheet" th:href="@{/css/admin-job.css}"/>
     <link rel="stylesheet" th:href="@{/css/admin-company.css}"/>
+
 </head>
 <body class="admin-body">
 
@@ -211,15 +212,12 @@
                             <!-- Logo -->
                             <td>
                                 <div class="company-logo-cell">
-                                    <img th:if="${company.imageUrl != null and !#strings.isEmpty(company.imageUrl)}"
-                                         th:src="${company.imageUrl}"
-                                         th:alt="${company.nameCompany}"
-                                         class="company-logo-img"
-                                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-                                    <!-- Fallback placeholder (always rendered, hidden by default if img loads) -->
-                                    <div class="company-logo-placeholder"
-                                         th:style="${company.imageUrl != null and !#strings.isEmpty(company.imageUrl)} ? 'display:none' : 'display:flex'">
-                                        <span th:text="${#strings.substring(company.nameCompany,0,1)}"></span>
+                                    <div class="company-logo-cell lf-wrap">
+                                        <img class="lf-img company-logo-img"
+                                             th:src="${company.imageUrl}"
+                                             th:alt="${company.nameCompany}"
+                                             onerror="lfErr(this)"/>
+
                                     </div>
                                 </div>
                             </td>
@@ -285,6 +283,6 @@
         });
     });
 </script>
-
+<script th:src="@{/js/logo-helper.js}" defer></script>
 </body>
 </html>

@@ -21,5 +21,7 @@ public interface JobService {
     // Trending: top job most apply in 7 day
     List<Job> findTrendingJobs(int limit);
 
+    List<Job> findOpenJobsByCompanyId(Long companyId);
+
 
 }

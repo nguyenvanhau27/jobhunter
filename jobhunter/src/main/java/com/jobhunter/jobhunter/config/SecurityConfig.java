@@ -44,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/css/**", "/static/js/**", "/images/**", "/uploads/**").permitAll()
                         .requestMatchers("/register", "/login", "/forgot-password", "/reset-password").permitAll()
                         .requestMatchers("/", "/home", "/jobs", "/jobs/**").permitAll()
+                        .requestMatchers("/companies", "/companies/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/profile/**").hasRole("USER")
                         .requestMatchers("/user/**").hasRole("USER")

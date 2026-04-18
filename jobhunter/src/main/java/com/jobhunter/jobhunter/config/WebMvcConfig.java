@@ -13,12 +13,19 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${app.upload.cv-dir:uploads/cv}")
     private String cvUploadDir;
 
+    @Value("${app.upload.logo-dir:uploads/logo}")
+    private String logoUploadDir;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        String absolutePath = Paths.get(cvUploadDir)
-                .toAbsolutePath().normalize().toString();
-
+        // Serve CV PDF — /uploads/cv/**
+        String cvPath = Paths.get(cvUploadDir).toAbsolutePath().normalize().toString();
         registry.addResourceHandler("/uploads/cv/**")
-                .addResourceLocations("file:" + absolutePath + "/");
+                .addResourceLocations("file:" + cvPath + "/");
+
+        // Serve Company Logo — /uploads/logo/**
+        String logoPath = Paths.get(logoUploadDir).toAbsolutePath().normalize().toString();
+        registry.addResourceHandler("/uploads/logo/**")
+                .addResourceLocations("file:" + logoPath + "/");
     }
 }

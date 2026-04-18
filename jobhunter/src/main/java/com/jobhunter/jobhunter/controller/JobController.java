@@ -10,9 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.List;
 
@@ -83,6 +82,13 @@ public class JobController {
     @GetMapping("/{id}")
     public String jobDetail(@PathVariable Long id, Model model) {
         Job job = jobService.findById(id);
+
+        List<String> requirements = Arrays.stream(
+                        job.getRequirements().split("\\.|\\n"))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
+        model.addAttribute("requirementsList", requirements);
         model.addAttribute("job", job);
         return "job/detail";
     }

@@ -4,10 +4,6 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
-/**
- * FIX #9:  Thêm updatedAt + @PreUpdate (nhất quán với Job, Application).
- * FIX #14: Comment tiếng Việt nhất quán.
- */
 @Entity
 @Table(name = "companies")
 public class Company {

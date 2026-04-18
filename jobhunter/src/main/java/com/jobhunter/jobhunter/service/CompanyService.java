@@ -2,6 +2,8 @@ package com.jobhunter.jobhunter.service;
 
 import com.jobhunter.jobhunter.dto.CompanyDTO;
 import com.jobhunter.jobhunter.entity.Company;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 
 public interface CompanyService {
@@ -16,4 +18,11 @@ public interface CompanyService {
 
     // Top company: most job open
     List<Company> findTopCompanies(int limit);
+
+
+    // List company USER/GUEST — search theo tên + phân trang
+    Page<Company> searchCompanies(String keyword, int page, int pageSize);
+
+    // Đếm job OPEN của 1 company — hiển thị trên card và detail page
+    long countOpenJobs(Long companyId);
 }

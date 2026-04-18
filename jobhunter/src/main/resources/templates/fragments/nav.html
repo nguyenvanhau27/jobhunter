@@ -22,6 +22,7 @@
         <ul class="jh-nav-links">
             <li><a th:href="@{/jobs}">Jobs</a></li>
             <li><a th:href="@{/#about}">About</a></li>
+            <li><a th:href="@{/companies}">Company</a></li>
             <li sec:authorize="hasRole('USER')">
                 <a th:href="@{/applications/my}">Applieds</a>
             </li>
@@ -211,6 +212,14 @@
             <line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
         About
+    </a>
+    <a th:href="@{/#company}" class="jh-drawer-item" onclick="jhCloseDrawer()">
+        <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        Company
     </a>
 
     <div sec:authorize="hasRole('USER')">

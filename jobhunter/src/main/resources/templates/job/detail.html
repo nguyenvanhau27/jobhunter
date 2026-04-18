@@ -10,6 +10,8 @@
     <link rel="stylesheet" th:href="@{/css/nav.css}"/>
     <link rel="stylesheet" th:href="@{/css/footer.css}"/>
     <link rel="stylesheet" th:href="@{/css/job-detail.css}"/>
+    <link rel="stylesheet" th:href="@{/css/logo.css}"/>
+    <script th:src="@{/js/logo-helper.js}" defer></script>
 </head>
 <body class="jd-page">
 
@@ -19,66 +21,78 @@
 
     <!-- Back -->
     <a th:href="@{/jobs}" class="jd-back">
-        <svg viewBox="0 0 24 24">
-            <polyline points="15 18 9 12 15 6"/>
-        </svg>
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
         Quay lại danh sách việc làm
     </a>
 
     <!-- HEADER CARD -->
     <div class="jd-header">
         <div class="jd-header-left">
-            <!-- Logo -->
-            <div th:if="${job.company.imageUrl != null and !#strings.isEmpty(job.company.imageUrl)}"
-                 class="jd-logo">
-                <img th:src="${job.company.imageUrl}" th:alt="${job.company.nameCompany}"
-                     onerror="this.parentElement.className='jd-logo-ph';this.parentElement.textContent=this.alt.charAt(0)"/>
+
+            <!--
+                FIX LOGO: không dùng th:if để ẩn/hiện.
+                Luôn render cả img lẫn .lf-ph trong DOM.
+                onerror="lfErr(this)" — logo-helper.js xử lý ẩn img, hiện placeholder.
+            -->
+            <div class="jd-logo lf-wrap">
+                <img class="lf-img"
+                     th:src="${job.company.imageUrl}"
+                     th:alt="${job.company.nameCompany}"
+                     onerror="lfErr(this)"/>
+                <span class="lf-ph"
+                      th:text="${#strings.substring(job.company.nameCompany,0,1)}"></span>
             </div>
-            <div th:if="${job.company.imageUrl == null or #strings.isEmpty(job.company.imageUrl)}"
-                 class="jd-logo-ph" th:text="${#strings.substring(job.company.nameCompany,0,1)}"></div>
 
             <div>
                 <h1 class="jd-title" th:text="${job.title}"></h1>
                 <div class="jd-company" th:text="${job.company.nameCompany}"></div>
                 <div class="jd-tags">
-          <span class="jd-tag">
-            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10"
-                                                                                                       r="3"/></svg>
-            <span th:text="${job.location}"></span>
-          </span>
                     <span class="jd-tag">
-            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path
-                    d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-            <span th:text="${job.jobType}"></span>
-          </span>
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <span th:text="${job.location}"></span>
+                    </span>
                     <span class="jd-tag">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span th:text="${job.experienceLevel}"></span>
-          </span>
+                        <svg viewBox="0 0 24 24">
+                            <rect x="2" y="7" width="20" height="14" rx="2"/>
+                            <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                        </svg>
+                        <span th:text="${job.jobType}"></span>
+                    </span>
+                    <span class="jd-tag">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                        <span th:text="${job.experienceLevel}"></span>
+                    </span>
                 </div>
             </div>
         </div>
+
         <div class="jd-header-right">
             <div th:if="${job.statusJob.toString() == 'OPEN' and !job.isExpired()}">
                 <a th:if="${#authorization.expression('isAuthenticated()')}"
                    th:href="@{/jobs/{id}/apply(id=${job.id})}" class="jd-apply-btn">
-                        <svg viewBox="0 0 24 24">
-                            <line x1="22" y1="2" x2="11" y2="13"/>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                        </svg>
-                        Ứng tuyển ngay
+                    <svg viewBox="0 0 24 24">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                    Ứng tuyển ngay
                 </a>
-
                 <a th:if="${#authorization.expression('isAnonymous()')}"
                    th:href="@{/login}" class="jd-apply-btn">
-                        <svg viewBox="0 0 24 24">
-                            <line x1="22" y1="2" x2="11" y2="13"/>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                        </svg>
-                        Đăng nhập để ứng tuyển
+                    <svg viewBox="0 0 24 24">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                    Đăng nhập để ứng tuyển
                 </a>
             </div>
-            <div th:if="${job.statusJob.toString() == 'CLOSED' or job.isExpired()}" class="jd-expired-tag">
+            <div th:if="${job.statusJob.toString() == 'CLOSED' or job.isExpired()}"
+                 class="jd-expired-tag">
                 <svg viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10"/>
                     <line x1="12" y1="8" x2="12" y2="12"/>
@@ -112,20 +126,28 @@
             </div>
 
             <!-- Yêu cầu -->
-            <div class="jd-card" th:if="${job.requirements != null}">
+            <div class="jd-card" th:if="${requirementsList != null}">
                 <h2 class="jd-card-title">Yêu cầu công việc</h2>
                 <ul class="jd-req-list">
-                    <li th:each="req : ${#strings.arraySplit(job.requirements, '\n')}"
-                        th:if="${!#strings.isEmpty(req.trim())}"
-                        th:text="${req.trim()}"></li>
+<!--                    <li th:each="req : ${#strings.arraySplit(job.requirements, '\\.\\s+|\\n')}"-->
+<!--                        th:if="${!#strings.isEmpty(req.trim())}"-->
+<!--                        th:text="${req.trim()}">-->
+<!--                    </li>-->
+                    <li th:each="req : ${requirementsList}"
+                        th:text="${req}">
+                    </li>
                 </ul>
+
             </div>
 
             <!-- Skills -->
-            <div class="jd-card" th:if="${job.skills != null and !#sets.isEmpty(job.skills)}">
+            <div class="jd-card"
+                 th:if="${job.skills != null and !#sets.isEmpty(job.skills)}">
                 <h2 class="jd-card-title">Kỹ năng yêu cầu</h2>
                 <div class="jd-skills">
-                    <span th:each="skill : ${job.skills}" class="jd-skill-tag" th:text="${skill.name}"></span>
+                    <span th:each="skill : ${job.skills}"
+                          class="jd-skill-tag"
+                          th:text="${skill.name}"></span>
                 </div>
             </div>
 
@@ -177,27 +199,6 @@
                 </div>
 
                 <div class="jd-apply-box">
-<!--                    <div th:if="${job.statusJob.toString() == 'OPEN' and !job.isExpired()}">-->
-<!--                        <sec:authorize access="hasRole('USER')">-->
-<!--                            <a th:href="@{/jobs/{id}/apply(id=${job.id})}" class="jd-apply-btn">-->
-<!--                                <svg viewBox="0 0 24 24">-->
-<!--                                    <line x1="22" y1="2" x2="11" y2="13"/>-->
-<!--                                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>-->
-<!--                                </svg>-->
-<!--                                Ứng tuyển ngay-->
-<!--                            </a>-->
-<!--                        </sec:authorize>-->
-<!--                        <sec:authorize access="isAnonymous()">-->
-<!--                            <a th:href="@{/login}" class="jd-apply-btn">-->
-<!--                                <svg viewBox="0 0 24 24">-->
-<!--                                    <line x1="22" y1="2" x2="11" y2="13"/>-->
-<!--                                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>-->
-<!--                                </svg>-->
-<!--                                Đăng nhập để ứng tuyển-->
-<!--                            </a>-->
-<!--                        </sec:authorize>-->
-<!--                    </div>-->
-
                     <div class="jd-share-row" style="margin-top:10px;">
                         <button class="jd-share-btn" onclick="shareJob()">
                             <svg viewBox="0 0 24 24">
@@ -279,23 +280,31 @@
             <div class="jd-company-card">
                 <div class="jd-company-card-title">Về công ty</div>
 
-                <div th:if="${job.company.imageUrl != null and !#strings.isEmpty(job.company.imageUrl)}"
-                     class="jd-company-logo-wrap">
-                    <img th:src="${job.company.imageUrl}" th:alt="${job.company.nameCompany}"
-                         onerror="this.parentElement.style.display='none'"/>
+                <!--
+                    FIX: Luôn render img + placeholder cùng lúc.
+                    CSS .lf-ph { display:none } mặc định.
+                    onerror="lfErr(this)" → ẩn img, hiện .lf-ph khi lỗi hoặc src rỗng.
+                -->
+                <div class="jd-company-logo-wrap lf-wrap">
+                    <img class="lf-img"
+                         th:src="${job.company.imageUrl}"
+                         th:alt="${job.company.nameCompany}"
+                         onerror="lfErr(this)"/>
+                    <span class="lf-ph"
+                          th:text="${#strings.substring(job.company.nameCompany,0,1)}"></span>
                 </div>
-                <div th:if="${job.company.imageUrl == null or #strings.isEmpty(job.company.imageUrl)}"
-                     class="jd-company-logo-ph"
-                     th:text="${#strings.substring(job.company.nameCompany,0,1)}"></div>
 
                 <div class="jd-company-name-big" th:text="${job.company.nameCompany}"></div>
 
                 <p class="jd-company-about"
-                   th:text="${job.company.description != null ? job.company.description : 'Thông tin công ty chưa được cập nhật.'}">
+                   th:text="${job.company.description != null
+                       ? job.company.description
+                       : 'Thông tin công ty chưa được cập nhật.'}">
                 </p>
 
                 <div class="jd-company-meta">
-                    <div class="jd-company-meta-row" th:if="${job.company.size != null}">
+                    <div class="jd-company-meta-row"
+                         th:if="${job.company.size != null}">
                         <div class="jd-company-meta-key">
                             <svg viewBox="0 0 24 24">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -303,9 +312,11 @@
                             </svg>
                             Nhân viên:
                         </div>
-                        <span class="jd-company-meta-val" th:text="${job.company.size}"></span>
+                        <span class="jd-company-meta-val"
+                              th:text="${job.company.size}"></span>
                     </div>
-                    <div class="jd-company-meta-row" th:if="${job.company.website != null}">
+                    <div class="jd-company-meta-row"
+                         th:if="${job.company.website != null}">
                         <div class="jd-company-meta-key">
                             <svg viewBox="0 0 24 24">
                                 <circle cx="12" cy="12" r="10"/>
@@ -315,11 +326,13 @@
                             Website:
                         </div>
                         <span class="jd-company-meta-val">
-              <a th:href="${job.company.website}" target="_blank"
-                 th:text="${job.company.website}"></a>
-            </span>
+                            <a th:href="${job.company.website}"
+                               target="_blank"
+                               th:text="${job.company.website}"></a>
+                        </span>
                     </div>
-                    <div class="jd-company-meta-row" th:if="${job.company.location != null}">
+                    <div class="jd-company-meta-row"
+                         th:if="${job.company.location != null}">
                         <div class="jd-company-meta-key">
                             <svg viewBox="0 0 24 24">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
@@ -327,12 +340,14 @@
                             </svg>
                             Địa chỉ:
                         </div>
-                        <span class="jd-company-meta-val" th:text="${job.company.location}"></span>
+                        <span class="jd-company-meta-val"
+                              th:text="${job.company.location}"></span>
                     </div>
                 </div>
 
-                <a th:href="@{/jobs(location=${job.company.location})}" class="jd-view-all-btn">
-                    Xem tất cả việc làm
+                <a th:href="@{/companies/{id}(id=${job.company.id})}"
+                   class="jd-view-all-btn">
+                    Xem tất cả việc làm của công ty
                 </a>
             </div>
 
@@ -345,12 +360,13 @@
 <script>
     function shareJob() {
         if (navigator.share) {
-            navigator.share({title: document.title, url: window.location.href});
+            navigator.share({ title: document.title, url: window.location.href });
         } else {
             navigator.clipboard.writeText(window.location.href)
-                .then(() => alert('Đã copy link vào clipboard!'));
+                .then(function () { alert('Đã copy link vào clipboard!'); });
         }
     }
 </script>
+<script th:src="@{/js/navbar.js}"></script>
 </body>
 </html>

@@ -81,4 +81,11 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     // Đếm số đơn theo jobId (dùng cho job detail page)
     @Query("SELECT COUNT(a) FROM Application a WHERE a.job.id = :jobId")
     long countApplicationsByJobId(@Param("jobId") Long jobId);
+
+    @Query("SELECT j FROM Job j WHERE j.company.id = :companyId " +
+            "AND j.statusJob = 'OPEN' " +
+            "AND (j.expiredAt IS NULL OR j.expiredAt > :now) " +
+            "ORDER BY j.createdAt DESC")
+    List<Job> findOpenJobsByCompanyId(@Param("companyId") Long companyId,
+                                      @Param("now") LocalDateTime now);
 }
