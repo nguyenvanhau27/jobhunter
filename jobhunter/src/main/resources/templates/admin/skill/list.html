@@ -293,6 +293,7 @@
             </a>
         </nav>
         <!-- Footer -->
+        <div class="admin-sidebar-collapse" id="sidebarCollapseBtn"></div>
         <form th:action="@{/logout}" method="post" class="admin-logout-form">
             <input type="hidden"
                    th:name="${_csrf.parameterName}"
@@ -699,45 +700,7 @@
 
 
 </div>
-<!--<script th:src="@{/js/admin-common.js}" defer></script>-->
-<!--<script>-->
-<!--    (function () {-->
-<!--        var pendingSkillId = null;-->
 
-<!--        document.addEventListener('click', function (e) {-->
-<!--            var btn = e.target.closest('.js-delete-skill');-->
-<!--            if (!btn) return;-->
-
-<!--            pendingSkillId = btn.dataset.skillId;-->
-<!--            var skillName  = btn.dataset.skillName || '';-->
-
-<!--            // Cập nhật nội dung modal — tên element tuỳ theo file của bạn-->
-<!--            var nameEl = document.getElementById('deleteSkillName');-->
-<!--            if (nameEl) nameEl.textContent = '\u201c' + skillName + '\u201d';-->
-
-<!--            document.getElementById('deleteSkillModal').classList.add('open');-->
-<!--            document.getElementById('deleteSkillBackdrop').classList.add('open');-->
-<!--            document.body.style.overflow = 'hidden';-->
-<!--        });-->
-
-<!--        window.hideDeleteSkillModal = function () {-->
-<!--            document.getElementById('deleteSkillModal').classList.remove('open');-->
-<!--            document.getElementById('deleteSkillBackdrop').classList.remove('open');-->
-<!--            document.body.style.overflow = '';-->
-<!--            pendingSkillId = null;-->
-<!--        };-->
-
-<!--        var confirmBtn = document.getElementById('confirmDeleteSkillBtn');-->
-<!--        if (confirmBtn) {-->
-<!--            confirmBtn.addEventListener('click', function () {-->
-<!--                if (pendingSkillId) {-->
-<!--                    var form = document.getElementById('deleteSkillForm-' + pendingSkillId);-->
-<!--                    if (form) form.submit();-->
-<!--                }-->
-<!--            });-->
-<!--        }-->
-<!--    })();-->
-<!--</script>-->
 <script>
     // ── Sidebar ──────────────────────────────────
     document.getElementById('sidebarCollapseBtn').addEventListener('click', () => {
