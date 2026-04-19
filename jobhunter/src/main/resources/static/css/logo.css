@@ -1,0 +1,43 @@
+
+
+.lf-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+/* Image: mặc định hiện, fill wrap */
+.lf-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    position: relative;
+    z-index: 1;
+}
+
+/* Ẩn img khi Thymeleaf render src="" (imageUrl null) */
+.lf-img[src=""],
+.lf-img:not([src]) {
+    display: none !important;
+}
+
+/* Placeholder: mặc định ẩn, JS onerror sẽ show */
+.lf-ph {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-family: var(--font, 'Segoe UI', sans-serif);
+    color: var(--primary, #2563eb);
+    background: var(--primary-light, #dbeafe);
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    z-index: 0;
+}

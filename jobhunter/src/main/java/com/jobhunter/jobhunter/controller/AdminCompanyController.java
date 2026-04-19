@@ -32,16 +32,15 @@ public class AdminCompanyController {
         return "admin/company/form";
     }
 
-    @PostMapping("/create")
+    @PostMapping(value = "/create", consumes = "multipart/form-data")
     public String create(
             @Valid @ModelAttribute("companyDTO") CompanyDTO dto,
             BindingResult bindingResult,
             Model model,
             RedirectAttributes redirectAttributes) {
 
-        if (bindingResult.hasErrors()) {
-            return "admin/company/form";
-        }
+        if (bindingResult.hasErrors()) return "admin/company/form";
+
         try {
             companyService.create(dto);
             redirectAttributes.addFlashAttribute("successMessage", "Tạo công ty thành công!");
@@ -62,14 +61,15 @@ public class AdminCompanyController {
         dto.setSize(company.getSize());
         dto.setLocation(company.getLocation());
         dto.setWebsite(company.getWebsite());
-        dto.setImageUrl(company.getImageUrl());
+        dto.setCurrentLogoPath(company.getImageUrl()); // path cũ — hidden field
 
         model.addAttribute("companyDTO", dto);
         model.addAttribute("companyId", id);
+        model.addAttribute("currentLogoUrl", company.getImageUrl()); // hiển thị preview
         return "admin/company/form";
     }
 
-    @PostMapping("/{id}/edit")
+    @PostMapping(value = "/{id}/edit", consumes = "multipart/form-data")
     public String update(
             @PathVariable Long id,
             @Valid @ModelAttribute("companyDTO") CompanyDTO dto,
@@ -79,6 +79,7 @@ public class AdminCompanyController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("companyId", id);
+            model.addAttribute("currentLogoUrl", dto.getCurrentLogoPath());
             return "admin/company/form";
         }
         try {
@@ -87,6 +88,7 @@ public class AdminCompanyController {
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
             model.addAttribute("companyId", id);
+            model.addAttribute("currentLogoUrl", dto.getCurrentLogoPath());
             return "admin/company/form";
         }
         return "redirect:/admin/companies";

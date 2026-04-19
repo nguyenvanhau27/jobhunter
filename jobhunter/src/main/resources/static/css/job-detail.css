@@ -205,8 +205,13 @@
     text-align: center; margin-bottom: 10px;
 }
 .jd-company-about {
-    font-size: 13px; color: var(--text-muted); line-height: 1.65;
+    font-size: 13px; color: var(--text-muted);
+    line-height: 1.65;
     margin-bottom: 14px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 .jd-company-meta { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
 .jd-company-meta-row {
@@ -242,7 +247,17 @@
     width: 18px; height: 18px; stroke: var(--danger); fill: none;
     stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0;
 }
+/* Header logo placeholder — 64x64, font 24px */
+.jd-logo.lf-wrap .lf-ph {
+    font-size: 24px;
+    border-radius: 12px;
+}
 
+/* Sidebar "Về công ty" logo placeholder — 64x64, font 22px */
+.jd-company-logo-wrap.lf-wrap .lf-ph {
+    font-size: 22px;
+    border-radius: 12px;
+}
 @media (max-width: 768px) {
     .jd-body { grid-template-columns: 1fr; }
     .jd-header { flex-direction: column; }

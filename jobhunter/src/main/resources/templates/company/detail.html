@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="vi">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${company.nameCompany} + ' — JobHunter'">Công ty</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}"/>
+    <link rel="stylesheet" th:href="@{/css/nav.css}"/>
+    <link rel="stylesheet" th:href="@{/css/footer.css}"/>
+    <link rel="stylesheet" th:href="@{/css/company.css}"/>
+    <link rel="stylesheet" th:href="@{/css/logo.css}"/>
+
+</head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<div class="co-page">
+    <div class="co-detail-wrap">
+
+        <!-- Back link -->
+        <a th:href="@{/companies}" class="co-back">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            Quay lại danh sách công ty
+        </a>
+
+        <!-- Hero card -->
+        <div class="co-hero">
+            <div class="co-hero-banner"></div>
+            <div class="co-hero-body">
+
+                <!-- Logo -->
+                <div class="co-hero-logo lf-wrap">
+                    <img class="lf-img"
+                         th:src="${company.imageUrl}"
+                         th:alt="${company.nameCompany}"
+                         onerror="lfErr(this)"/>
+                    <span class="lf-ph"
+                          style="font-size:24px;border-radius:11px;"
+                          th:text="${#strings.substring(company.nameCompany,0,1)}"></span>
+                </div>
+
+                <!-- Info -->
+                <div class="co-hero-info">
+                    <div class="co-hero-name" th:text="${company.nameCompany}"></div>
+                    <div class="co-hero-meta">
+          <span class="co-hero-meta-item"
+                th:if="${company.location != null and !#strings.isEmpty(company.location)}">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span th:text="${company.location}"></span>
+          </span>
+                        <span class="co-hero-meta-item"
+                              th:if="${company.size != null and !#strings.isEmpty(company.size)}">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span th:text="${company.size} + ' nhân viên'"></span>
+          </span>
+                        <span class="co-hero-meta-item"
+                              th:if="${company.website != null and !#strings.isEmpty(company.website)}">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <a th:href="${company.website}" target="_blank" rel="noopener noreferrer"
+               th:text="${company.website}">
+            </a>
+          </span>
+                        <span class="co-hero-meta-item"
+                              th:if="${company.createdAt != null}">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Thành lập:
+            <span th:text="${#temporals.format(company.createdAt, 'MM/yyyy')}"></span>
+          </span>
+                    </div>
+                </div>
+
+                <!-- Job count badge -->
+                <div class="co-job-stat">
+                    <div class="co-job-stat-num" th:text="${openJobCount}">0</div>
+                    <div class="co-job-stat-label">Vị trí đang tuyển</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About -->
+        <div class="co-section"
+             th:if="${company.description != null and !#strings.isEmpty(company.description)}">
+            <div class="co-section-title">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Giới thiệu công ty
+            </div>
+            <div class="co-description" th:text="${company.description}"></div>
+        </div>
+
+        <!-- Open jobs -->
+        <div class="co-section">
+            <div class="co-section-title">
+                <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                Vị trí đang tuyển
+                <span style="font-size:13px;font-weight:500;color:var(--text-muted);margin-left:4px;"
+                      th:text="'(' + ${openJobCount} + ')'">
+      </span>
+            </div>
+
+            <!-- No open jobs -->
+            <div th:if="${#lists.isEmpty(openJobs)}"
+                 style="text-align:center;padding:28px 0;font-size:14px;color:var(--text-muted);">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#d1d5db"
+                     stroke-width="1.5" style="display:block;margin:0 auto 10px;">
+                    <rect x="2" y="7" width="20" height="14" rx="2"/>
+                    <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+                </svg>
+                Hiện tại công ty không có vị trí tuyển dụng nào
+            </div>
+
+            <!-- Job list -->
+            <div th:unless="${#lists.isEmpty(openJobs)}">
+                <div th:each="job : ${openJobs}" class="co-job-item">
+                    <div class="co-job-item-left">
+                        <a th:href="@{/jobs/{id}(id=${job.id})}"
+                           th:text="${job.title}"
+                           class="co-job-item-title">
+                        </a>
+                        <div class="co-job-item-meta">
+            <span th:if="${job.location != null}">
+              <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span th:text="${job.location}"></span>
+            </span>
+                            <span th:if="${job.jobType != null}">
+              <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/></svg>
+              <span th:text="${job.jobType}"></span>
+            </span>
+                            <span th:if="${job.minSalary != null and job.maxSalary != null}">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              <span th:text="${#numbers.formatDecimal(job.minSalary/1000000,1,0)}
+                             + ' - '
+                             + ${#numbers.formatDecimal(job.maxSalary/1000000,1,0)}
+                             + ' triệu'">
+              </span>
+            </span>
+                            <span th:if="${job.expiredAt != null}">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Hết hạn:
+              <span th:text="${#temporals.format(job.expiredAt, 'dd/MM/yyyy')}"></span>
+            </span>
+                        </div>
+                    </div>
+
+                    <!-- Apply button — USER thấy nút, GUEST thấy "Đăng nhập" -->
+                    <a sec:authorize="hasRole('USER')"
+                       th:href="@{/jobs/{id}/apply(id=${job.id})}"
+                       class="co-job-apply-btn">
+                        Ứng tuyển
+                    </a>
+                    <a sec:authorize="isAnonymous()"
+                       th:href="@{/login}"
+                       class="co-job-apply-btn"
+                       style="background:#64748b;">
+                        Đăng nhập để ứng tuyển
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="co-cta">
+        <h2>Ready to Start Your IT Career Journey?</h2>
+        <p>Join thousands of IT professionals who found their dream jobs. Create your free account today and get matched with the perfect opportunities.</p>
+        <div class="co-cta-btns">
+            <a th:href="@{/jobs}" class="co-cta-white">Browse Jobs</a>
+            <a th:href="@{/register}" class="co-cta-outline">Register Now</a>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/logo-helper.js}" defer></script>
+<script th:src="@{/js/navbar.js}"></script>
+</body>
+</html>

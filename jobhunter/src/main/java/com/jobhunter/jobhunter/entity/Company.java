@@ -29,12 +29,22 @@ public class Company {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
     public Company() {
     }
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -49,56 +59,64 @@ public class Company {
         return nameCompany;
     }
 
-    public void setNameCompany(String nameCompany) {
-        this.nameCompany = nameCompany;
+    public void setNameCompany(String v) {
+        this.nameCompany = v;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescription(String v) {
+        this.description = v;
     }
 
     public String getSize() {
         return size;
     }
 
-    public void setSize(String size) {
-        this.size = size;
+    public void setSize(String v) {
+        this.size = v;
     }
 
     public String getLocation() {
         return location;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setLocation(String v) {
+        this.location = v;
     }
 
     public String getImageUrl() {
         return imageUrl;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setImageUrl(String v) {
+        this.imageUrl = v;
     }
 
     public String getWebsite() {
         return website;
     }
 
-    public void setWebsite(String website) {
-        this.website = website;
+    public void setWebsite(String v) {
+        this.website = v;
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedAt(LocalDateTime v) {
+        this.createdAt = v;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime v) {
+        this.updatedAt = v;
     }
 
     @Override

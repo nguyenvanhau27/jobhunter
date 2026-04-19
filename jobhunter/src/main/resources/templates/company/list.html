@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="vi">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Công ty tuyển dụng — JobHunter</title>
+    <link rel="stylesheet" th:href="@{/css/variables.css}"/>
+    <link rel="stylesheet" th:href="@{/css/nav.css}"/>
+    <link rel="stylesheet" th:href="@{/css/footer.css}"/>
+    <link rel="stylesheet" th:href="@{/css/company.css}"/>
+    <link rel="stylesheet" th:href="@{/css/logo.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<div class="co-page">
+    <div class="co-wrap">
+
+        <div class="co-page-head">
+            <h1 class="co-page-title">Công ty tuyển dụng</h1>
+            <p class="co-page-sub">Khám phá các công ty công nghệ hàng đầu đang tuyển dụng</p>
+        </div>
+
+        <!-- Search -->
+        <div class="co-search-bar">
+            <form th:action="@{/companies}" method="get"
+                  style="display:flex;gap:10px;flex-wrap:wrap;width:100%;align-items:flex-end;">
+                <div class="co-search-group">
+                    <label class="co-search-label">Tên công ty</label>
+                    <div class="co-search-input-wrap">
+                        <div class="co-search-icon">
+                            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        </div>
+                        <input class="co-search-input" type="text" name="keyword"
+                               th:value="${keyword}" placeholder="VD: Shopee, VNG, FPT..."/>
+                    </div>
+                </div>
+                <button type="submit" class="co-btn-search">
+                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    Tìm kiếm
+                </button>
+                <a th:if="${isFiltering}" th:href="@{/companies}" class="co-btn-reset">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Xoá lọc
+                </a>
+            </form>
+        </div>
+
+        <!-- Result count -->
+        <div class="co-result-info">
+    <span th:if="${isFiltering}">
+      Kết quả cho "<strong th:text="${keyword}"></strong>":
+      <strong th:text="${totalCompanies}"></strong> công ty
+    </span>
+            <span th:unless="${isFiltering}">
+      Tổng cộng <strong th:text="${totalCompanies}"></strong> công ty
+    </span>
+        </div>
+
+        <!-- Empty -->
+        <div th:if="${#lists.isEmpty(companies)}" class="co-empty">
+            <div class="co-empty-icon">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div class="co-empty-title"
+                 th:text="${isFiltering} ? 'Không tìm thấy công ty phù hợp' : 'Chưa có công ty nào'">
+            </div>
+            <div class="co-empty-sub"
+                 th:text="${isFiltering} ? 'Thử tìm với từ khoá khác' : 'Các công ty sẽ được cập nhật sớm'">
+            </div>
+            <a th:if="${isFiltering}" th:href="@{/companies}" class="co-empty-link">← Xem tất cả công ty</a>
+        </div>
+
+        <!-- Grid -->
+        <div th:unless="${#lists.isEmpty(companies)}" class="co-grid">
+            <a th:each="company : ${companies}"
+               th:href="@{/companies/{id}(id=${company.id})}"
+               class="co-card">
+
+                <div class="co-card-logo lf-wrap">
+                    <img class="lf-img"
+                         th:src="${company.imageUrl}"
+                         th:alt="${company.nameCompany}"
+                         onerror="lfErr(this)"/>
+                    <span class="lf-ph"
+                          th:text="${#strings.substring(company.nameCompany,0,1)}"></span>
+                </div>
+
+                <div class="co-card-body">
+                    <div class="co-card-name" th:text="${company.nameCompany}"></div>
+                    <div class="co-card-meta">
+          <span class="co-card-meta-item"
+                th:if="${company.location != null and !#strings.isEmpty(company.location)}">
+            <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span th:text="${company.location}"></span>
+          </span>
+                        <span class="co-card-meta-item"
+                              th:if="${company.size != null and !#strings.isEmpty(company.size)}">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <span th:text="${company.size} + ' nhân viên'"></span>
+          </span>
+                    </div>
+                    <div th:with="count=${openJobCounts[company.id]}">
+          <span th:if="${count != null and count > 0}" class="co-card-job-badge">
+            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+            <span th:text="${count} + ' vị trí đang tuyển'"></span>
+          </span>
+                        <span th:unless="${count != null and count > 0}" class="co-card-no-job">
+            Hiện không tuyển dụng
+          </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Pagination -->
+        <div th:if="${totalPages > 1}" class="co-pagination" style="margin-bottom:32px;">
+            <a th:href="@{/companies(page=${currentPage - 1}, keyword=${keyword})}"
+               class="co-page-btn"
+               th:style="${currentPage == 0} ? 'pointer-events:none;opacity:.35' : ''">‹</a>
+            <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                <a th:href="@{/companies(page=${i}, keyword=${keyword})}"
+                   class="co-page-btn" th:classappend="${i == currentPage} ? ' active' : ''"
+                   th:text="${i + 1}">
+                </a>
+            </th:block>
+            <a th:href="@{/companies(page=${currentPage + 1}, keyword=${keyword})}"
+               class="co-page-btn"
+               th:style="${currentPage >= totalPages - 1} ? 'pointer-events:none;opacity:.35' : ''">›</a>
+        </div>
+
+    </div>
+
+    <div class="co-cta">
+        <h2>Ready to Start Your IT Career Journey?</h2>
+        <p>Join thousands of IT professionals who found their dream jobs. Create your free account today and get matched with the perfect opportunities.</p>
+        <div class="co-cta-btns">
+            <a th:href="@{/jobs}" class="co-cta-white">Browse Jobs</a>
+            <a th:href="@{/register}" class="co-cta-outline">Register Now</a>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+<script th:src="@{/js/logo-helper.js}" defer></script>
+<script th:src="@{/js/navbar.js}"></script>
+</body>
+</html>

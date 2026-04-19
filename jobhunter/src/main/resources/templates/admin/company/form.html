@@ -13,9 +13,7 @@
 
 <div class="admin-shell">
 
-    <!-- ╔═══════════════════════════════╗
-         ║  SIDEBAR                     ║
-         ╚═══════════════════════════════╝ -->
+    <!-- SIDEBAR (giữ nguyên cấu trúc) -->
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="admin-sidebar-brand">
             <div class="admin-sidebar-brand-icon">
@@ -28,7 +26,7 @@
             </div>
             <div class="admin-sidebar-brand-text">
                 <div class="admin-sidebar-brand-name">Admin Panel</div>
-                <div class="admin-sidebar-brand-sub">ITJobHub</div>
+                <div class="admin-sidebar-brand-sub">JobHunter</div>
             </div>
         </div>
         <nav class="admin-sidebar-nav">
@@ -54,8 +52,6 @@
                 <svg viewBox="0 0 24 24">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                     <circle cx="9" cy="7" r="4"/>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                 </svg>
                 Quản lý User
             </a>
@@ -66,96 +62,89 @@
                 </svg>
                 Quản lý Công ty
             </a>
-            <div class="admin-sidebar-section-label" style="margin-top:8px;">System</div>
-            <a th:href="@{/admin/settings}" class="admin-nav-item">
+            <a th:href="@{/admin/skills}" class="admin-nav-item">
                 <svg viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    <polygon
+                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                 </svg>
-                Cài đặt hệ thống
+                Quản lý Kỹ năng
             </a>
         </nav>
-        <div class="admin-sidebar-footer">
-            <div class="admin-sidebar-collapse" id="sidebarCollapseBtn">
+        <!-- Footer -->
+        <form th:action="@{/logout}" method="post" class="admin-logout-form">
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}"/>
+
+            <button type="submit" class="admin-sidebar-logout">
                 <svg viewBox="0 0 24 24">
-                    <polyline points="15 18 9 12 15 6"/>
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
                 </svg>
-                <span>Thu gọn</span>
-            </div>
-        </div>
+                <span>Đăng xuất</span>
+            </button>
+        </form>
     </aside>
 
-    <!-- ╔═══════════════════════════════╗
-         ║  MAIN AREA                   ║
-         ╚═══════════════════════════════╝ -->
     <div class="admin-main">
-
         <header class="admin-topbar">
             <div class="admin-breadcrumb">
-                <a th:href="@{/}">Home</a>
-                <span class="sep">›</span>
-                <a th:href="@{/admin/dashboard}">Dashboard</a>
-                <span class="sep">›</span>
-                <a th:href="@{/admin/companies}">Quản lý Công ty</a>
-                <span class="sep">›</span>
+                <a th:href="@{/}">Home</a><span class="sep">›</span>
+                <a th:href="@{/admin/dashboard}">Dashboard</a><span class="sep">›</span>
+                <a th:href="@{/admin/companies}">Quản lý Công ty</a><span class="sep">›</span>
                 <span class="current"
                       th:text="${companyId} ? 'Chỉnh sửa #' + ${companyId} : 'Tạo mới'">Form</span>
-            </div>
-            <div class="admin-topbar-right">
-                <div class="admin-topbar-avatar">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                </div>
             </div>
         </header>
 
         <main class="admin-content">
 
-            <!-- Page header -->
             <div class="admin-page-header">
                 <div>
                     <h1 class="admin-page-title"
                         th:text="${companyId} ? 'Cập nhật: ' + ${companyDTO.nameCompany} : 'Tạo công ty mới'">
-                        Company Form
                     </h1>
                     <p class="admin-page-subtitle"
-                       th:text="${companyId} ? 'Chỉnh sửa thông tin công ty' : 'Điền thông tin để thêm công ty mới vào hệ thống'">
+                       th:text="${companyId} ? 'Chỉnh sửa thông tin công ty' : 'Điền thông tin để thêm công ty mới'">
                     </p>
                 </div>
             </div>
 
             <!-- Error -->
-            <div th:if="${errorMessage}" class="flash-error" style="margin-bottom:20px;">
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                         style="flex-shrink:0">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="8" x2="12" y2="12"/>
-                        <line x1="12" y1="16" x2="12.01" y2="16"/>
-                    </svg>
-                    <span th:text="${errorMessage}"></span>
-                </div>
+            <div th:if="${errorMessage}"
+                 style="background:#fef2f2;color:#dc2626;border:1px solid #fecaca;border-radius:10px;
+                  padding:12px 16px;font-size:14px;margin-bottom:20px;
+                  display:flex;align-items:center;gap:8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" style="flex-shrink:0">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <span th:text="${errorMessage}"></span>
             </div>
 
-            <!-- ── FORM ─────────────────────────────── -->
-            <form th:with="actionUrl=${companyId} ? '/admin/companies/' + ${companyId} + '/edit' : '/admin/companies/create'"
+            <form th:with="actionUrl=${companyId}
+                ? '/admin/companies/' + ${companyId} + '/edit'
+                : '/admin/companies/create'"
                   th:action="${actionUrl}"
                   th:object="${companyDTO}"
-                  method="post">
+                  method="post"
+                  enctype="multipart/form-data">
+
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <!-- Hidden: giữ path logo cũ khi update mà không upload logo mới -->
+                <input type="hidden" th:field="*{currentLogoPath}"/>
 
                 <div class="form-layout">
 
-                    <!-- ── Left: main fields ────────────── -->
+                    <!-- ── Left: main fields ── -->
                     <div class="form-main">
-
-                        <!-- Section: Thông tin cơ bản -->
                         <div class="form-section">
                             <h2 class="form-section-title">Thông tin cơ bản</h2>
 
-                            <!-- Tên công ty -->
                             <div class="form-group">
                                 <label class="form-label" for="nameCompany">
                                     Tên công ty <span class="required">*</span>
@@ -163,18 +152,16 @@
                                 <input type="text" id="nameCompany" th:field="*{nameCompany}"
                                        class="form-input"
                                        th:classappend="${#fields.hasErrors('nameCompany')} ? ' is-error'"
-                                       placeholder="VD: Tiki Corporation"/>
+                                       placeholder="VD: Shopee Vietnam"/>
                                 <span th:if="${#fields.hasErrors('nameCompany')}"
                                       class="form-error" th:errors="*{nameCompany}"></span>
                             </div>
 
-                            <!-- Địa điểm + Quy mô -->
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label" for="location">Địa điểm</label>
                                     <input type="text" id="location" th:field="*{location}"
-                                           class="form-input"
-                                           placeholder="Hồ Chí Minh, Hà Nội..."/>
+                                           class="form-input" placeholder="TP. Hồ Chí Minh, Hà Nội..."/>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label" for="size">Quy mô</label>
@@ -192,16 +179,16 @@
                                 </div>
                             </div>
 
-                            <!-- Website -->
                             <div class="form-group">
                                 <label class="form-label" for="website">Website</label>
                                 <div style="position:relative;">
-                                    <span class="input-prefix">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="14"
-                                             height="14"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22"
-                                                                                               y2="12"/><path
-                                                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                                    </span>
+                  <span class="input-prefix">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" width="14" height="14">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="2" y1="12" x2="22" y2="12"/>
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                  </span>
                                     <input type="text" id="website" th:field="*{website}"
                                            class="form-input with-prefix"
                                            placeholder="https://example.com"/>
@@ -209,63 +196,66 @@
                             </div>
                         </div>
 
-                        <!-- Section: Mô tả -->
                         <div class="form-section">
                             <h2 class="form-section-title">Mô tả công ty</h2>
                             <div class="form-group">
-                                <textarea id="description" th:field="*{description}"
-                                          class="form-textarea"
-                                          rows="7"
-                                          placeholder="Giới thiệu tổng quan về công ty, văn hóa, sản phẩm/dịch vụ..."></textarea>
+                <textarea id="description" th:field="*{description}"
+                          class="form-textarea" rows="7"
+                          placeholder="Giới thiệu tổng quan về công ty, văn hoá, sản phẩm...">
+                </textarea>
                             </div>
                         </div>
-
                     </div>
-                    <!-- /form-main -->
 
-                    <!-- ── Right: logo preview ──────────── -->
+                    <!-- ── Right: logo upload ── -->
                     <div class="form-side">
                         <div class="form-section">
                             <h2 class="form-section-title">Logo công ty</h2>
 
-                            <!-- Logo preview -->
+                            <!-- Preview ảnh hiện tại (khi edit) -->
                             <div class="logo-preview-wrap">
-                                <div class="logo-preview" id="logoPreview">
-                                    <!-- Shows image if URL is filled, else placeholder -->
-                                    <img id="logoPreviewImg"
-                                         th:src="${companyDTO.imageUrl}"
-                                         th:style="${companyDTO.imageUrl != null and !#strings.isEmpty(companyDTO.imageUrl)} ? '' : 'display:none'"
-                                         alt="Logo preview"
-                                         onerror="this.style.display='none';document.getElementById('logoPreviewPlaceholder').style.display='flex'"/>
-                                    <div id="logoPreviewPlaceholder"
-                                         class="logo-preview-placeholder"
-                                         th:style="${companyDTO.imageUrl != null and !#strings.isEmpty(companyDTO.imageUrl)} ? 'display:none' : 'display:flex'">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                            <rect x="3" y="3" width="18" height="18" rx="3"/>
-                                            <circle cx="8.5" cy="8.5" r="1.5"/>
-                                            <polyline points="21 15 16 10 5 21"/>
-                                        </svg>
-                                        <span>Logo preview</span>
-                                    </div>
+                                <div class="logo-preview lf-wrap" id="logoPreview">
+                                    <img class="lf-img" id="logoPreviewImg"
+                                         th:src="${currentLogoUrl}"
+                                         alt="Logo preview"/>
                                 </div>
                             </div>
 
-                            <!-- Image URL input -->
+                            <!-- File upload input -->
                             <div class="form-group" style="margin-top:14px;">
-                                <label class="form-label" for="imageUrl">URL ảnh logo</label>
-                                <input type="text" id="imageUrl" th:field="*{imageUrl}"
-                                       class="form-input"
-                                       placeholder="https://example.com/logo.png"/>
-                                <p class="form-hint">Nhập URL ảnh PNG/JPG để hiển thị logo</p>
+                                <label class="form-label" for="logoFile">
+                                    <span th:text="${companyId != null} ? 'Thay đổi logo' : 'Upload logo'">Upload logo</span>
+                                </label>
+
+                                <!-- Custom file input -->
+                                <div class="file-upload-zone" id="logoUploadZone"
+                                     onclick="document.getElementById('logoFile').click()">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                    <span id="uploadZoneText">Nhấn để chọn ảnh</span>
+                                    <small>PNG, JPG, JPEG, WEBP, SVG — tối đa 2MB</small>
+                                </div>
+
+                                <!-- Hidden actual input -->
+                                <input type="file" id="logoFile" th:field="*{logoFile}"
+                                       accept=".png,.jpg,.jpeg,.webp,.svg"
+                                       style="display:none;"
+                                       onchange="previewLogo(this)"/>
+
+                                <!-- Note khi đang edit -->
+                                <p th:if="${companyId != null}" class="form-hint" style="margin-top:8px;">
+                                    Không chọn file mới → giữ nguyên logo hiện tại
+                                </p>
                             </div>
                         </div>
                     </div>
-                    <!-- /form-side -->
 
                 </div>
-                <!-- /form-layout -->
 
-                <!-- Form actions -->
+                <!-- Actions -->
                 <div class="form-actions">
                     <a th:href="@{/admin/companies}" class="btn-form-cancel">Huỷ</a>
                     <button type="submit" class="btn-form-submit">
@@ -277,42 +267,93 @@
                         <span th:text="${companyId} ? 'Lưu thay đổi' : 'Tạo công ty'">Lưu</span>
                     </button>
                 </div>
-
             </form>
+
         </main>
     </div>
 </div>
 
+<style>
+    .file-upload-zone {
+        border: 2px dashed #bfdbfe;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        background: #fafcff;
+        transition: border-color .2s, background .2s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .file-upload-zone:hover {
+        border-color: var(--primary);
+        background: var(--primary-light);
+    }
+
+    .file-upload-zone svg {
+        width: 28px;
+        height: 28px;
+        stroke: var(--primary);
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    .file-upload-zone span {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--primary);
+    }
+
+    .file-upload-zone small {
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+
+    .file-upload-zone.has-file {
+        border-color: #16a34a;
+        background: #f0fdf4;
+    }
+
+    .file-upload-zone.has-file svg {
+        stroke: #16a34a;
+    }
+
+    .file-upload-zone.has-file span {
+        color: #15803d;
+    }
+</style>
+
 <script>
-    document.getElementById('sidebarCollapseBtn').addEventListener('click', () => {
+    document.getElementById('sidebarCollapseBtn').addEventListener('click', function () {
         document.getElementById('adminSidebar').classList.toggle('open');
     });
 
-    // Live logo preview when URL input changes
-    const imageUrlInput = document.getElementById('imageUrl');
-    const previewImg = document.getElementById('logoPreviewImg');
-    const placeholder = document.getElementById('logoPreviewPlaceholder');
+    function previewLogo(input) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
 
-    function updateLogoPreview(url) {
-        if (url && url.trim()) {
-            previewImg.src = url.trim();
-            previewImg.style.display = 'block';
+        // Update zone UI
+        const zone = document.getElementById('logoUploadZone');
+        document.getElementById('uploadZoneText').textContent = file.name;
+        zone.classList.add('has-file');
+
+        // Live preview
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = document.getElementById('logoPreviewImg');
+            const placeholder = document.getElementById('logoPlaceholder');
+            img.src = e.target.result;
+            img.style.display = 'block';
             placeholder.style.display = 'none';
-        } else {
-            previewImg.style.display = 'none';
-            placeholder.style.display = 'flex';
-        }
+        };
+        reader.readAsDataURL(file);
     }
-
-    imageUrlInput.addEventListener('input', function () {
-        updateLogoPreview(this.value);
-    });
-
-    previewImg.addEventListener('error', function () {
-        this.style.display = 'none';
-        placeholder.style.display = 'flex';
-    });
 </script>
-
+<script th:src="@{/js/logo-helper.js}" defer></script>
 </body>
 </html>

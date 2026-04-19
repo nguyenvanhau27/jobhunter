@@ -76,9 +76,7 @@
 
 <div class="admin-shell">
 
-    <!-- ╔═══════════════════════════════╗
-         ║  SIDEBAR                     ║
-         ╚═══════════════════════════════╝ -->
+
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="admin-sidebar-brand">
             <div class="admin-sidebar-brand-icon">
@@ -108,18 +106,35 @@
                 <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 Quản lý Công ty
             </a>
-            <div class="admin-sidebar-section-label" style="margin-top:8px;">System</div>
-            <a th:href="@{/admin/settings}" class="admin-nav-item">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                Cài đặt hệ thống
+            <a th:href="@{/admin/skills}" class="admin-nav-item">
+                <svg viewBox="0 0 24 24">
+                    <polygon
+                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+                Quản lý Kỹ năng
             </a>
         </nav>
-        <div class="admin-sidebar-footer">
-            <div class="admin-sidebar-collapse" id="sidebarCollapseBtn">
-                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-                <span>Thu gọn</span>
-            </div>
-        </div>
+<!--        <div class="admin-sidebar-footer">-->
+<!--            <div class="admin-sidebar-collapse" id="sidebarCollapseBtn">-->
+<!--                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>-->
+<!--                <span>Thu gọn</span>-->
+<!--            </div>-->
+<!--        </div>-->
+        <!-- Footer -->
+        <form th:action="@{/logout}" method="post" class="admin-logout-form">
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}"/>
+
+            <button type="submit" class="admin-sidebar-logout">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                <span>Đăng xuất</span>
+            </button>
+        </form>
     </aside>
 
     <div class="admin-main">
@@ -133,11 +148,11 @@
                 <span class="sep">›</span>
                 <span class="current">Quản lý User</span>
             </div>
-            <div class="admin-topbar-right">
-                <div class="admin-topbar-avatar">
-                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </div>
-            </div>
+<!--            <div class="admin-topbar-right">-->
+<!--                <div class="admin-topbar-avatar">-->
+<!--                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>-->
+<!--                </div>-->
+<!--            </div>-->
         </header>
 
         <main class="admin-content">
@@ -273,19 +288,26 @@
 
                             <!-- Toggle — data-active (boolean) is safe in Thymeleaf 3.1 -->
                             <td>
-                                <form th:action="@{/admin/users/{id}/toggle-status(id=${user.id})}"
-                                      method="post"
-                                      th:id="'toggleForm-' + ${user.id}"
-                                      style="display:inline;">
-                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                                    <button type="button"
-                                            class="btn-action js-toggle-btn"
-                                            th:classappend="${user.statusUser.toString() == 'ACTIVE'} ? ' btn-lock' : ' btn-unlock'"
-                                            th:data-user-id="${user.id}"
-                                            th:data-active="${user.statusUser.toString() == 'ACTIVE'}"
-                                            th:text="${user.statusUser.toString() == 'ACTIVE'} ? 'Khoá' : 'Mở khoá'">
-                                    </button>
-                                </form>
+                                <div class="action-group">
+                                    <!-- Chi tiết -->
+                                    <a th:href="@{/admin/users/{id}(id=${user.id})}" class="btn-action edit">
+                                        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        Chi tiết
+                                    </a>
+                                    <!-- Toggle status -->
+                                    <form th:action="@{/admin/users/{id}/toggle-status(id=${user.id})}"
+                                          method="post" th:id="'tf-' + ${user.id}" style="display:inline;">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                        <input type="hidden" name="from" value="list"/>
+                                        <button type="button" class="btn-action js-toggle-btn"
+                                                th:classappend="${user.statusUser.toString() == 'ACTIVE'} ? ' btn-lock' : ' btn-unlock'"
+                                                th:data-user-id="${user.id}"
+                                                th:data-active="${user.statusUser.toString() == 'ACTIVE'}"
+                                                th:text="${user.statusUser.toString() == 'ACTIVE'} ? 'Khoá' : 'Mở khoá'">
+                                        </button>
+                                    </form>
+                                </div>
+
                             </td>
                         </tr>
                         </tbody>
@@ -322,9 +344,7 @@
     </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     CONFIRM MODAL (lock / unlock)
-     ══════════════════════════════════════ -->
+
 <div class="modal-backdrop" id="toggleBackdrop" onclick="hideToggleModal()"></div>
 <div class="modal" id="toggleModal">
     <div class="modal-header">
@@ -347,65 +367,54 @@
         <button type="button" id="confirmToggleBtn" class="btn-modal-confirm">Xác nhận</button>
     </div>
 </div>
-
+<script th:src="@{/js/admin-common.js}" defer></script>
 <script>
-    // ── Sidebar ──────────────────────────────────
-    document.getElementById('sidebarCollapseBtn').addEventListener('click', () => {
-        document.getElementById('adminSidebar').classList.toggle('open');
-    });
+    (function () {
+        var pendingToggleId = null;
 
-    // ── Toggle modal via event delegation ────────
-    let pendingToggleId = null;
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('.js-toggle-btn');
+            if (!btn) return;
 
-    document.addEventListener('click', function (e) {
-        const btn = e.target.closest('.js-toggle-btn');
-        if (!btn) return;
+            pendingToggleId = btn.dataset.userId;
+            var isActive    = btn.dataset.active === 'true';
 
-        pendingToggleId    = btn.dataset.userId;
-        const isActive     = btn.dataset.active === 'true';
+            document.getElementById('toggleModalTitle').textContent =
+                isActive ? 'Khoá tài khoản' : 'Mở khoá tài khoản';
+            document.getElementById('toggleModalSub').textContent =
+                isActive ? 'Người dùng sẽ không thể đăng nhập.' : 'Người dùng sẽ đăng nhập được lại.';
+            document.getElementById('toggleModalMsg').textContent =
+                isActive ? 'Bạn có chắc muốn khoá?' : 'Bạn có chắc muốn mở khoá?';
 
-        const title   = document.getElementById('toggleModalTitle');
-        const sub     = document.getElementById('toggleModalSub');
-        const msg     = document.getElementById('toggleModalMsg');
-        const confirm = document.getElementById('confirmToggleBtn');
-        const box     = document.getElementById('toggleWarningBox');
+            var box = document.getElementById('toggleWarningBox');
+            box.style.background  = isActive ? '#fff7ed' : '#f0fdf4';
+            box.style.borderColor = isActive ? '#fed7aa' : '#bbf7d0';
 
-        if (isActive) {
-            title.textContent    = 'Khoá tài khoản';
-            sub.textContent      = 'Người dùng sẽ không thể đăng nhập cho đến khi được mở khoá.';
-            msg.textContent      = 'Bạn có chắc chắn muốn khoá tài khoản này?';
-            confirm.textContent  = 'Khoá tài khoản';
-            confirm.className    = 'btn-modal-delete';
-            box.style.background = '#fff7ed';
-            box.style.borderColor = '#fed7aa';
-        } else {
-            title.textContent    = 'Mở khoá tài khoản';
-            sub.textContent      = 'Người dùng sẽ có thể đăng nhập lại bình thường.';
-            msg.textContent      = 'Bạn có chắc chắn muốn mở khoá tài khoản này?';
-            confirm.textContent  = 'Mở khoá';
-            confirm.className    = 'btn-modal-confirm';
-            box.style.background = '#f0fdf4';
-            box.style.borderColor = '#bbf7d0';
-        }
+            var confirm = document.getElementById('confirmToggleBtn');
+            confirm.textContent = isActive ? 'Khoá' : 'Mở khoá';
+            confirm.className   = isActive ? 'btn-modal-delete' : 'btn-modal-confirm';
 
-        document.getElementById('toggleModal').classList.add('open');
-        document.getElementById('toggleBackdrop').classList.add('open');
-        document.body.style.overflow = 'hidden';
-    });
+            document.getElementById('toggleModal').classList.add('open');
+            document.getElementById('toggleBackdrop').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
 
-    function hideToggleModal() {
-        document.getElementById('toggleModal').classList.remove('open');
-        document.getElementById('toggleBackdrop').classList.remove('open');
-        document.body.style.overflow = '';
-        pendingToggleId = null;
-    }
+        window.hideToggleModal = function () {
+            document.getElementById('toggleModal').classList.remove('open');
+            document.getElementById('toggleBackdrop').classList.remove('open');
+            document.body.style.overflow = '';
+            pendingToggleId = null;
+        };
 
-    document.getElementById('confirmToggleBtn').addEventListener('click', () => {
-        if (pendingToggleId) {
-            document.getElementById('toggleForm-' + pendingToggleId).submit();
-        }
-    });
+        document.getElementById('confirmToggleBtn').addEventListener('click', function () {
+            if (pendingToggleId) {
+                // list.html dùng id 'tf-' + userId
+                var form = document.getElementById('tf-' + pendingToggleId)
+                    || document.getElementById('toggleForm-' + pendingToggleId);
+                if (form) form.submit();
+            }
+        });
+    })();
 </script>
-
 </body>
 </html>

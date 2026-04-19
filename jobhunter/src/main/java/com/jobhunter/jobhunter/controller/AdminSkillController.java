@@ -15,7 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/admin/skills")
 public class AdminSkillController {
 
-    private static final int PAGE_SIZE = 20;
+    private static final int PAGE_SIZE = 10;
 
     private final SkillRepository skillRepository;
 

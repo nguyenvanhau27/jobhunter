@@ -17,6 +17,7 @@ import java.util.List;
 
 @Controller
 public class ApplicationController {
+    private static final int PAGE_SIZE = 2;
 
     private final ApplicationService applicationService;
     private final JobService jobService;
@@ -67,10 +68,28 @@ public class ApplicationController {
     @GetMapping("/applications/my")
     public String myApplications(
             @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(defaultValue = "0")  int    page,
+            @RequestParam(required = false)    String companyName,
             Model model) {
+
         User user = userService.findByEmail(userDetails.getUsername());
-        List<Application> applications = applicationService.getByUserId(user.getId());
-        model.addAttribute("applications", applications);
+
+        List<Application> applications = applicationService
+                .searchMyApplications(user.getId(), companyName, page, PAGE_SIZE);
+
+        int totalFiltered = applicationService.countMyApplications(user.getId(), companyName);
+        int totalPages    = Math.max(1, (int) Math.ceil((double) totalFiltered / PAGE_SIZE));
+        int safePage      = Math.min(page, totalPages - 1);
+        int totalAll      = applicationService.countMyApplications(user.getId(), null);
+
+        model.addAttribute("applications",  applications);
+        model.addAttribute("totalAll",      totalAll);
+        model.addAttribute("totalFiltered", totalFiltered);
+        model.addAttribute("totalPages",    totalPages);
+        model.addAttribute("currentPage",   safePage);
+        model.addAttribute("companyName",   companyName);
+        model.addAttribute("isFiltering",   companyName != null && !companyName.isBlank());
+
         return "user/my-applications";
     }
 }

@@ -1,6 +1,6 @@
-/* ═══════════════════════════════════════════════════
+/*═
    admin-admin-dashboard.css  –  ITJobHub Admin Panel
-   ═══════════════════════════════════════════════════ */
+   ═*/
 
 /* ── Reset for admin layout ──────────────────────── */
 body.admin-body {
@@ -10,15 +10,15 @@ body.admin-body {
     min-height: 100vh;
 }
 
-/* ══════════════════════════════════════════════════
+/*
    ADMIN SHELL  (sidebar + main)
-   ══════════════════════════════════════════════════ */
+   */
 .admin-shell {
     display: flex;
     min-height: 100vh;
 }
 
-/* ── Sidebar ─────────────────────────────────────── */
+/* ── Sidebar ───*/
 .admin-sidebar {
     width: 220px;
     flex-shrink: 0;
@@ -133,7 +133,7 @@ body.admin-body {
     stroke-width: 2; stroke-linecap: round;
 }
 
-/* ── Main area ───────────────────────────────────── */
+/* ── Main area ─*/
 .admin-main {
     margin-left: 220px;
     flex: 1;
@@ -142,7 +142,7 @@ body.admin-body {
     min-height: 100vh;
 }
 
-/* ── Top bar ─────────────────────────────────────── */
+/* ── Top bar ───*/
 .admin-topbar {
     background: var(--bg-white);
     border-bottom: 1px solid var(--border);
@@ -257,9 +257,9 @@ body.admin-body {
     stroke-width: 2.5; stroke-linecap: round;
 }
 
-/* ══════════════════════════════════════════════════
+/*
    STAT CARDS
-   ══════════════════════════════════════════════════ */
+   */
 .stat-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -376,9 +376,9 @@ body.admin-body {
     stroke-width: 2; stroke-linecap: round;
 }
 
-/* ══════════════════════════════════════════════════
+/*
    RECENT APPLICATIONS TABLE
-   ══════════════════════════════════════════════════ */
+   */
 .admin-card {
     background: var(--bg-white);
     border: 1px solid var(--border);
@@ -500,6 +500,7 @@ body.admin-body {
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-left: 10px;
     width: 100%;
     padding: 10px 0;
     font-size: 14px;
@@ -526,7 +527,7 @@ body.admin-body {
     stroke-width: 2;
 }
 
-/* ── Responsive ──────────────────────────────────── */
+/* ── Responsive */
 @media (max-width: 1100px) {
     .stat-grid { grid-template-columns: repeat(2, 1fr); }
 }

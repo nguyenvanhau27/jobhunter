@@ -64,4 +64,8 @@ public class JobServiceImpl implements JobService {
                 PageRequest.of(0, limit));
     }
 
+    @Override
+    public List<Job> findOpenJobsByCompanyId(Long companyId) {
+        return jobRepository.findOpenJobsByCompanyId(companyId, LocalDateTime.now());
+    }
 }

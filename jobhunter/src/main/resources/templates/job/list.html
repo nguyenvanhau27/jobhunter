@@ -16,9 +16,7 @@
 
 <div class="jobs-page">
 
-    <!-- ══════════════════════════════════════════
-         TOP SEARCH BAR
-         ══════════════════════════════════════════ -->
+
     <div class="search-hero">
         <div class="container">
             <form id="filterForm" th:action="@{/jobs}" method="get">
@@ -63,9 +61,6 @@
 
         <div class="jobs-layout">
 
-            <!-- ╔══════════════════════════════════╗
-                 ║  SIDEBAR FILTERS                 ║
-                 ╚══════════════════════════════════╝ -->
             <aside class="sidebar">
                 <div class="sidebar-header">
                     <h3>Filters</h3>
@@ -137,16 +132,7 @@
                 </div>
 
                 <!-- ─── Skills grouped by category ─ -->
-                <!--
-                    Controller must add to model:
-                      Map<String, List<Skill>> skillsByCategory
-                    Example (in JobController):
-                      List<Skill> skills = skillRepository.findAllByOrderByCategoryAscNameAsc();
-                      Map<String, List<Skill>> grouped = skills.stream()
-                          .collect(Collectors.groupingBy(Skill::getCategory,
-                                   LinkedHashMap::new, Collectors.toList()));
-                      model.addAttribute("skillsByCategory", grouped);
-                -->
+
                 <th:block th:if="${skillsByCategory != null and !skillsByCategory.isEmpty()}">
                     <div class="filter-group collapsed"
                          th:each="entry : ${skillsByCategory}"
@@ -208,12 +194,9 @@
                 </div>
             </aside>
 
-            <!-- ╔══════════════════════════════════╗
-                 ║  MAIN CONTENT                    ║
-                 ╚══════════════════════════════════╝ -->
             <main>
 
-                <!-- ── Job Cards ──────────────────── -->
+                <!-- ── Job Cards -->
                 <div th:if="${#lists.isEmpty(jobs)}" class="empty-state">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -326,9 +309,6 @@
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<!-- ══════════════════════════════════════════════
-     FILTER JS
-     ══════════════════════════════════════════════ -->
 <script>
     const JOB_TYPE_LABELS = {
         FULLTIME: 'Full-time', PART_TIME: 'Part-time',
@@ -388,6 +368,6 @@
 
     syncFilters(); // restore chips from server-rendered checked state
 </script>
-
+<script th:src="@{/js/navbar.js}"></script>
 </body>
 </html>

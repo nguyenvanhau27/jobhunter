@@ -2,9 +2,9 @@
    Depends on: variables.css
 */
 
-/* ══════════════════════════════════════
+/* 
    SHARED page wrapper
-══════════════════════════════════════ */
+ */
 .ap-page {
     background: #f8faff;
     min-height: 100vh;
@@ -29,9 +29,9 @@
     color: var(--text-muted);
 }
 
-/* ══════════════════════════════════════
+/* 
    APPLY PAGE  /jobs/{id}/apply
-══════════════════════════════════════ */
+ */
 
 /* Job info summary card */
 .ap-job-card {
@@ -304,9 +304,9 @@
     stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
 }
 
-/* ══════════════════════════════════════
+/* 
    MY APPLICATIONS  /applications/my
-══════════════════════════════════════ */
+ */
 
 .my-wrap {
     max-width: 1000px;

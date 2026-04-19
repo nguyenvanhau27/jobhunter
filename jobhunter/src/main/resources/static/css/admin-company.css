@@ -27,7 +27,7 @@
     flex-shrink: 0;
 }
 
-/* ── Size badge ──────────────────────────────────── */
+/* ── Size badge */
 .size-badge {
     display: inline-flex;
     align-items: center;
@@ -45,7 +45,7 @@
 .size-badge.medium { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
 .size-badge.small  { background: #fff7ed; color: #c2410c; border-color: #fed7aa; }
 
-/* ── Website link ────────────────────────────────── */
+/* ── Website link*/
 .company-website-link {
     color: var(--primary);
     font-size: 12px;
@@ -74,7 +74,7 @@
 .form-main { display: flex; flex-direction: column; gap: 0; }
 .form-side  { display: flex; flex-direction: column; }
 
-/* ── Input with prefix icon ──────────────────────── */
+/* ── Input with prefix icon */
 .input-prefix {
     position: absolute;
     left: 12px; top: 50%;
@@ -85,7 +85,7 @@
 }
 .form-input.with-prefix { padding-left: 34px; }
 
-/* ── Logo preview widget ─────────────────────────── */
+/* ── Logo preview widget */
 .logo-preview-wrap {
     display: flex;
     justify-content: center;
@@ -127,7 +127,7 @@
     color: var(--text-muted);
 }
 
-/* ── Responsive ──────────────────────────────────── */
+/* ── Responsive */
 @media (max-width: 860px) {
     .form-layout { grid-template-columns: 1fr; }
     .form-side { order: -1; }
