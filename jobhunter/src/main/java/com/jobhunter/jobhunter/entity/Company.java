@@ -29,7 +29,7 @@ public class Company {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    // FIX #9: Thêm field updatedAt — nhất quán với Job và Application
+
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
@@ -42,7 +42,6 @@ public class Company {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // FIX #9: Thêm @PreUpdate
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();

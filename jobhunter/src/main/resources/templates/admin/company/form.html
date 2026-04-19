@@ -96,14 +96,6 @@
                 <span class="current"
                       th:text="${companyId} ? 'Chỉnh sửa #' + ${companyId} : 'Tạo mới'">Form</span>
             </div>
-<!--            <div class="admin-topbar-right">-->
-<!--                <div class="admin-topbar-avatar">-->
-<!--                    <svg viewBox="0 0 24 24">-->
-<!--                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>-->
-<!--                        <circle cx="12" cy="7" r="4"/>-->
-<!--                    </svg>-->
-<!--                </div>-->
-<!--            </div>-->
         </header>
 
         <main class="admin-content">
@@ -133,10 +125,6 @@
                 <span th:text="${errorMessage}"></span>
             </div>
 
-            <!--
-              ⚠ QUAN TRỌNG: enctype="multipart/form-data" bắt buộc cho file upload.
-              Nếu thiếu → logoFile sẽ null ở server.
-            -->
             <form th:with="actionUrl=${companyId}
                 ? '/admin/companies/' + ${companyId} + '/edit'
                 : '/admin/companies/create'"
@@ -230,17 +218,6 @@
                                     <img class="lf-img" id="logoPreviewImg"
                                          th:src="${currentLogoUrl}"
                                          alt="Logo preview"/>
-<!--                                         onerror="lfErr(this)"/>-->
-<!--                                    <span class="lf-ph" id="logoPlaceholder"-->
-<!--                                          style="flex-direction:column;gap:8px;color:#9ca3af;background:#f8f9fa;font-size:13px;font-weight:400;border-radius:inherit;">-->
-<!--      <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor"-->
-<!--           stroke-width="1.5" stroke-linecap="round">-->
-<!--        <rect x="3" y="3" width="18" height="18" rx="3"/>-->
-<!--        <circle cx="8.5" cy="8.5" r="1.5"/>-->
-<!--        <polyline points="21 15 16 10 5 21"/>-->
-<!--      </svg>-->
-<!--      Chưa có logo-->
-<!--    </span>-->
                                 </div>
                             </div>
 

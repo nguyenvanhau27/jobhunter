@@ -83,7 +83,7 @@
             </form>
         </div>
 
-        <!-- ══ TÌM KIẾM KỸ NĂNG CỦA TÔI ══ -->
+        <!--  TÌM KIẾM KỸ NĂNG CỦA TÔI  -->
         <div class="sk-search-bar">
             <div style="width:100%">
                 <div class="sk-search-bar-title">
@@ -136,7 +136,7 @@
             </form>
         </div>
 
-        <!-- ══ DANH SÁCH KỸ NĂNG ══ -->
+        <!--  DANH SÁCH KỸ NĂNG  -->
         <div class="sk-list-card">
             <div class="sk-list-head">
                 <div>
@@ -203,10 +203,6 @@
             </span>
                     </td>
                     <td>
-                        <!--
-                          Highlight tên skill nếu đang search theo tên.
-                          Dùng Thymeleaf fragment để highlight (chỉ show highlight khi có searchName).
-                        -->
                         <span th:if="${searchName == null or #strings.isEmpty(searchName)}"
                               class="sk-name" th:text="${us.skill.name}">
             </span>
@@ -321,7 +317,7 @@
 </script>
 
 <script>
-    // ─── Add-form skill search ───────────────────────────────────────────────────
+    // ─── Add-form skill search
     let skAll = [];
     try {
         skAll = SK_DATA_RAW.map(function(s) {

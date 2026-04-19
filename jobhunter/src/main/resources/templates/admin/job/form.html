@@ -113,12 +113,6 @@
                     Cập nhật lúc:&nbsp;
                     <span th:text="${#temporals.format(now, 'HH:mm dd/MM/yyyy')}">00:00</span>
                 </div>
-<!--                <div class="admin-topbar-avatar">-->
-<!--                    <svg viewBox="0 0 24 24">-->
-<!--                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>-->
-<!--                        <circle cx="12" cy="7" r="4"/>-->
-<!--                    </svg>-->
-<!--                </div>-->
             </div>
         </header>
 
@@ -155,7 +149,7 @@
                 </div>
             </div>
 
-            <!-- ── FORM ─────────────────────────────── -->
+            <!-- ── FORM -->
             <form th:with="actionUrl=${jobId} ? '/admin/jobs/' + ${jobId} + '/edit' : '/admin/jobs/create'"
                   th:action="${actionUrl}"
                   th:object="${jobDTO}"

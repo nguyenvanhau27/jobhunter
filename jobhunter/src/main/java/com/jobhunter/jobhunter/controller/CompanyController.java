@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-/**
- * Public controller — USER và GUEST đều truy cập được.
- * Route /companies (khác với /admin/companies của admin).
- */
+
 @Controller
 @RequestMapping("/companies")
 public class CompanyController {
@@ -32,7 +29,7 @@ public class CompanyController {
         this.jobService = jobService;
     }
 
-    // ── GET /companies — List + search ────────────────────────────
+
     @GetMapping
     public String list(
             @RequestParam(required = false)   String keyword,
@@ -41,8 +38,6 @@ public class CompanyController {
 
         Page<Company> companyPage = companyService.searchCompanies(keyword, page, PAGE_SIZE);
 
-        // Tính open job count cho mỗi company trong page hiện tại
-        // (không tính toàn bộ — chỉ page đang hiển thị)
         java.util.Map<Long, Long> openJobCounts = new java.util.LinkedHashMap<>();
         for (Company c : companyPage.getContent()) {
             openJobCounts.put(c.getId(), companyService.countOpenJobs(c.getId()));
@@ -62,13 +57,12 @@ public class CompanyController {
         return "company/list";
     }
 
-    // ── GET /companies/{id} — Detail ─────────────────────────────
+
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id, Model model) {
         Company company = companyService.findById(id);
         long openJobCount = companyService.countOpenJobs(id);
 
-        // Lấy các job OPEN của company này — dùng lại JobService
         List<Job> openJobs = jobService.findOpenJobsByCompanyId(id);
 
         model.addAttribute("company",      company);

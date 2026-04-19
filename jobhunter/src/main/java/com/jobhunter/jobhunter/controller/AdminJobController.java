@@ -1,7 +1,5 @@
 package com.jobhunter.jobhunter.controller;
 
-import com.jobhunter.jobhunter.dto.ApplicationDetailDTO;
-import com.jobhunter.jobhunter.dto.ApplicationListItemDTO;
 import com.jobhunter.jobhunter.dto.JobDTO;
 import com.jobhunter.jobhunter.dto.JobListItemDTO;
 import com.jobhunter.jobhunter.entity.AppEnums;
@@ -18,10 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.time.LocalDateTime;
-import java.util.List;
-
 
 @Controller
 @RequestMapping("/admin/jobs")
@@ -166,7 +161,7 @@ public class AdminJobController {
         return "admin/application/list";
     }
 
-    // FIX #3: 60 dòng → 5 dòng
+
     @GetMapping("/{jobId}/applications/{appId}")
     public String applicationDetail(@PathVariable Long jobId, @PathVariable Long appId,
                                     Model model) {

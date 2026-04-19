@@ -1,7 +1,4 @@
-/* logo-fix.css — Đặt vào static/css/logo-fix.css
- * Include: <link rel="stylesheet" th:href="@{/css/logo-fix.css}"/>
- * trên MỌI trang có logo company.
- */
+
 
 .lf-wrap {
     position: relative;

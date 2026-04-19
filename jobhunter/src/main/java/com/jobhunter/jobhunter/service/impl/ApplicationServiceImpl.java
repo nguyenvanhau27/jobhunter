@@ -26,7 +26,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final UserRepository userRepository;
     private final JobRepository jobRepository;
 
-    // The folder where CVs are saved — configured in application.properties
     @Value("${app.upload.cv-dir:uploads/cv}")
     private String cvUploadDir;
 
@@ -144,7 +143,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         return applyFilter(applicationRepository.findByUser_Id(userId), companyName).size();
     }
 
-    // ── Filter theo tên công ty ──────────────────────────────────
+    // ── Filter theo tên công ty
     private List<Application> applyFilter(List<Application> all, String companyName) {
         if (companyName == null || companyName.isBlank()) return all;
 
@@ -157,30 +156,4 @@ public class ApplicationServiceImpl implements ApplicationService {
                         .toLowerCase().contains(keyword))
                 .collect(Collectors.toList());
     }
-
-    // ── Validate + save CV ───────────────────────────────────────
-//    private String validateAndSaveFile(MultipartFile file, Long userId, Long jobId) {
-//        if (file == null || file.isEmpty()) {
-//            throw new IllegalArgumentException("Vui lòng upload file CV");
-//        }
-//        String originalName = file.getOriginalFilename();
-//        if (originalName == null || !originalName.toLowerCase().endsWith(".pdf")) {
-//            throw new IllegalArgumentException("File không hợp lệ — chỉ chấp nhận PDF");
-//        }
-//        if (file.getSize() > 5 * 1024 * 1024) {
-//            throw new IllegalArgumentException("File vượt quá 5MB");
-//        }
-//        try {
-//            Path uploadPath = Paths.get(cvUploadDir).toAbsolutePath().normalize();
-//            if (!Files.exists(uploadPath)) Files.createDirectories(uploadPath);
-//
-//            String fileName = userId + "_" + jobId + "_" + System.currentTimeMillis() + ".pdf";
-//            Path filePath = uploadPath.resolve(fileName);
-//            Files.copy(file.getInputStream(), filePath);
-//
-//            return "uploads/cv/" + fileName;
-//        } catch (IOException e) {
-//            throw new RuntimeException("Lỗi khi lưu file: " + e.getMessage());
-//        }
-//    }
 }

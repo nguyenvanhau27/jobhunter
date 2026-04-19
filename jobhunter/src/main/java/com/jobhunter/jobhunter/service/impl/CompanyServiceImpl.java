@@ -114,7 +114,7 @@ public class CompanyServiceImpl implements CompanyService {
         return companyRepository.countOpenJobsByCompanyId(companyId);
     }
 
-    // ── Logo upload helpers ──────────────────────────────────────
+    // ── Logo upload helpers
 
     /**
      * Lưu file logo vào uploads/logo/.

@@ -1,12 +1,4 @@
-/* ═══════════════════════════════════════════════════
-   admin-job.css  –  Job List & Form pages
-   ═══════════════════════════════════════════════════ */
 
-/* ══════════════════════════════════════════════════
-   JOB LIST PAGE
-   ══════════════════════════════════════════════════ */
-
-/* ── Search bar ──────────────────────────────────── */
 .job-search-bar {
     display: flex;
     align-items: center;
@@ -95,7 +87,7 @@
     border: 1px solid #fed7aa;
 }
 
-/* ── Table extras ────────────────────────────────── */
+/* ── Table extras ─ */
 .admin-table-wrap {
     overflow-x: auto;
 }
@@ -109,7 +101,7 @@
 .td-date.expired { color: var(--danger); }
 .td-muted { color: var(--text-muted); font-size: 12px; }
 
-/* ── Action buttons ──────────────────────────────── */
+/* ── Action buttons ──*/
 .action-group {
     display: flex;
     align-items: center;
@@ -156,7 +148,7 @@
 }
 .btn-action.delete:hover { background: #fecaca; }
 
-/* ── Pagination ──────────────────────────────────── */
+/* ── Pagination ─── */
 .admin-pagination {
     display: flex;
     align-items: center;
@@ -188,9 +180,7 @@
 .page-btn.disabled { color: var(--text-muted); pointer-events: none; opacity: .5; }
 .page-ellipsis { font-size: 13px; color: var(--text-muted); padding: 0 2px; }
 
-/* ══════════════════════════════════════════════════
-   MODAL (Reopen + Delete confirm)
-   ══════════════════════════════════════════════════ */
+/* MODAL (Reopen + Delete confirm) */
 .modal-backdrop {
     display: none;
     position: fixed; inset: 0;
@@ -338,11 +328,9 @@
 }
 .delete-warning p { font-size: 14px; color: var(--text-dark); line-height: 1.5; }
 
-/* ══════════════════════════════════════════════════
-   JOB FORM PAGE
-   ══════════════════════════════════════════════════ */
+/*  JOB FORM PAGE*/
 
-/* ── Form sections ───────────────────────────────── */
+/* Form sections  */
 .form-section {
     background: var(--bg-white);
     border: 1px solid var(--border);
@@ -359,7 +347,7 @@
     border-bottom: 1px solid var(--border);
 }
 
-/* ── Form elements ───────────────────────────────── */
+/* ── Form elements  */
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -437,7 +425,7 @@
     margin-top: 5px;
 }
 
-/* ── Skill tag picker ────────────────────────────── */
+/* ── Skill tag picker */
 .skill-tag-box {
     display: flex;
     flex-wrap: wrap;
@@ -530,7 +518,7 @@
 }
 .skill-dropdown-item.selected::after { content: ' ✓'; }
 
-/* ── Form actions footer ─────────────────────────── */
+/* ── Form actions footer*/
 .form-actions {
     display: flex;
     align-items: center;
@@ -579,7 +567,7 @@
     stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
 }
 
-/* ── Candidates column ───────────────────────── */
+/* ── Candidates column */
 .candidates-btn {
     display: inline-flex;
     align-items: center;

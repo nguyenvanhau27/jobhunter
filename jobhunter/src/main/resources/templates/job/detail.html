@@ -29,11 +29,6 @@
     <div class="jd-header">
         <div class="jd-header-left">
 
-            <!--
-                FIX LOGO: không dùng th:if để ẩn/hiện.
-                Luôn render cả img lẫn .lf-ph trong DOM.
-                onerror="lfErr(this)" — logo-helper.js xử lý ẩn img, hiện placeholder.
-            -->
             <div class="jd-logo lf-wrap">
                 <img class="lf-img"
                      th:src="${job.company.imageUrl}"
@@ -129,10 +124,6 @@
             <div class="jd-card" th:if="${requirementsList != null}">
                 <h2 class="jd-card-title">Yêu cầu công việc</h2>
                 <ul class="jd-req-list">
-<!--                    <li th:each="req : ${#strings.arraySplit(job.requirements, '\\.\\s+|\\n')}"-->
-<!--                        th:if="${!#strings.isEmpty(req.trim())}"-->
-<!--                        th:text="${req.trim()}">-->
-<!--                    </li>-->
                     <li th:each="req : ${requirementsList}"
                         th:text="${req}">
                     </li>
@@ -279,12 +270,6 @@
             <!-- Về công ty -->
             <div class="jd-company-card">
                 <div class="jd-company-card-title">Về công ty</div>
-
-                <!--
-                    FIX: Luôn render img + placeholder cùng lúc.
-                    CSS .lf-ph { display:none } mặc định.
-                    onerror="lfErr(this)" → ẩn img, hiện .lf-ph khi lỗi hoặc src rỗng.
-                -->
                 <div class="jd-company-logo-wrap lf-wrap">
                     <img class="lf-img"
                          th:src="${job.company.imageUrl}"

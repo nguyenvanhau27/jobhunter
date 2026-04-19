@@ -14,7 +14,6 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class AdminUserController {
         this.roleRepository = roleRepository;
     }
 
-    // ── List ─────────────────────────────────────────
+
     @GetMapping
     public String list(
             @RequestParam(defaultValue = "0") int page,
@@ -48,7 +47,7 @@ public class AdminUserController {
         return "admin/user/list";
     }
 
-    // ── Detail / Edit form ────────────────────────────
+
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id, Model model) {
         User user = adminUserService.findById(id);
@@ -68,7 +67,7 @@ public class AdminUserController {
         return "admin/user/detail";
     }
 
-    // ── Update user ───────────────────────────────────
+
     @PostMapping("/{id}/update")
     public String update(
             @PathVariable Long id,
@@ -77,7 +76,7 @@ public class AdminUserController {
             Model model,
             RedirectAttributes ra) {
 
-        // Bỏ lỗi @Size của newPassword nếu admin để trống (optional field)
+
         if (dto.getNewPassword() == null || dto.getNewPassword().isBlank()) {
             bindingResult = dropFieldError(bindingResult, dto, "newPassword");
         }
@@ -98,7 +97,7 @@ public class AdminUserController {
         return "redirect:/admin/users/" + id;
     }
 
-    // ── Toggle status (gọi từ list hoặc detail) ──────
+
     @PostMapping("/{id}/toggle-status")
     public String toggleStatus(
             @PathVariable Long id,

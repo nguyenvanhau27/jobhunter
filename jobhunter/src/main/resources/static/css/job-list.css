@@ -1,15 +1,15 @@
-/* ═══════════════════════════════════════════════
+/* 
    job-list.css  –  ITJobHub Job Listings Page
-   ═══════════════════════════════════════════════ */
+    */
 
-/* ── Page shell ───────────────────────────────── */
+/* ── Page shell */
 .jobs-page {
     background: var(--bg-light);
     min-height: calc(100vh - var(--nav-h));
     padding-bottom: 60px;
 }
 
-/* ── Top search bar ───────────────────────────── */
+/* ── Top search bar */
 .search-hero {
     background: var(--bg-white);
     border-bottom: 1px solid var(--border);
@@ -63,7 +63,7 @@
 }
 .search-bar .btn-search:hover { background: var(--primary-dark); }
 
-/* ── Results count bar ────────────────────────── */
+/* ── Results count bar */
 .results-bar {
     display: flex;
     align-items: center;
@@ -94,7 +94,7 @@
     padding-top: 24px;
 }
 
-/* ── Sidebar filter ───────────────────────────── */
+/* ── Sidebar filter */
 .sidebar {
     background: var(--bg-white);
     border: 1px solid var(--border);
@@ -223,7 +223,7 @@
 }
 .btn-apply-filter:hover { background: var(--primary-dark); }
 
-/* ── Trending & Top Companies ─────────────────── */
+/* ── Trending & Top Companies ──── */
 .section-title {
     font-size: 17px;
     font-weight: 700;
@@ -338,7 +338,7 @@
     margin: 8px 0 24px;
 }
 
-/* ── Job list ─────────────────────────────────── */
+/* ── Job list ──*/
 .job-cards { display: flex; flex-direction: column; gap: 12px; }
 
 .job-card {
@@ -470,7 +470,7 @@
     border-color: var(--primary);
 }
 
-/* ── Empty state ──────────────────────────────── */
+/* ── Empty state ───*/
 .empty-state {
     text-align: center;
     padding: 60px 20px;
@@ -481,7 +481,7 @@
 .empty-state svg { width: 56px; height: 56px; color: var(--border); margin: 0 auto 12px; }
 .empty-state p { font-size: 15px; color: var(--text-muted); }
 
-/* ── Pagination ───────────────────────────────── */
+/* ── Pagination */
 .pagination {
     display: flex;
     align-items: center;
@@ -515,7 +515,7 @@
 }
 .page-ellipsis { font-size: 13px; color: var(--text-muted); padding: 0 4px; }
 
-/* ── Responsive ───────────────────────────────── */
+/* ── Responsive */
 @media (max-width: 900px) {
     .jobs-layout { grid-template-columns: 1fr; }
     .sidebar { position: static; }
