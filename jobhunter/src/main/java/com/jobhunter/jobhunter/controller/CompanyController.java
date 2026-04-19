@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping("/companies")
 public class CompanyController {
 
-    private static final int PAGE_SIZE = 2;
+    private static final int PAGE_SIZE = 6;
 
     private final CompanyService companyService;
     private final JobService jobService;

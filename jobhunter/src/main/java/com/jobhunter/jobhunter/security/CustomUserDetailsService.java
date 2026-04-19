@@ -5,6 +5,7 @@ import com.jobhunter.jobhunter.entity.User;
 import com.jobhunter.jobhunter.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,13 +33,16 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "Không tìm thấy user: " + email));
 
-        // Cập nhật lastLogin đúng nơi: service security, không phải config
-        user.setLastLogin(LocalDateTime.now());
-        userRepository.save(user);
+        if (user.getStatusUser() == AppEnums.UserStatus.INACTIVE) {
+            throw new DisabledException("Tài khoản đã bị khóa");
+        }
 
         boolean enabled = user.getStatusUser() == AppEnums.UserStatus.ACTIVE;
         String roleWithPrefix = "ROLE_" + user.getRole().getName();
 
+        // Cập nhật lastLogin đúng nơi: service security, không phải config
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
         log.info("LOGIN | email={} | role={} | enabled={}", email, roleWithPrefix, enabled);
 
         return org.springframework.security.core.userdetails.User

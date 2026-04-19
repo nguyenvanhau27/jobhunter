@@ -4,6 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Đăng nhập — JobHunter</title>
+    <link rel="icon" th:href="@{/images/favicon.ico}" type="image/x-icon">
     <link rel="stylesheet" th:href="@{/css/variables.css}"/>
     <link rel="stylesheet" th:href="@{/css/nav.css}"/>
     <link rel="stylesheet" th:href="@{/css/auth.css}"/>
@@ -56,6 +57,16 @@
         </div>
 
         <!-- Login error -->
+        <div th:if="${param.blocked}" class="auth-error">
+            <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            Tài khoản của bạn đã bị chặn truy cập. Vui lòng liên hệ quản trị viên.
+        </div>
+
+        <!-- Sai mật khẩu -->
         <div th:if="${param.error}" class="auth-error">
             <svg viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="10"/>

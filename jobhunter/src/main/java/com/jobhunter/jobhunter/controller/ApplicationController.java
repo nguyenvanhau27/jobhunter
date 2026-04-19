@@ -17,7 +17,7 @@ import java.util.List;
 
 @Controller
 public class ApplicationController {
-    private static final int PAGE_SIZE = 2;
+    private static final int PAGE_SIZE = 5;
 
     private final ApplicationService applicationService;
     private final JobService jobService;

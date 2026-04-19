@@ -4,6 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Quản lý Công ty – ITJobHub Admin</title>
+    <link rel="icon" th:href="@{/images/favicon.ico}" type="image/x-icon">
     <link rel="stylesheet" th:href="@{/css/variables.css}"/>
     <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}"/>
     <link rel="stylesheet" th:href="@{/css/admin-job.css}"/>
@@ -166,14 +167,6 @@
                             Tổng <strong th:text="${#lists.size(companies)}">0</strong> công ty
                         </div>
                     </div>
-                    <a th:href="@{/admin/companies/create}" class="btn-admin-primary"
-                       style="font-size:13px;padding:7px 14px;">
-                        <svg viewBox="0 0 24 24">
-                            <line x1="12" y1="5" x2="12" y2="19"/>
-                            <line x1="5" y1="12" x2="19" y2="12"/>
-                        </svg>
-                        Tạo mới
-                    </a>
                 </div>
 
                 <!-- Empty -->

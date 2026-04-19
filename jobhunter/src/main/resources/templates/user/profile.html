@@ -6,6 +6,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Quản lý tài khoản — JobHunter</title>
+    <link rel="icon" th:href="@{/images/favicon.ico}" type="image/x-icon">
     <link rel="stylesheet" th:href="@{/css/variables.css}"/>
     <link rel="stylesheet" th:href="@{/css/nav.css}"/>
     <link rel="stylesheet" th:href="@{/css/footer.css}"/>
@@ -219,7 +220,7 @@
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
-
+<script th:src="@{/js/navbar.js}"></script>
 <script>
     /* Tab switch — no reload */
     function pfSwitch(tab) {

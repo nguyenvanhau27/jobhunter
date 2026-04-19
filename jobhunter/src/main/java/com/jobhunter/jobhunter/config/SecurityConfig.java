@@ -25,6 +25,11 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CustomAuthFailureHandler customAuthFailureHandler() {
+        return new CustomAuthFailureHandler();
+    }
+
+    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -53,6 +58,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .failureHandler(customAuthFailureHandler())
                         .loginProcessingUrl("/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
@@ -66,7 +72,7 @@ public class SecurityConfig {
                                 response.sendRedirect("/");
                             }
                         })
-                        .failureUrl("/login?error=true")
+//                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
