@@ -513,30 +513,34 @@
         </button>
     </div>
 </div>
-
-<script>
-    document.getElementById('sidebarCollapseBtn').addEventListener('click', () => {
-        document.getElementById('adminSidebar').classList.toggle('open');
-    });
-
+<script th:src="@{/js/admin-common.js}" defer></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // ── Job list search (client-side filter) ──
     document.getElementById('jobSearchInput').addEventListener('input', function () {
-        const q = this.value.toLowerCase();
-        document.querySelectorAll('#jobTable tbody tr').forEach(row => {
+        var q = this.value.toLowerCase();
+        document.querySelectorAll('#jobTable tbody tr').forEach(function (row) {
             row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
         });
     });
 
+    // ── Reopen + Delete modal (event delegation) ──
+    var pendingDeleteId = null;
+
     document.addEventListener('click', function (e) {
-        const reopenBtn = e.target.closest('.js-reopen');
+        // Reopen
+        var reopenBtn = e.target.closest('.js-reopen');
         if (reopenBtn) {
             document.getElementById('reopenForm').action =
                 '/admin/jobs/' + reopenBtn.dataset.jobId + '/reopen';
             document.getElementById('reopenModal').classList.add('open');
             document.getElementById('reopenBackdrop').classList.add('open');
             document.body.style.overflow = 'hidden';
+            return;
         }
 
-        const deleteBtn = e.target.closest('.js-delete');
+        // Delete
+        var deleteBtn = e.target.closest('.js-delete');
         if (deleteBtn) {
             pendingDeleteId = deleteBtn.dataset.jobId;
             document.getElementById('deleteJobName').textContent =
@@ -546,8 +550,6 @@
             document.body.style.overflow = 'hidden';
         }
     });
-
-    let pendingDeleteId = null;
 
     function hideReopenModal() {
         document.getElementById('reopenModal').classList.remove('open');
@@ -562,10 +564,65 @@
         pendingDeleteId = null;
     }
 
-    document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
-        if (pendingDeleteId) document.getElementById('deleteForm-' + pendingDeleteId).submit();
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+        if (pendingDeleteId) {
+            document.getElementById('deleteForm-' + pendingDeleteId).submit();
+        }
     });
+    /*]]>*/
 </script>
+<!--<script>-->
+<!--    document.getElementById('sidebarCollapseBtn').addEventListener('click', () => {-->
+<!--        document.getElementById('adminSidebar').classList.toggle('open');-->
+<!--    });-->
+
+<!--    document.getElementById('jobSearchInput').addEventListener('input', function () {-->
+<!--        const q = this.value.toLowerCase();-->
+<!--        document.querySelectorAll('#jobTable tbody tr').forEach(row => {-->
+<!--            row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';-->
+<!--        });-->
+<!--    });-->
+
+<!--    document.addEventListener('click', function (e) {-->
+<!--        const reopenBtn = e.target.closest('.js-reopen');-->
+<!--        if (reopenBtn) {-->
+<!--            document.getElementById('reopenForm').action =-->
+<!--                '/admin/jobs/' + reopenBtn.dataset.jobId + '/reopen';-->
+<!--            document.getElementById('reopenModal').classList.add('open');-->
+<!--            document.getElementById('reopenBackdrop').classList.add('open');-->
+<!--            document.body.style.overflow = 'hidden';-->
+<!--        }-->
+
+<!--        const deleteBtn = e.target.closest('.js-delete');-->
+<!--        if (deleteBtn) {-->
+<!--            pendingDeleteId = deleteBtn.dataset.jobId;-->
+<!--            document.getElementById('deleteJobName').textContent =-->
+<!--                '\u201c' + (deleteBtn.dataset.jobTitle || '') + '\u201d';-->
+<!--            document.getElementById('deleteModal').classList.add('open');-->
+<!--            document.getElementById('deleteBackdrop').classList.add('open');-->
+<!--            document.body.style.overflow = 'hidden';-->
+<!--        }-->
+<!--    });-->
+
+<!--    let pendingDeleteId = null;-->
+
+<!--    function hideReopenModal() {-->
+<!--        document.getElementById('reopenModal').classList.remove('open');-->
+<!--        document.getElementById('reopenBackdrop').classList.remove('open');-->
+<!--        document.body.style.overflow = '';-->
+<!--    }-->
+
+<!--    function hideDeleteModal() {-->
+<!--        document.getElementById('deleteModal').classList.remove('open');-->
+<!--        document.getElementById('deleteBackdrop').classList.remove('open');-->
+<!--        document.body.style.overflow = '';-->
+<!--        pendingDeleteId = null;-->
+<!--    }-->
+
+<!--    document.getElementById('confirmDeleteBtn').addEventListener('click', () => {-->
+<!--        if (pendingDeleteId) document.getElementById('deleteForm-' + pendingDeleteId).submit();-->
+<!--    });-->
+<!--</script>-->
 
 </body>
 </html>

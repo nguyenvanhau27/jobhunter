@@ -813,67 +813,123 @@
     z-index:300; align-items:center; gap:8px;">
     📅 Tính năng hẹn phỏng vấn sẽ được cập nhật sớm!
 </div>
-
-<script>
-    document.getElementById('sidebarCollapseBtn').addEventListener('click', () => {
-        document.getElementById('adminSidebar').classList.toggle('open');
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // ── Job list search (client-side filter) ──
+    document.getElementById('jobSearchInput').addEventListener('input', function () {
+        var q = this.value.toLowerCase();
+        document.querySelectorAll('#jobTable tbody tr').forEach(function (row) {
+            row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
     });
 
-    // ── Action buttons (approve/reject) ──────────
-    let pendingFormId = null;
+    // ── Reopen + Delete modal (event delegation) ──
+    var pendingDeleteId = null;
 
     document.addEventListener('click', function (e) {
-        const btn = e.target.closest('.js-action-btn');
-        if (btn && !btn.disabled) {
-            pendingFormId = btn.dataset.form;
-            const action = btn.dataset.action;           // 'approve' or 'reject'
-            const applicantName = btn.dataset.name || 'ứng viên này';
-            const isApprove = action === 'approve';
+        // Reopen
+        var reopenBtn = e.target.closest('.js-reopen');
+        if (reopenBtn) {
+            document.getElementById('reopenForm').action =
+                '/admin/jobs/' + reopenBtn.dataset.jobId + '/reopen';
+            document.getElementById('reopenModal').classList.add('open');
+            document.getElementById('reopenBackdrop').classList.add('open');
+            document.body.style.overflow = 'hidden';
+            return;
+        }
 
-            document.getElementById('actionModalTitle').textContent =
-                isApprove ? 'Duyệt hồ sơ' : 'Từ chối hồ sơ';
-            document.getElementById('actionModalMsg').textContent =
-                (isApprove ? 'Duyệt hồ sơ của ' : 'Từ chối hồ sơ của ')
-                + applicantName + '?';
-
-            const box = document.getElementById('actionWarningBox');
-            const confirmBtn = document.getElementById('confirmActionBtn');
-            if (isApprove) {
-                box.style.background = '#f0fdf4';
-                box.style.borderColor = '#bbf7d0';
-                confirmBtn.textContent = '✓ Duyệt';
-                confirmBtn.className = 'btn-modal-confirm';
-            } else {
-                box.style.background = '#fff7ed';
-                box.style.borderColor = '#fed7aa';
-                confirmBtn.textContent = '✗ Từ chối';
-                confirmBtn.className = 'btn-modal-delete';
-            }
-
-            document.getElementById('actionModal').classList.add('open');
-            document.getElementById('actionBackdrop').classList.add('open');
+        // Delete
+        var deleteBtn = e.target.closest('.js-delete');
+        if (deleteBtn) {
+            pendingDeleteId = deleteBtn.dataset.jobId;
+            document.getElementById('deleteJobName').textContent =
+                '\u201c' + (deleteBtn.dataset.jobTitle || '') + '\u201d';
+            document.getElementById('deleteModal').classList.add('open');
+            document.getElementById('deleteBackdrop').classList.add('open');
             document.body.style.overflow = 'hidden';
         }
     });
 
-    function hideActionModal() {
-        document.getElementById('actionModal').classList.remove('open');
-        document.getElementById('actionBackdrop').classList.remove('open');
+    function hideReopenModal() {
+        document.getElementById('reopenModal').classList.remove('open');
+        document.getElementById('reopenBackdrop').classList.remove('open');
         document.body.style.overflow = '';
-        pendingFormId = null;
     }
 
-    document.getElementById('confirmActionBtn').addEventListener('click', () => {
-        if (pendingFormId) document.getElementById(pendingFormId).submit();
-    });
+    function hideDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('open');
+        document.getElementById('deleteBackdrop').classList.remove('open');
+        document.body.style.overflow = '';
+        pendingDeleteId = null;
+    }
 
-    // ── Interview button (toast placeholder) ─────
-    document.getElementById('btnInterview').addEventListener('click', () => {
-        const toast = document.getElementById('interviewToast');
-        toast.style.display = 'flex';
-        setTimeout(() => toast.style.display = 'none', 3000);
+    document.getElementById('confirmDeleteBtn').addEventListener('click', function () {
+        if (pendingDeleteId) {
+            document.getElementById('deleteForm-' + pendingDeleteId).submit();
+        }
     });
+    /*]]>*/
 </script>
+<!--<script>-->
+<!--    document.getElementById('sidebarCollapseBtn').addEventListener('click', () => {-->
+<!--        document.getElementById('adminSidebar').classList.toggle('open');-->
+<!--    });-->
+
+<!--    // ── Action buttons (approve/reject) ──────────-->
+<!--    let pendingFormId = null;-->
+
+<!--    document.addEventListener('click', function (e) {-->
+<!--        const btn = e.target.closest('.js-action-btn');-->
+<!--        if (btn && !btn.disabled) {-->
+<!--            pendingFormId = btn.dataset.form;-->
+<!--            const action = btn.dataset.action;           // 'approve' or 'reject'-->
+<!--            const applicantName = btn.dataset.name || 'ứng viên này';-->
+<!--            const isApprove = action === 'approve';-->
+
+<!--            document.getElementById('actionModalTitle').textContent =-->
+<!--                isApprove ? 'Duyệt hồ sơ' : 'Từ chối hồ sơ';-->
+<!--            document.getElementById('actionModalMsg').textContent =-->
+<!--                (isApprove ? 'Duyệt hồ sơ của ' : 'Từ chối hồ sơ của ')-->
+<!--                + applicantName + '?';-->
+
+<!--            const box = document.getElementById('actionWarningBox');-->
+<!--            const confirmBtn = document.getElementById('confirmActionBtn');-->
+<!--            if (isApprove) {-->
+<!--                box.style.background = '#f0fdf4';-->
+<!--                box.style.borderColor = '#bbf7d0';-->
+<!--                confirmBtn.textContent = '✓ Duyệt';-->
+<!--                confirmBtn.className = 'btn-modal-confirm';-->
+<!--            } else {-->
+<!--                box.style.background = '#fff7ed';-->
+<!--                box.style.borderColor = '#fed7aa';-->
+<!--                confirmBtn.textContent = '✗ Từ chối';-->
+<!--                confirmBtn.className = 'btn-modal-delete';-->
+<!--            }-->
+
+<!--            document.getElementById('actionModal').classList.add('open');-->
+<!--            document.getElementById('actionBackdrop').classList.add('open');-->
+<!--            document.body.style.overflow = 'hidden';-->
+<!--        }-->
+<!--    });-->
+
+<!--    function hideActionModal() {-->
+<!--        document.getElementById('actionModal').classList.remove('open');-->
+<!--        document.getElementById('actionBackdrop').classList.remove('open');-->
+<!--        document.body.style.overflow = '';-->
+<!--        pendingFormId = null;-->
+<!--    }-->
+
+<!--    document.getElementById('confirmActionBtn').addEventListener('click', () => {-->
+<!--        if (pendingFormId) document.getElementById(pendingFormId).submit();-->
+<!--    });-->
+
+<!--    // ── Interview button (toast placeholder) ─────-->
+<!--    document.getElementById('btnInterview').addEventListener('click', () => {-->
+<!--        const toast = document.getElementById('interviewToast');-->
+<!--        toast.style.display = 'flex';-->
+<!--        setTimeout(() => toast.style.display = 'none', 3000);-->
+<!--    });-->
+<!--</script>-->
 
 </body>
 </html>

@@ -13,9 +13,7 @@
 
 <div class="admin-shell">
 
-    <!-- ╔═══════════════════════════════╗
-         ║  SIDEBAR                     ║
-         ╚═══════════════════════════════╝ -->
+
     <aside class="admin-sidebar" id="adminSidebar">
         <div class="admin-sidebar-brand">
             <div class="admin-sidebar-brand-icon">
@@ -92,9 +90,6 @@
         </form>
     </aside>
 
-    <!-- ╔═══════════════════════════════╗
-         ║  MAIN AREA                   ║
-         ╚═══════════════════════════════╝ -->
     <div class="admin-main">
 
         <!-- Top bar -->
@@ -378,127 +373,114 @@
         </main>
     </div>
 </div>
-
+<script th:src="@{/js/admin-common.js}" defer></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
-
-    // ── Sidebar ───────────────────────────────────
-    document.getElementById('sidebarCollapseBtn').addEventListener('click', () => {
-        document.getElementById('adminSidebar').classList.toggle('open');
-    });
-
-    // ── Skill tag picker ──────────────────────────
-    const selectedSkillIds = new Set();
-    document.querySelectorAll('#skillHiddenInputs input[name=skillIds]').forEach(inp => {
+    // ── Skill tag picker ──────────────────────────────────────────────
+    var selectedSkillIds = new Set();
+    document.querySelectorAll('#skillHiddenInputs input[name=skillIds]').forEach(function (inp) {
         selectedSkillIds.add(parseInt(inp.value));
     });
 
-    // Build lookup map from dropdown items
-    const skillMap = {};
-    document.querySelectorAll('.skill-dropdown-item').forEach(item => {
+    // Build lookup map
+    var skillMap = {};
+    document.querySelectorAll('.skill-dropdown-item').forEach(function (item) {
         skillMap[item.dataset.id] = item.dataset.name;
     });
 
     function refreshDropdownVisibility() {
-        document.querySelectorAll('.skill-dropdown-item').forEach(item => {
+        document.querySelectorAll('.skill-dropdown-item').forEach(function (item) {
             item.classList.toggle('selected', selectedSkillIds.has(parseInt(item.dataset.id)));
         });
     }
-
     refreshDropdownVisibility();
 
-    // ── Dropdown show/hide ────────────────────────
+    // Dropdown show/hide
     function showSkillDropdown() {
         document.getElementById('skillDropdown').classList.add('open');
         document.addEventListener('click', outsideClickHandler);
     }
-
     function hideSkillDropdown() {
         document.getElementById('skillDropdown').classList.remove('open');
     }
-
     function outsideClickHandler(e) {
-        const box = document.getElementById('skillTagBox');
-        const dd = document.getElementById('skillDropdown');
+        var box = document.getElementById('skillTagBox');
+        var dd  = document.getElementById('skillDropdown');
         if (!box.contains(e.target) && !dd.contains(e.target)) {
             hideSkillDropdown();
             document.removeEventListener('click', outsideClickHandler);
         }
     }
 
-    // ── Wire skill search input (no inline handlers) ──
-    const skillSearchInput = document.getElementById('skillSearchInput');
+    // Skill search input
+    var skillSearchInput = document.getElementById('skillSearchInput');
     skillSearchInput.addEventListener('input', function () {
         showSkillDropdown();
-        const q = this.value.toLowerCase();
-        document.querySelectorAll('.skill-dropdown-item').forEach(item => {
+        var q = this.value.toLowerCase();
+        document.querySelectorAll('.skill-dropdown-item').forEach(function (item) {
             item.style.display = item.dataset.name.toLowerCase().includes(q) ? '' : 'none';
         });
     });
     skillSearchInput.addEventListener('focus', showSkillDropdown);
-    skillSearchInput.addEventListener('keydown', e => {
+    skillSearchInput.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') hideSkillDropdown();
     });
 
-    // ── Skill dropdown item click ──────────────────
+    // Select skill from dropdown
     function selectSkill(el) {
-        const id = parseInt(el.dataset.id);
-        const name = el.dataset.name;
+        var id   = parseInt(el.dataset.id);
+        var name = el.dataset.name;
         if (selectedSkillIds.has(id)) return;
         selectedSkillIds.add(id);
         addSkillTag(id, name);
         addHiddenInput(id);
         refreshDropdownVisibility();
         skillSearchInput.value = '';
-        // reset filter
-        document.querySelectorAll('.skill-dropdown-item').forEach(i => i.style.display = '');
+        document.querySelectorAll('.skill-dropdown-item').forEach(function (i) {
+            i.style.display = '';
+        });
     }
 
-    // ── Add tag element ────────────────────────────
     function addSkillTag(id, name) {
-        const box = document.getElementById('skillTagBox');
-        const tag = document.createElement('span');
-        tag.className = 'skill-tag js-skill-tag';
-        tag.dataset.id = id;
-        // Build tag with remove button — data-skill-id is numeric, no th:onclick needed
-        const labelSpan = document.createElement('span');
-        labelSpan.textContent = name;          // textContent = safe, no XSS
-        const removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
+        var box      = document.getElementById('skillTagBox');
+        var tag      = document.createElement('span');
+        tag.className      = 'skill-tag js-skill-tag';
+        tag.dataset.id     = id;
+        var labelSpan      = document.createElement('span');
+        labelSpan.textContent = name;
+        var removeBtn      = document.createElement('button');
+        removeBtn.type     = 'button';
         removeBtn.className = 'skill-tag-remove';
-        removeBtn.dataset.skillId = id;        // numeric — safe
+        removeBtn.dataset.skillId = id;
         removeBtn.textContent = '×';
         tag.appendChild(labelSpan);
         tag.appendChild(removeBtn);
         box.insertBefore(tag, skillSearchInput);
     }
 
-    // ── Hidden input for form POST ─────────────────
     function addHiddenInput(id) {
-        const container = document.getElementById('skillHiddenInputs');
+        var container = document.getElementById('skillHiddenInputs');
         if (!container.querySelector('input[value="' + id + '"]')) {
-            const inp = document.createElement('input');
-            inp.type = 'hidden';
-            inp.name = 'skillIds';
+            var inp = document.createElement('input');
+            inp.type  = 'hidden';
+            inp.name  = 'skillIds';
             inp.value = id;
             container.appendChild(inp);
         }
     }
 
-    // ── Remove skill — event delegation ───────────
-    // Works for both server-rendered tags (data-skill-id) and JS-created tags (data-skill-id)
+    // Remove skill — event delegation on tag box
     document.getElementById('skillTagBox').addEventListener('click', function (e) {
-        const btn = e.target.closest('.skill-tag-remove');
+        var btn = e.target.closest('.skill-tag-remove');
         if (!btn) return;
-        const id = parseInt(btn.dataset.skillId);
+        var id  = parseInt(btn.dataset.skillId);
         selectedSkillIds.delete(id);
-        const tag = document.querySelector('.js-skill-tag[data-id="' + id + '"]');
+        var tag = document.querySelector('.js-skill-tag[data-id="' + id + '"]');
         if (tag) tag.remove();
-        const inp = document.querySelector('#skillHiddenInputs input[value="' + id + '"]');
+        var inp = document.querySelector('#skillHiddenInputs input[value="' + id + '"]');
         if (inp) inp.remove();
         refreshDropdownVisibility();
     });
-
     /*]]>*/
 </script>
 
