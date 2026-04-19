@@ -27,7 +27,7 @@ import java.util.List;
 @RequestMapping("/admin/jobs")
 public class AdminJobController {
 
-    private static final int PAGE_SIZE = 20;
+    private static final int PAGE_SIZE = 10;
 
     private final AdminJobService adminJobService;
     private final CompanyRepository companyRepository;

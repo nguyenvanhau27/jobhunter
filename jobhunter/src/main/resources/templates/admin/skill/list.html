@@ -294,23 +294,22 @@
                 </svg>
                 Quản lý Kỹ năng
             </a>
-            <div class="admin-sidebar-section-label" style="margin-top:8px;">System</div>
-            <a th:href="@{/admin/settings}" class="admin-nav-item">
-                <svg viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                </svg>
-                Cài đặt hệ thống
-            </a>
         </nav>
-        <div class="admin-sidebar-footer">
-            <div class="admin-sidebar-collapse" id="sidebarCollapseBtn">
+        <!-- Footer -->
+        <form th:action="@{/logout}" method="post" class="admin-logout-form">
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}"/>
+
+            <button type="submit" class="admin-sidebar-logout">
                 <svg viewBox="0 0 24 24">
-                    <polyline points="15 18 9 12 15 6"/>
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
                 </svg>
-                <span>Thu gọn</span>
-            </div>
-        </div>
+                <span>Đăng xuất</span>
+            </button>
+        </form>
     </aside>
 
     <div class="admin-main">
@@ -324,14 +323,14 @@
                 <span class="sep">›</span>
                 <span class="current">Quản lý Kỹ năng</span>
             </div>
-            <div class="admin-topbar-right">
-                <div class="admin-topbar-avatar">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                </div>
-            </div>
+<!--            <div class="admin-topbar-right">-->
+<!--                <div class="admin-topbar-avatar">-->
+<!--                    <svg viewBox="0 0 24 24">-->
+<!--                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>-->
+<!--                        <circle cx="12" cy="7" r="4"/>-->
+<!--                    </svg>-->
+<!--                </div>-->
+<!--            </div>-->
         </header>
 
         <main class="admin-content">
@@ -702,6 +701,8 @@
             Xoá
         </button>
     </div>
+
+
 </div>
 
 <script>

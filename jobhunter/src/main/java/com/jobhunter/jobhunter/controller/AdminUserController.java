@@ -16,7 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/admin/users")
 public class AdminUserController {
 
-    private static final int PAGE_SIZE = 20;
+    private static final int PAGE_SIZE = 5;
     private final UserRepository userRepository;
 
     public AdminUserController(UserRepository userRepository) {

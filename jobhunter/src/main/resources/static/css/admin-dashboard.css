@@ -500,6 +500,7 @@ body.admin-body {
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-left: 10px;
     width: 100%;
     padding: 10px 0;
     font-size: 14px;
